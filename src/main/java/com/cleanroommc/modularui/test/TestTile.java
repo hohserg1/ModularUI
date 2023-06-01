@@ -7,6 +7,7 @@ import com.cleanroommc.modularui.api.future.IItemHandlerModifiable;
 import com.cleanroommc.modularui.api.future.ItemStackHandler;
 import com.cleanroommc.modularui.api.layout.CrossAxisAlignment;
 import com.cleanroommc.modularui.drawable.*;
+import com.cleanroommc.modularui.drawable.keys.StringKey;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.screen.Tooltip;
@@ -23,6 +24,7 @@ import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fluids.FluidTank;
 
@@ -54,6 +56,7 @@ public class TestTile extends TileEntity implements IGuiHolder {
 
     private boolean bool = false, bool2 = true;
     private int num = 2;
+    private int currentDropdownIndex = -1;
 
     @Override
     public void buildSyncHandler(GuiSyncHandler guiSyncHandler, EntityPlayer player) {
@@ -78,6 +81,7 @@ public class TestTile extends TileEntity implements IGuiHolder {
         }
         guiSyncHandler.syncValue("mixer_fluids", 0, SyncHandlers.fluidSlot(mixerFluids1));
         guiSyncHandler.syncValue("mixer_fluids", 1, SyncHandlers.fluidSlot(mixerFluids2));
+        guiSyncHandler.syncValue("drop_down_index", SyncHandlers.intNumber(() -> currentDropdownIndex, val -> currentDropdownIndex = val));
 
     }
 
@@ -103,7 +107,8 @@ public class TestTile extends TileEntity implements IGuiHolder {
                         .child(new PageButton(1, tabController)
                                 .tab(GuiTextures.TAB_TOP, 0))
                         .child(new PageButton(2, tabController)
-                                .tab(GuiTextures.TAB_TOP, 0)))
+                                .tab(GuiTextures.TAB_TOP, 0))
+                        .child(new PageButton(3, tabController).tab(GuiTextures.TAB_TOP, 0)))
                 .child(new PagedWidget<>()
                         .size(1f)
                         .controller(tabController)
@@ -270,7 +275,19 @@ public class TestTile extends TileEntity implements IGuiHolder {
                                                         .texture(GuiTextures.CHECK_BOX)
                                                         .size(14, 14))
                                                 .child(IKey.lang("bogosort.gui.enabled").asWidget()
-                                                        .height(14))))));
+                                                        .height(14)))))
+                        .addPage(
+                            new ParentWidget<>()
+                                .size(1f, 1f)
+                                .padding(7)
+                                .child(SlotGroupWidget.playerInventory())
+                                .child(
+                                    new DropDownMenu()
+                                        .addChoice(menu -> currentDropdownIndex = menu.getSelectedIndex(), "Help")
+                                        .addChoice(menu -> currentDropdownIndex = menu.getSelectedIndex(), "Help2")
+                                        .size(60, 16)
+                                        .setSynced("drop_down_index")
+                                        .setSelectedIndex(currentDropdownIndex))));
         /*panel.child(new ButtonWidget<>()
                         .flex(flex -> flex.size(60, 20)
                                 .top(7)
@@ -337,6 +354,18 @@ public class TestTile extends TileEntity implements IGuiHolder {
         if (++progress == duration) {
             progress = 0;
         }
+    }
+
+    @Override
+    public void writeToNBT(NBTTagCompound nbt) {
+        nbt.setInteger("dropDownIndex", currentDropdownIndex);
+        super.writeToNBT(nbt);
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound nbt) {
+        currentDropdownIndex = nbt.hasKey("dropDownIndex") ? nbt.getInteger("dropDownIndex") : -1;
+        super.readFromNBT(nbt);
     }
 
     private static class SpecialButton extends ButtonWidget<SpecialButton> {
