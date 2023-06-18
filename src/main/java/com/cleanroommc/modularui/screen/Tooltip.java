@@ -95,7 +95,7 @@ public class Tooltip {
         GL11.glDisable(GL11.GL_DEPTH_TEST);
         GL11.glDisable(GL11.GL_BLEND);
 
-        GuiDraw.drawTooltipBackground(textLines, area.x, area.y, area.width, area.height, 300);
+        GuiDraw.drawTooltipBackground(textLines, area.x, area.y, area.width, area.height);
 
         GL11.glColor4f(1f, 1f, 1f, 1f);
 

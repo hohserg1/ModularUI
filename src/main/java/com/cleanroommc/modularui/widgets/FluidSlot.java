@@ -129,7 +129,7 @@ public class FluidSlot extends Widget<FluidSlot> implements Interactable {
         }
         if (isHovering()) {
             GL11.glColorMask(true, true, true, false);
-            GuiDraw.drawSolidRect(1, 1, 16, 16, getWidgetTheme(context.getTheme()).getSlotHoverColor());
+            GuiDraw.drawRect(1, 1, 16, 16, getWidgetTheme(context.getTheme()).getSlotHoverColor());
             GL11.glColorMask(true, true, true, true);
         }
     }

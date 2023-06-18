@@ -8,13 +8,8 @@ import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.utils.JsonHelper;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.Tessellator;
-import org.lwjgl.opengl.GL11;
 
 import java.util.function.IntConsumer;
-
-import static com.cleanroommc.modularui.drawable.BufferBuilder.bufferbuilder;
 
 public class Rectangle implements IDrawable {
 
@@ -81,54 +76,11 @@ public class Rectangle implements IDrawable {
 
     @Override
     public void draw(GuiContext context, int x0, int y0, int width, int height) {
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glDisable(GL11.GL_ALPHA_TEST);
-        OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
-        GL11.glShadeModel(GL11.GL_SMOOTH);
-        float x1 = x0 + width, y1 = y0 + height;
-        Tessellator.instance.startDrawingQuads();
-        if (this.cornerRadius == 0) {
-            bufferbuilder.pos(x0, y0, 0.0f).color(Color.getRed(colorTL), Color.getGreen(colorTL), Color.getBlue(colorTL), Color.getAlpha(colorTL)).endVertex();
-            bufferbuilder.pos(x0, y1, 0.0f).color(Color.getRed(colorBL), Color.getGreen(colorBL), Color.getBlue(colorBL), Color.getAlpha(colorBL)).endVertex();
-            bufferbuilder.pos(x1, y1, 0.0f).color(Color.getRed(colorBR), Color.getGreen(colorBR), Color.getBlue(colorBR), Color.getAlpha(colorBR)).endVertex();
-            bufferbuilder.pos(x1, y0, 0.0f).color(Color.getRed(colorTR), Color.getGreen(colorTR), Color.getBlue(colorTR), Color.getAlpha(colorTR)).endVertex();
-        } else {
-            int color = Color.average(colorBL, colorBR, colorTR, colorTL);
-            bufferbuilder.pos(x0 + width / 2f, y0 + height / 2f, 0.0f).color(Color.getRed(color), Color.getGreen(color), Color.getBlue(color), Color.getAlpha(color)).endVertex();
-            bufferbuilder.pos(x0, y0 + cornerRadius, 0.0f).color(Color.getRed(colorTL), Color.getGreen(colorTL), Color.getBlue(colorTL), Color.getAlpha(colorTL)).endVertex();
-            bufferbuilder.pos(x0, y1 - cornerRadius, 0.0f).color(Color.getRed(colorBL), Color.getGreen(colorBL), Color.getBlue(colorBL), Color.getAlpha(colorBL)).endVertex();
-            int n = cornerSegments;
-            for (int i = 1; i <= n; i++) {
-                float x = (float) (x0 + cornerRadius - Math.cos(PI_2 / n * i) * cornerRadius);
-                float y = (float) (y1 - cornerRadius + Math.sin(PI_2 / n * i) * cornerRadius);
-                bufferbuilder.pos(x, y, 0.0f).color(Color.getRed(colorBL), Color.getGreen(colorBL), Color.getBlue(colorBL), Color.getAlpha(colorBL)).endVertex();
-            }
-            bufferbuilder.pos(x1 - cornerRadius, y1, 0.0f).color(Color.getRed(colorBR), Color.getGreen(colorBR), Color.getBlue(colorBR), Color.getAlpha(colorBR)).endVertex();
-            for (int i = 1; i <= n; i++) {
-                float x = (float) (x1 - cornerRadius + Math.sin(PI_2 / n * i) * cornerRadius);
-                float y = (float) (y1 - cornerRadius + Math.cos(PI_2 / n * i) * cornerRadius);
-                bufferbuilder.pos(x, y, 0.0f).color(Color.getRed(colorBR), Color.getGreen(colorBR), Color.getBlue(colorBR), Color.getAlpha(colorBR)).endVertex();
-            }
-            bufferbuilder.pos(x1, y0 + cornerRadius, 0.0f).color(Color.getRed(colorTR), Color.getGreen(colorTR), Color.getBlue(colorTR), Color.getAlpha(colorTR)).endVertex();
-            for (int i = 1; i <= n; i++) {
-                float x = (float) (x1 - cornerRadius + Math.cos(PI_2 / n * i) * cornerRadius);
-                float y = (float) (y0 + cornerRadius - Math.sin(PI_2 / n * i) * cornerRadius);
-                bufferbuilder.pos(x, y, 0.0f).color(Color.getRed(colorTR), Color.getGreen(colorTR), Color.getBlue(colorTR), Color.getAlpha(colorTR)).endVertex();
-            }
-            bufferbuilder.pos(x0 + cornerRadius, y0, 0.0f).color(Color.getRed(colorTL), Color.getGreen(colorTL), Color.getBlue(colorTL), Color.getAlpha(colorTL)).endVertex();
-            for (int i = 1; i <= n; i++) {
-                float x = (float) (x0 + cornerRadius - Math.sin(PI_2 / n * i) * cornerRadius);
-                float y = (float) (y0 + cornerRadius - Math.cos(PI_2 / n * i) * cornerRadius);
-                bufferbuilder.pos(x, y, 0.0f).color(Color.getRed(colorTL), Color.getGreen(colorTL), Color.getBlue(colorTL), Color.getAlpha(colorTL)).endVertex();
-            }
-            bufferbuilder.pos(x0, y0 + cornerRadius, 0.0f).color(Color.getRed(colorTL), Color.getGreen(colorTL), Color.getBlue(colorTL), Color.getAlpha(colorTL)).endVertex();
+        if (this.cornerRadius <= 0) {
+            GuiDraw.drawRect(x0, y0, width, height, this.colorTL, this.colorTR, this.colorBL, this.colorBR);
+            return;
         }
-        Tessellator.instance.draw();
-        GL11.glShadeModel(GL11.GL_FLAT);
-        GL11.glDisable(GL11.GL_BLEND);
-        GL11.glEnable(GL11.GL_ALPHA_TEST);
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GuiDraw.drawRoundedRect(x0, y0, width, height, this.colorTL, this.colorTR, this.colorBL, this.colorBR, this.cornerRadius, this.cornerSegments);
     }
 
     @Override

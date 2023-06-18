@@ -73,7 +73,7 @@ public class ItemSlot extends Widget<ItemSlot> implements IVanillaSlot, Interact
             GL11.glDisable(GL11.GL_LIGHTING);
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glColorMask(true, true, true, false);
-            GuiDraw.drawSolidRect(1, 1, 16, 16, getWidgetTheme(context.getTheme()).getSlotHoverColor());
+            GuiDraw.drawRect(1, 1, 16, 16, getWidgetTheme(context.getTheme()).getSlotHoverColor());
             GL11.glColorMask(true, true, true, true);
             GL11.glDisable(GL11.GL_BLEND);
         }
@@ -201,7 +201,7 @@ public class ItemSlot extends Widget<ItemSlot> implements IVanillaSlot, Interact
 
         if (!flag1) {
             if (flag) {
-                GuiDraw.drawSolidRect(1, 1, 16, 16, -2130706433);
+                GuiDraw.drawRect(1, 1, 16, 16, -2130706433);
             }
 
             if (itemstack != null) {
