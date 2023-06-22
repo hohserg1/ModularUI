@@ -6,6 +6,7 @@ import codechicken.nei.api.INEIGuiHandler;
 import codechicken.nei.api.TaggedInventoryArea;
 import codechicken.nei.guihook.GuiContainerManager;
 import codechicken.nei.guihook.IContainerDrawHandler;
+import codechicken.nei.guihook.IContainerInputHandler;
 import com.cleanroommc.modularui.GuiErrorHandler;
 import com.cleanroommc.modularui.ModularUIConfig;
 import com.cleanroommc.modularui.api.widget.IGuiElement;
@@ -322,7 +323,17 @@ public class GuiScreenWrapper extends GuiContainer implements INEIGuiHandler {
 
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
-        if (this.screen.onMousePressed(mouseButton)) return;
+        if (this.screen.onMousePressed(mouseButton)) {
+            if (this.screen.context.isNEIEnabled()) {
+                for (IContainerInputHandler inputhander : GuiContainerManager.inputHandlers) {
+                    inputhander.onMouseClicked(this, mouseX, mouseY, mouseButton);
+                }
+            }
+            return;
+        }
+        // NEI injects GuiContainerManager#mouseClicked there.
+        // Ideally we should call `onMouseClicked` before handling our click behaviors,
+        // but then they will be called twice if our onMousePressed returns false.
         super.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
