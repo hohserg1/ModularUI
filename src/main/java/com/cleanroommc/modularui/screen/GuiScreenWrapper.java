@@ -359,6 +359,8 @@ public class GuiScreenWrapper extends GuiContainer implements INEIGuiHandler {
         int key = Keyboard.getEventKey();
         boolean state = Keyboard.getEventKeyState();
 
+        if (GuiContainerManager.getManager().firstKeyTyped(c0, key)) return;
+
         if (state) {
             this.lastChar = c0;
             if (this.screen.onKeyPressed(c0, key)) return;
