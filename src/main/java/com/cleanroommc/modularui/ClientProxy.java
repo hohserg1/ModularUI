@@ -1,6 +1,9 @@
 package com.cleanroommc.modularui;
 
+import codechicken.nei.guihook.GuiContainerManager;
 import com.cleanroommc.modularui.drawable.DrawableSerialization;
+import com.cleanroommc.modularui.integration.nei.ModularUIContainerObjectHandler;
+import com.cleanroommc.modularui.integration.nei.ModularUIInputHandler;
 import com.cleanroommc.modularui.test.EventHandler;
 import com.cleanroommc.modularui.theme.ThemeManager;
 import com.cleanroommc.modularui.theme.ThemeReloadCommand;
@@ -18,6 +21,9 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void preInit(FMLPreInitializationEvent event) {
         super.preInit(event);
+
+        GuiContainerManager.addInputHandler(new ModularUIInputHandler());
+        GuiContainerManager.addObjectHandler(new ModularUIContainerObjectHandler());
 
         ModularUI.timer60Fps = new Timer(60f);
 

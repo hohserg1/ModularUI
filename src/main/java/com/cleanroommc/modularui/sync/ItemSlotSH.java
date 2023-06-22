@@ -3,6 +3,7 @@ package com.cleanroommc.modularui.sync;
 import com.cleanroommc.modularui.api.future.IItemHandlerModifiable;
 import com.cleanroommc.modularui.api.future.ItemStackHandler;
 import com.cleanroommc.modularui.api.sync.SyncHandler;
+import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.utils.ClickData;
 import com.cleanroommc.modularui.widgets.slot.ICustomSlot;
 import com.cleanroommc.modularui.widgets.slot.SlotCustomSlot;
@@ -13,8 +14,14 @@ import net.minecraft.network.PacketBuffer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.util.function.Predicate;
 
+/**
+ * This does NOT sync items between server and client. It makes sure there is a
+ * mc slot in the container class, which will handle syncing.
+ * This will also handle interaction in case this is a phantom slot.
+ */
 public class ItemSlotSH extends SyncHandler {
 
     private final SlotCustomSlot customSlot;
@@ -64,6 +71,7 @@ public class ItemSlotSH extends SyncHandler {
 
     public ItemSlotSH(IItemHandlerModifiable itemHandler, int index) {
         this(new SlotCustomSlot(itemHandler, index, 0, 0));
+        customSlot.setSyncHandler(this);
     }
 
     public ItemSlotSH(IInventory itemHandler, int index) {
@@ -71,7 +79,7 @@ public class ItemSlotSH extends SyncHandler {
     }
 
     @Override
-    public void init(MapKey key, GuiSyncHandler syncHandler) {
+    public void init(String key, GuiSyncHandler syncHandler) {
         super.init(key, syncHandler);
         syncHandler.getContainer().registerSlot(this);
     }
@@ -84,13 +92,16 @@ public class ItemSlotSH extends SyncHandler {
     }
 
     @Override
-    public void readOnServer(int id, PacketBuffer buf) {
+    public void readOnServer(int id, PacketBuffer buf) throws IOException {
         if (id == 2) {
             phantomClick(ClickData.readPacket(buf));
         } else if (id == 3) {
             phantomScroll(ClickData.readPacket(buf));
         } else if (id == 4) {
             setEnabled(buf.readBoolean(), false);
+        } else if (id == 5) {
+            ItemStack stack = buf.readItemStackFromBuffer();
+            this.slot.putStack(stack);
         }
     }
 
@@ -182,6 +193,10 @@ public class ItemSlotSH extends SyncHandler {
                 sync(4, buffer -> buffer.writeBoolean(enabled));
             }
         }
+    }
+
+    public void updateFromClient(ItemStack stack) {
+        syncToServer(5, buf -> NetworkUtils.writeItemStack(buf, stack));
     }
 
     public Slot getSlot() {

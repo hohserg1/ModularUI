@@ -102,6 +102,10 @@ public class NetworkUtils {
         buffer.writeBytes(bytes);
     }
 
+    public static String readStringSafe(PacketBuffer buffer) {
+        return readStringSafe(buffer, Short.MAX_VALUE);
+    }
+
     public static String readStringSafe(PacketBuffer buffer, int maxLength) {
         int length = buffer.readVarIntFromBuffer();
 

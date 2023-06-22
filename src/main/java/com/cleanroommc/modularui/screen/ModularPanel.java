@@ -1,5 +1,6 @@
 package com.cleanroommc.modularui.screen;
 
+import codechicken.nei.ItemPanels;
 import com.cleanroommc.modularui.ModularUIConfig;
 import com.cleanroommc.modularui.api.ITheme;
 import com.cleanroommc.modularui.api.layout.IViewport;
@@ -8,6 +9,7 @@ import com.cleanroommc.modularui.api.widget.IFocusedWidget;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.api.widget.IWidgetList;
 import com.cleanroommc.modularui.api.widget.Interactable;
+import com.cleanroommc.modularui.integration.nei.NEIDragAndDropHandler;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
 import com.cleanroommc.modularui.screen.viewport.GuiViewportStack;
 import com.cleanroommc.modularui.screen.viewport.LocatedWidget;
@@ -251,6 +253,7 @@ public class ModularPanel extends ParentWidget<ModularPanel> implements IViewpor
                 widget.applyMatrix(getContext());
                 if (widget.getElement() instanceof Interactable) {
                     Interactable interactable = (Interactable) widget.getElement();
+                    if (shouldSkipClick(interactable)) continue;
                     switch (interactable.onMousePressed(mouseButton)) {
                         case IGNORE:
                             break;
@@ -339,6 +342,20 @@ public class ModularPanel extends ParentWidget<ModularPanel> implements IViewpor
         this.timePressed = 0;
         this.isMouseButtonHeld = false;
         return result;
+    }
+
+    private boolean shouldSkipClick(Interactable interactable) {
+        // For reference: in 1.12 JEI handles drag-and-drop on MouseInputEvent.Pre event,
+        // which is fired before GuiScreen#handleMouseInput call and able to dismiss it.
+        // In contrast, NEI injects GuiContainerManager#mouseClicked at the start of GuiContainer#mouseClicked,
+        // so at this point NEI has not handled drag-and-drop yet.
+        // See also: PanelWidget#handleClickExt
+        return isNEIWantToHandleDragAndDrop() && interactable instanceof NEIDragAndDropHandler;
+    }
+
+    private boolean isNEIWantToHandleDragAndDrop() {
+        return getContext().isNEIEnabled()
+            && (ItemPanels.itemPanel.draggedStack != null || ItemPanels.bookmarkPanel.draggedStack != null);
     }
 
     @ApiStatus.OverrideOnly

@@ -7,6 +7,8 @@ import com.cleanroommc.modularui.api.sync.SyncHandler;
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.drawable.TextRenderer;
+import com.cleanroommc.modularui.integration.nei.NEIDragAndDropHandler;
+import com.cleanroommc.modularui.integration.nei.IHasStackUnderMouse;
 import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.screen.Tooltip;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
@@ -17,6 +19,7 @@ import com.cleanroommc.modularui.utils.ClickData;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.utils.NumberFormat;
 import com.cleanroommc.modularui.widget.Widget;
+import gregtech.api.util.GT_Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
@@ -27,7 +30,9 @@ import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
-public class FluidSlot extends Widget<FluidSlot> implements Interactable {
+import static com.cleanroommc.modularui.ModularUI.isGT5ULoaded;
+
+public class FluidSlot extends Widget<FluidSlot> implements Interactable, NEIDragAndDropHandler, IHasStackUnderMouse {
 
     private static final IFluidTank EMPTY = new FluidTank(0);
 
@@ -183,11 +188,13 @@ public class FluidSlot extends Widget<FluidSlot> implements Interactable {
         return Interactable.super.onKeyRelease(typedChar, keyCode);
     }
 
+    @Nullable
+    public FluidStack getFluidStack() {
+        return this.syncHandler == null ? null : this.syncHandler.getCachedValue();
+    }
+
     public IFluidTank getFluidTank() {
-        if (this.syncHandler == null) {
-            return EMPTY;
-        }
-        return this.syncHandler.getFluidTank();
+        return this.syncHandler == null ? EMPTY : this.syncHandler.getFluidTank();
     }
 
     /**
@@ -217,5 +224,22 @@ public class FluidSlot extends Widget<FluidSlot> implements Interactable {
     public FluidSlot overlayTexture(@Nullable IDrawable overlayTexture) {
         this.overlayTexture = overlayTexture;
         return this;
+    }
+
+    @Override
+    public boolean handleDragAndDrop(@NotNull ItemStack draggedStack, int button) {
+        if (!this.syncHandler.isPhantom()) return false;
+        // nh todo
+        this.syncHandler.updateFromClient(null);
+        draggedStack.stackSize = 0;
+        return true;
+    }
+
+    @Override
+    public @Nullable ItemStack getStackUnderMouse() {
+        if (isGT5ULoaded) {
+            return GT_Utility.getFluidDisplayStack(getFluidStack(), false);
+        }
+        return null;
     }
 }

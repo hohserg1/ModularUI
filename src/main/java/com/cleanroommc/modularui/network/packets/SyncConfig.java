@@ -30,7 +30,7 @@ public class SyncConfig implements IPacket {
 
     @Override
     public void read(PacketBuffer buf) {
-        this.name = NetworkUtils.readStringSafe(buffer, Short.MAX_VALUE);
+        this.name = NetworkUtils.readStringSafe(buffer);
         this.buffer = NetworkUtils.readPacketBuffer(buf);
     }
 

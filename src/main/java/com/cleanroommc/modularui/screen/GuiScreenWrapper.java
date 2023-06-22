@@ -1,5 +1,6 @@
 package com.cleanroommc.modularui.screen;
 
+import codechicken.nei.NEIClientUtils;
 import codechicken.nei.VisiblityData;
 import codechicken.nei.api.INEIGuiHandler;
 import codechicken.nei.api.TaggedInventoryArea;
@@ -12,6 +13,7 @@ import com.cleanroommc.modularui.api.widget.IVanillaSlot;
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.drawable.Scissor;
+import com.cleanroommc.modularui.integration.nei.NEIDragAndDropHandler;
 import com.cleanroommc.modularui.mixins.GuiContainerAccessor;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
 import com.cleanroommc.modularui.screen.viewport.LocatedWidget;
@@ -437,6 +439,11 @@ public class GuiScreenWrapper extends GuiContainer implements INEIGuiHandler {
 
     @Override
     public boolean handleDragNDrop(GuiContainer gui, int mousex, int mousey, ItemStack draggedStack, int button) {
+        if (!(gui instanceof GuiScreenWrapper) || NEIClientUtils.getHeldItem() != null) return false;
+        IGuiElement hovered = ((GuiScreenWrapper) gui).getScreen().context.getHovered();
+        if (hovered instanceof NEIDragAndDropHandler) {
+            return ((NEIDragAndDropHandler) hovered).handleDragAndDrop(draggedStack, button);
+        }
         return false;
     }
 
@@ -444,7 +451,6 @@ public class GuiScreenWrapper extends GuiContainer implements INEIGuiHandler {
     public boolean hideItemPanelSlot(GuiContainer gui, int x, int y, int w, int h) {
         if (!(gui instanceof GuiScreenWrapper)) return false;
         if (!this.screen.context.isNEIEnabled()) return false;
-        // nh todo dragged things
         return this.screen.context.getAllNEIExclusionAreas().stream().anyMatch(
             a -> a.intersects(new Rectangle(x, y, w, h))
         );

@@ -1,5 +1,7 @@
 package com.cleanroommc.modularui.api.sync;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.network.PacketBuffer;
 
 /**
@@ -19,5 +21,6 @@ public interface IValueSyncHandler<T> {
 
     void read(PacketBuffer buffer);
 
+    @SideOnly(Side.CLIENT)
     void updateFromClient(T value);
 }

@@ -9,9 +9,11 @@ import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.drawable.TextRenderer;
 import com.cleanroommc.modularui.mixins.GuiContainerAccessor;
+import com.cleanroommc.modularui.integration.nei.NEIDragAndDropHandler;
+import com.cleanroommc.modularui.integration.nei.IHasStackUnderMouse;
+import com.cleanroommc.modularui.screen.viewport.GuiContext;
 import com.cleanroommc.modularui.screen.GuiScreenWrapper;
 import com.cleanroommc.modularui.screen.ModularScreen;
-import com.cleanroommc.modularui.screen.viewport.GuiContext;
 import com.cleanroommc.modularui.sync.ItemSlotSH;
 import com.cleanroommc.modularui.theme.WidgetSlotTheme;
 import com.cleanroommc.modularui.utils.Alignment;
@@ -30,10 +32,11 @@ import net.minecraft.util.EnumChatFormatting;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class ItemSlot extends Widget<ItemSlot> implements IVanillaSlot, Interactable {
+public class ItemSlot extends Widget<ItemSlot> implements IVanillaSlot, Interactable, NEIDragAndDropHandler, IHasStackUnderMouse {
 
     private static final TextRenderer textRenderer = new TextRenderer();
     private ItemSlotSH syncHandler;
@@ -160,8 +163,6 @@ public class ItemSlot extends Widget<ItemSlot> implements IVanillaSlot, Interact
     private void drawSlot(Slot slotIn) {
         GuiScreenWrapper guiScreen = getScreen().getScreenWrapper();
         GuiContainerAccessor accessor = guiScreen.getAccessor();
-        int x = slotIn.xDisplayPosition;
-        int y = slotIn.yDisplayPosition;
         ItemStack itemstack = slotIn.getStack();
         boolean flag = false;
         boolean flag1 = slotIn == accessor.getClickedSlot() && accessor.getDraggedStack() != null && !accessor.getIsRightMouseClick();
@@ -256,5 +257,18 @@ public class ItemSlot extends Widget<ItemSlot> implements IVanillaSlot, Interact
 
         GuiScreenWrapper.getItemRenderer().zLevel = 0.0F;
         guiScreen.setZ(0f);
+    }
+
+    @Override
+    public boolean handleDragAndDrop(@NotNull ItemStack draggedStack, int button) {
+        if (!this.syncHandler.isPhantom()) return false;
+        this.syncHandler.updateFromClient(draggedStack);
+        draggedStack.stackSize = 0;
+        return true;
+    }
+
+    @Override
+    public @Nullable ItemStack getStackUnderMouse() {
+        return this.syncHandler.getSlot().getStack();
     }
 }

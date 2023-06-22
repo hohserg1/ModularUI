@@ -3,7 +3,11 @@ package com.cleanroommc.modularui.screen.viewport;
 import com.cleanroommc.modularui.ModularUI;
 import com.cleanroommc.modularui.api.ITheme;
 import com.cleanroommc.modularui.api.layout.IViewport;
-import com.cleanroommc.modularui.api.widget.*;
+import com.cleanroommc.modularui.api.widget.IDraggable;
+import com.cleanroommc.modularui.api.widget.IFocusedWidget;
+import com.cleanroommc.modularui.api.widget.IGuiElement;
+import com.cleanroommc.modularui.api.widget.IVanillaSlot;
+import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.mixins.GuiContainerAccessor;
 import com.cleanroommc.modularui.screen.DraggablePanelWrapper;
 import com.cleanroommc.modularui.screen.ModularPanel;
@@ -492,6 +496,7 @@ public class GuiContext extends GuiViewportStack {
     }
 
     public List<Rectangle> getAllNEIExclusionAreas() {
+        this.neiExclusionWidgets.removeIf(widget -> !widget.isValid());
         List<Rectangle> areas = new ArrayList<>(this.neiExclusionAreas);
         areas.addAll(this.neiExclusionWidgets.stream()
                 .filter(IWidget::isEnabled)

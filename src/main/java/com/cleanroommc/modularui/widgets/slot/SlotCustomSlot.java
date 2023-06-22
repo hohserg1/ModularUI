@@ -2,6 +2,7 @@ package com.cleanroommc.modularui.widgets.slot;
 
 import com.cleanroommc.modularui.api.future.IItemHandler;
 import com.cleanroommc.modularui.api.future.SlotItemHandler;
+import com.cleanroommc.modularui.sync.ItemSlotSH;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -11,6 +12,7 @@ import java.util.function.Predicate;
 
 public class SlotCustomSlot extends SlotItemHandler implements ICustomSlot {
 
+    private ItemSlotSH syncHandler;
     private int slotLimit = 64;
     private Predicate<ItemStack> filter;
     private boolean ignoreMaxStackSize = false;
@@ -18,6 +20,10 @@ public class SlotCustomSlot extends SlotItemHandler implements ICustomSlot {
 
     public SlotCustomSlot(IItemHandler itemHandler, int index, int xPosition, int yPosition) {
         super(itemHandler, index, xPosition, yPosition);
+    }
+
+    public void setSyncHandler(ItemSlotSH syncHandler) {
+        this.syncHandler = syncHandler;
     }
 
     // @Override // nh todo
@@ -48,6 +54,7 @@ public class SlotCustomSlot extends SlotItemHandler implements ICustomSlot {
     }
 
     public boolean isItemValid(@NotNull ItemStack stack) {
+        if (syncHandler != null && syncHandler.isPhantom()) return false;
         return (this.filter == null || this.filter.test(stack)) && super.isItemValid(stack);
     }
 

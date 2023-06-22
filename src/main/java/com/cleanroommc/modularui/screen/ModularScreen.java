@@ -2,7 +2,6 @@ package com.cleanroommc.modularui.screen;
 
 import com.cleanroommc.modularui.Tags;
 import com.cleanroommc.modularui.api.widget.IGuiAction;
-import com.cleanroommc.modularui.api.widget.ISynced;
 import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.drawable.GuiTextures;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
@@ -125,14 +124,6 @@ public abstract class ModularScreen {
 
     public void onOpen() {
         windowManager.init();
-        if (!getContainer().isClientOnly()) {
-            windowManager.getOpenPanels().forEach(panel -> WidgetTree.foreachChildByLayer(panel, widget -> {
-                if (widget instanceof ISynced) {
-                    ((ISynced<?>) widget).initialiseSyncHandler(this.syncHandler);
-                }
-                return true;
-            }));
-        }
     }
 
     @MustBeInvokedByOverriders
