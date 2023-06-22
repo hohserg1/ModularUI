@@ -6,8 +6,11 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.future.IItemHandlerModifiable;
 import com.cleanroommc.modularui.api.future.ItemStackHandler;
 import com.cleanroommc.modularui.api.layout.CrossAxisAlignment;
-import com.cleanroommc.modularui.drawable.*;
-import com.cleanroommc.modularui.drawable.keys.StringKey;
+import com.cleanroommc.modularui.drawable.AnimatedText;
+import com.cleanroommc.modularui.drawable.Circle;
+import com.cleanroommc.modularui.drawable.GuiTextures;
+import com.cleanroommc.modularui.drawable.ItemDrawable;
+import com.cleanroommc.modularui.drawable.Rectangle;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.screen.Tooltip;
@@ -17,7 +20,19 @@ import com.cleanroommc.modularui.sync.SyncHandlers;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.widget.ParentWidget;
-import com.cleanroommc.modularui.widgets.*;
+import com.cleanroommc.modularui.widgets.ButtonWidget;
+import com.cleanroommc.modularui.widgets.ColorPickerDialog;
+import com.cleanroommc.modularui.widgets.CycleButtonWidget;
+import com.cleanroommc.modularui.widgets.Dialog;
+import com.cleanroommc.modularui.widgets.DropDownMenu;
+import com.cleanroommc.modularui.widgets.FluidSlot;
+import com.cleanroommc.modularui.widgets.ItemSlot;
+import com.cleanroommc.modularui.widgets.ListWidget;
+import com.cleanroommc.modularui.widgets.PageButton;
+import com.cleanroommc.modularui.widgets.PagedWidget;
+import com.cleanroommc.modularui.widgets.ProgressWidget;
+import com.cleanroommc.modularui.widgets.SliderWidget;
+import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.layout.Column;
 import com.cleanroommc.modularui.widgets.layout.Row;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
@@ -101,7 +116,7 @@ public class TestTile extends TileEntity implements IGuiHolder {
         panel.bindPlayerInventory()
                 .child(new Row()
                         .coverChildren()
-                        .top(0f, 4, 1f)
+                        .topRel(0f, 4, 1f)
                         .child(new PageButton(0, tabController)
                                 .tab(GuiTextures.TAB_TOP, -1))
                         .child(new PageButton(1, tabController)
@@ -110,10 +125,10 @@ public class TestTile extends TileEntity implements IGuiHolder {
                                 .tab(GuiTextures.TAB_TOP, 0))
                         .child(new PageButton(3, tabController).tab(GuiTextures.TAB_TOP, 0)))
                 .child(new PagedWidget<>()
-                        .size(1f)
+                        .sizeRel(1f)
                         .controller(tabController)
                         .addPage(new ParentWidget<>()
-                                .size(1f, 1f)
+                                .sizeRel(1f, 1f)
                                 .child(SlotGroupWidget.playerInventory())
                                 .child(new Row()
                                         .height(137)
@@ -121,7 +136,7 @@ public class TestTile extends TileEntity implements IGuiHolder {
                                         .child(new Column()
                                                 .coverChildren()
                                                 //.flex(flex -> flex.height(0.5f))
-                                                .width(0.5f)
+                                                .widthRel(0.5f)
                                                 .crossAxisAlignment(CrossAxisAlignment.CENTER)
                                                 .child(new ButtonWidget<>()
                                                         .size(60, 18)
@@ -162,7 +177,7 @@ public class TestTile extends TileEntity implements IGuiHolder {
                                                 .child(IKey.str("Test string").asWidget().padding(2)))
                                         .child(new Column()
                                                 .coverChildren()
-                                                .width(0.5f)
+                                                .widthRel(0.5f)
                                                 .crossAxisAlignment(CrossAxisAlignment.CENTER)
                                                 .child(new ProgressWidget()
                                                         .progress(() -> progress / (double) duration)
@@ -214,17 +229,17 @@ public class TestTile extends TileEntity implements IGuiHolder {
                                                 .child(IKey.str("Hello World").asWidget().height(18)))
                                         .child(new SpecialButton(IKey.str("A very long string that looks cool when animated").withAnimation())
                                                 .height(14)
-                                                .width(1f))
+                                                .widthRel(1f))
                                 /*GuiTextures.LOGO.asIcon()
                                 .size(80, 80)
                                 .asWidget()
                                 .flex(flex -> flex.width(1f).height(1f))*/)
                         .addPage(new ParentWidget<>()
-                                .size(1f, 1f)
+                                .sizeRel(1f, 1f)
                                 .padding(7)
                                 .child(SlotGroupWidget.playerInventory())
                                 .child(new SliderWidget()
-                                        .width(1f).height(16)
+                                        .widthRel(1f).height(16)
                                         .top(7)
                                         .stopper(0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100)
                                         .background(GuiTextures.SLOT_DARK))
@@ -236,13 +251,13 @@ public class TestTile extends TileEntity implements IGuiHolder {
                                             return true;
                                         }))
                                 .child(new ListWidget<>()
-                                        .width(1f).top(50).bottom(2)
+                                        .widthRel(1f).top(50).bottom(2)
                                         /*.child(new Rectangle().setColor(0xFF606060).asWidget()
                                                 .top(1)
                                                 .left(32)
                                                 .size(1, 40))*/
                                         .child(new Row()
-                                                .width(1f).height(14)
+                                                .widthRel(1f).height(14)
                                                 .child(new CycleButtonWidget()
                                                         .toggle(() -> bool, val -> bool = val)
                                                         .texture(GuiTextures.CHECK_BOX)
@@ -252,7 +267,7 @@ public class TestTile extends TileEntity implements IGuiHolder {
                                                         .height(14)
                                                         .marginLeft(10)))
                                         .child(new Row()
-                                                .width(1f).height(14)
+                                                .widthRel(1f).height(14)
                                                 .child(new TextFieldWidget()
                                                         .getterLong(() -> num)
                                                         .setterLong(val -> num = (int) val)
@@ -270,7 +285,7 @@ public class TestTile extends TileEntity implements IGuiHolder {
                                                 .tooltip(tooltip -> tooltip.showUpTimer(10)
                                                         .addLine(IKey.lang("bogosort.gui.hotbar_scrolling.tooltip"))))
                                         .child(new Row()
-                                                .width(1f).height(14)
+                                                .widthRel(1f).height(14)
                                                 .child(new CycleButtonWidget()
                                                         .toggle(() -> bool2, val -> bool2 = val)
                                                         .texture(GuiTextures.CHECK_BOX)
@@ -279,7 +294,7 @@ public class TestTile extends TileEntity implements IGuiHolder {
                                                         .height(14)))))
                         .addPage(
                             new ParentWidget<>()
-                                .size(1f, 1f)
+                                .sizeRel(1f, 1f)
                                 .padding(7)
                                 .child(SlotGroupWidget.playerInventory())
                                 .child(

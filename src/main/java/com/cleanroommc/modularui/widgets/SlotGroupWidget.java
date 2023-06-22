@@ -20,7 +20,7 @@ public class SlotGroupWidget extends ParentWidget<SlotGroupWidget> {
         slotGroupWidget.flex()
                 .coverChildren()
                 .startDefaultMode()
-                .left(0.5f).bottom(7)
+                .leftRel(0.5f).bottom(7)
                 .endDefaultMode();
         slotGroupWidget.debugName("player_inventory");
         String key = "player";

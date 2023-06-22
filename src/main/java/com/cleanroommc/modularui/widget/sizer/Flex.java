@@ -78,14 +78,6 @@ public class Flex implements IResizeable, IPositioned<Flex> {
         return this;
     }
 
-    public Flex coverChildren() {
-        return coverChildrenWidth().coverChildrenHeight();
-    }
-
-    public Flex relative(IGuiElement guiElement) {
-        return relative(guiElement.getArea());
-    }
-
     public Flex relative(Area guiElement) {
         this.relativeTo = guiElement;
         this.relativeToParent = false;
@@ -189,14 +181,6 @@ public class Flex implements IResizeable, IPositioned<Flex> {
         return this;
     }
 
-    public Flex size(int w, int h) {
-        return width(w).height(h);
-    }
-
-    public Flex size(float w, float h) {
-        return width(w).height(h);
-    }
-
     public Flex anchorLeft(float val) {
         getLeft().setAnchor(val);
         getLeft().setAutoAnchor(false);
@@ -234,20 +218,6 @@ public class Flex implements IResizeable, IPositioned<Flex> {
         if (this.y.hasEnd()) {
             anchorBottom(alignment.y);
         }
-        return this;
-    }
-
-    public Flex alignX(float val) {
-        return left(val).anchorLeft(val);
-    }
-
-    public Flex alignY(float val) {
-        return top(val).anchorTop(val);
-    }
-
-    public Flex align(Alignment alignment) {
-        alignX(alignment.x);
-        alignY(alignment.y);
         return this;
     }
 

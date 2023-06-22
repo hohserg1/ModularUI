@@ -104,7 +104,7 @@ public class TestGui extends ModularScreen {
                 .bottom(23)
                 .width(100));
         panel.child(new ButtonWidget<>()
-                .bottom(7).size(12, 12).left(0.5f)
+                .bottom(7).size(12, 12).leftRel(0.5f)
                 .overlay(GuiTextures.ADD)
                 .onMouseTapped(mouseButton -> {
                     if (!isPanelOpen("Option Selection")) {
