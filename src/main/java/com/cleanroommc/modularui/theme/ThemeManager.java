@@ -18,6 +18,7 @@ import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.MinecraftForge;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @ApiStatus.Internal
 @SideOnly(Side.CLIENT)
@@ -34,9 +36,11 @@ public class ThemeManager implements IResourceManagerReloadListener {
     protected static final WidgetTheme defaultdefaultWidgetTheme = new WidgetTheme(null, null, Color.WHITE.normal, 0xFF404040, false);
 
     public static void reload() {
+        MinecraftForge.EVENT_BUS.post(new ReloadThemeEvent.Pre());
         ThemeAPI.INSTANCE.onReload();
         loadThemes();
         loadScreenThemes();
+        MinecraftForge.EVENT_BUS.post(new ReloadThemeEvent.Post());
     }
 
     public static void loadThemes() {
@@ -51,6 +55,11 @@ public class ThemeManager implements IResourceManagerReloadListener {
             ThemeJson theme = loadThemeJson(entry.getKey(), entry.getValue());
             if (theme != null) {
                 themeMap.put(entry.getKey(), theme);
+            }
+        }
+        for (Map.Entry<String, List<JsonBuilder>> entry : ThemeAPI.INSTANCE.defaultThemes.entrySet()) {
+            if (!themeMap.containsKey(entry.getKey())) {
+                themeMap.put(entry.getKey(), new ThemeJson(entry.getKey(), entry.getValue().stream().map(JsonBuilder::getJson).collect(Collectors.toList()), false));
             }
         }
         if (themeMap.isEmpty()) return;
