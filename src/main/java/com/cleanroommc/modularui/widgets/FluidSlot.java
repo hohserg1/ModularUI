@@ -8,7 +8,7 @@ import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.drawable.TextRenderer;
 import com.cleanroommc.modularui.integration.nei.NEIDragAndDropHandler;
-import com.cleanroommc.modularui.integration.nei.IHasStackUnderMouse;
+import com.cleanroommc.modularui.integration.nei.NEIIngredientProvider;
 import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.screen.Tooltip;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
@@ -32,7 +32,7 @@ import org.lwjgl.opengl.GL11;
 
 import static com.cleanroommc.modularui.ModularUI.isGT5ULoaded;
 
-public class FluidSlot extends Widget<FluidSlot> implements Interactable, NEIDragAndDropHandler, IHasStackUnderMouse {
+public class FluidSlot extends Widget<FluidSlot> implements Interactable, NEIDragAndDropHandler, NEIIngredientProvider {
 
     private static final IFluidTank EMPTY = new FluidTank(0);
 
@@ -236,7 +236,7 @@ public class FluidSlot extends Widget<FluidSlot> implements Interactable, NEIDra
     }
 
     @Override
-    public @Nullable ItemStack getStackUnderMouse() {
+    public @Nullable ItemStack getStackForNEI() {
         if (isGT5ULoaded) {
             return GT_Utility.getFluidDisplayStack(getFluidStack(), false);
         }

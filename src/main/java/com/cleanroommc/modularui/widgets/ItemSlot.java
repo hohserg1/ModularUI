@@ -10,7 +10,7 @@ import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.drawable.TextRenderer;
 import com.cleanroommc.modularui.mixins.GuiContainerAccessor;
 import com.cleanroommc.modularui.integration.nei.NEIDragAndDropHandler;
-import com.cleanroommc.modularui.integration.nei.IHasStackUnderMouse;
+import com.cleanroommc.modularui.integration.nei.NEIIngredientProvider;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
 import com.cleanroommc.modularui.screen.GuiScreenWrapper;
 import com.cleanroommc.modularui.screen.ModularScreen;
@@ -36,7 +36,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class ItemSlot extends Widget<ItemSlot> implements IVanillaSlot, Interactable, NEIDragAndDropHandler, IHasStackUnderMouse {
+public class ItemSlot extends Widget<ItemSlot> implements IVanillaSlot, Interactable, NEIDragAndDropHandler, NEIIngredientProvider {
 
     private static final TextRenderer textRenderer = new TextRenderer();
     private ItemSlotSH syncHandler;
@@ -268,7 +268,7 @@ public class ItemSlot extends Widget<ItemSlot> implements IVanillaSlot, Interact
     }
 
     @Override
-    public @Nullable ItemStack getStackUnderMouse() {
+    public @Nullable ItemStack getStackForNEI() {
         return this.syncHandler.getSlot().getStack();
     }
 }

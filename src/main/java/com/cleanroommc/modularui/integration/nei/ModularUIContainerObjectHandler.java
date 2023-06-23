@@ -21,8 +21,8 @@ public class ModularUIContainerObjectHandler implements IContainerObjectHandler 
     public ItemStack getStackUnderMouse(GuiContainer gui, int mousex, int mousey) {
         if (gui instanceof GuiScreenWrapper) {
             IGuiElement hovered = ((GuiScreenWrapper) gui).getScreen().context.getHovered();
-            if (hovered instanceof IHasStackUnderMouse) {
-                return ((IHasStackUnderMouse) hovered).getStackUnderMouse();
+            if (hovered instanceof NEIIngredientProvider) {
+                return ((NEIIngredientProvider) hovered).getStackForNEI();
             }
         }
         return null;
