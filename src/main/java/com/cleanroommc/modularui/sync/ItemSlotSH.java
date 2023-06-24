@@ -4,7 +4,7 @@ import com.cleanroommc.modularui.api.future.IItemHandlerModifiable;
 import com.cleanroommc.modularui.api.future.ItemStackHandler;
 import com.cleanroommc.modularui.api.sync.SyncHandler;
 import com.cleanroommc.modularui.network.NetworkUtils;
-import com.cleanroommc.modularui.utils.ClickData;
+import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.widgets.slot.ICustomSlot;
 import com.cleanroommc.modularui.widgets.slot.SlotCustomSlot;
 import net.minecraft.inventory.IInventory;
@@ -94,9 +94,9 @@ public class ItemSlotSH extends SyncHandler {
     @Override
     public void readOnServer(int id, PacketBuffer buf) throws IOException {
         if (id == 2) {
-            phantomClick(ClickData.readPacket(buf));
+            phantomClick(MouseData.readPacket(buf));
         } else if (id == 3) {
-            phantomScroll(ClickData.readPacket(buf));
+            phantomScroll(MouseData.readPacket(buf));
         } else if (id == 4) {
             setEnabled(buf.readBoolean(), false);
         } else if (id == 5) {
@@ -105,13 +105,13 @@ public class ItemSlotSH extends SyncHandler {
         }
     }
 
-    protected void phantomClick(ClickData clickData) {
+    protected void phantomClick(MouseData mouseData) {
         ItemStack cursorStack = getSyncHandler().getCursorItem();
         ItemStack slotStack = getSlot().getStack();
         ItemStack stackToPut;
         if (slotStack == null) {
             if (cursorStack == null) {
-                if (clickData.mouseButton == 1 && this.lastStoredPhantomItem != null) {
+                if (mouseData.mouseButton == 1 && this.lastStoredPhantomItem != null) {
                     stackToPut = this.lastStoredPhantomItem.copy();
                 } else {
                     return;
@@ -119,34 +119,34 @@ public class ItemSlotSH extends SyncHandler {
             } else {
                 stackToPut = cursorStack.copy();
             }
-            if (clickData.mouseButton == 1) {
+            if (mouseData.mouseButton == 1) {
                 stackToPut.stackSize = 1;
             }
             slot.putStack(stackToPut);
             this.lastStoredPhantomItem = stackToPut.copy();
         } else {
-            if (clickData.mouseButton == 0) {
-                if (clickData.shift) {
+            if (mouseData.mouseButton == 0) {
+                if (mouseData.shift) {
                     this.slot.putStack(null);
                 } else {
                     incrementStackCount(-1);
                 }
-            } else if (clickData.mouseButton == 1) {
+            } else if (mouseData.mouseButton == 1) {
                 incrementStackCount(1);
             }
         }
     }
 
-    protected void phantomScroll(ClickData clickData) {
+    protected void phantomScroll(MouseData mouseData) {
         ItemStack currentItem = this.slot.getStack();
-        int amount = clickData.mouseButton;
-        if (clickData.shift) {
+        int amount = mouseData.mouseButton;
+        if (mouseData.shift) {
             amount *= 4;
         }
-        if (clickData.ctrl) {
+        if (mouseData.ctrl) {
             amount *= 16;
         }
-        if (clickData.alt) {
+        if (mouseData.alt) {
             amount *= 64;
         }
         if (amount > 0 && currentItem == null && lastStoredPhantomItem != null) {
