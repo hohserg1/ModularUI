@@ -27,7 +27,6 @@ public class TestItem extends Item implements IItemGuiHolder {
         IItemHandlerModifiable itemHandler = new ItemStackItemHandler(itemStack, 4);
         guiSyncHandler.registerSlotGroup("mixer_items", 2);
         for (int i = 0; i < 4; i++) {
-            ModularUI.LOGGER.info("Create item sync handler {}", i);
             guiSyncHandler.syncValue("mixer_items", i, SyncHandlers.itemSlot(itemHandler, i).slotGroup("mixer_items"));
         }
     }

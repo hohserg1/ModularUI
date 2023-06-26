@@ -14,8 +14,8 @@ import javax.annotation.Nullable;
 
 public class TestBlock extends Block implements ITileEntityProvider {
 
-    public final static Block testBlock = new TestBlock();
-    public final static ItemBlock testItemBlock = new ItemBlock(testBlock);
+    public static final Block testBlock = new TestBlock();
+    public static final ItemBlock testItemBlock = new ItemBlock(testBlock);
 
     public static void preInit() {
         testBlock.setBlockName("test_block").setBlockTextureName("stone");
