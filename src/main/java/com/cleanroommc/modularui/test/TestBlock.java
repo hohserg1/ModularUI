@@ -6,6 +6,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
@@ -13,12 +14,15 @@ import javax.annotation.Nullable;
 
 public class TestBlock extends Block implements ITileEntityProvider {
 
-    public static Block testBlock = new TestBlock();
+    public final static Block testBlock = new TestBlock();
+    public final static ItemBlock testItemBlock = new ItemBlock(testBlock);
 
     public static void preInit() {
-        testBlock.setBlockName("testBlock").setBlockTextureName("stone");
-        GameRegistry.registerBlock(testBlock, "testBlock");
-        GameRegistry.registerTileEntity(TestTile.class, "TestTileEntity");
+        testBlock.setBlockName("test_block").setBlockTextureName("stone");
+        GameRegistry.registerBlock(testBlock, "test_block");
+        GameRegistry.registerTileEntity(TestTile.class, "test_block");
+        TestItem.testItem.setUnlocalizedName("test_item").setTextureName("diamond");
+        GameRegistry.registerItem(TestItem.testItem, "test_item");
     }
 
     public TestBlock() {
