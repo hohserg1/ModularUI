@@ -9,6 +9,7 @@ import com.cleanroommc.modularui.api.widget.IFocusedWidget;
 import com.cleanroommc.modularui.api.widget.IGuiElement;
 import com.cleanroommc.modularui.api.widget.IVanillaSlot;
 import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.integration.nei.NEIState;
 import com.cleanroommc.modularui.mixins.GuiContainerAccessor;
 import com.cleanroommc.modularui.screen.DraggablePanelWrapper;
 import com.cleanroommc.modularui.screen.ModularPanel;
@@ -66,7 +67,7 @@ public class GuiContext extends GuiViewportStack {
     private float partialTicks;
     private long tick;
 
-    private byte neiState = 0;
+    private NEIState neiState = NEIState.DEFAULT;
 
     public List<Consumer<GuiContext>> postRenderCallbacks = new ArrayList<>();
 
@@ -445,26 +446,19 @@ public class GuiContext extends GuiViewportStack {
     }
 
     public void enableNEI() {
-        this.neiState = 1;
+        this.neiState = NEIState.ENABLED;
     }
 
     public void disableNEI() {
-        this.neiState = 2;
+        this.neiState = NEIState.DISABLED;
     }
 
     public void defaultNEI() {
-        this.neiState = 0;
+        this.neiState = NEIState.DEFAULT;
     }
 
     public boolean isNEIEnabled() {
-        switch (this.neiState) {
-            case 1:
-                return true;
-            case 2:
-                return false;
-            default:
-                return !screen.getContainer().isClientOnly();
-        }
+        return this.neiState.test(this.screen);
     }
 
     public void addNEIExclusionArea(Rectangle area) {
