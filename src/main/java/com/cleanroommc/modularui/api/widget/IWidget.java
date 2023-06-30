@@ -1,10 +1,9 @@
 package com.cleanroommc.modularui.api.widget;
 
 import com.cleanroommc.modularui.api.ITheme;
-import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.layout.ILayoutWidget;
 import com.cleanroommc.modularui.api.layout.IViewportStack;
-import com.cleanroommc.modularui.drawable.Scissor;
+import com.cleanroommc.modularui.drawable.Stencil;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
 import com.cleanroommc.modularui.theme.WidgetTheme;
@@ -132,7 +131,7 @@ public interface IWidget extends IGuiElement {
     void setEnabled(boolean enabled);
 
     default boolean canBeSeen(IViewportStack stack) {
-        return Scissor.isInsideScissorArea(getArea(), stack);
+        return Stencil.isInsideScissorArea(getArea(), stack);
     }
 
     default boolean canHover() {

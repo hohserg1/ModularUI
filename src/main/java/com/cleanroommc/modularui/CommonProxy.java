@@ -1,5 +1,6 @@
 package com.cleanroommc.modularui;
 
+import com.cleanroommc.modularui.holoui.HoloScreenEntity;
 import com.cleanroommc.modularui.manager.GuiInfos;
 import com.cleanroommc.modularui.manager.GuiManager;
 import com.cleanroommc.modularui.network.NetworkHandler;
@@ -10,6 +11,7 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.registry.EntityRegistry;
 import net.minecraftforge.common.MinecraftForge;
 
 public class CommonProxy {
@@ -19,10 +21,12 @@ public class CommonProxy {
         NetworkRegistry.INSTANCE.registerGuiHandler(Tags.MODID, GuiManager.INSTANCE);
         GuiInfos.init();
 
-        if (ModularUI.isDevEnv) { // nh todo
+        if (ModularUI.isDevEnv) {
             MinecraftForge.EVENT_BUS.register(TestBlock.class);
             TestBlock.preInit();
         }
+
+        EntityRegistry.registerModEntity(HoloScreenEntity.class, "modular_screen", 0, ModularUI.INSTANCE, 0, 0, false);
 
         NetworkHandler.init();
 

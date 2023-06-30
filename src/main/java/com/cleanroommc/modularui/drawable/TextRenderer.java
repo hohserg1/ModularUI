@@ -128,11 +128,11 @@ public class TextRenderer {
         scroll = scroll % (int) (line.width + 1) ;
         String drawString = line.getText();//getFontRenderer().trimStringToWidth(line.getText(), (int) (this.maxWidth + scroll));
         Area.SHARED.set(this.x, Integer.MIN_VALUE, this.x + (int) this.maxWidth, Integer.MAX_VALUE);
-        Scissor.scissor(Area.SHARED, context);
+        Stencil.apply(Area.SHARED, context);
         GL11.glTranslatef(-scroll, 0, 0);
         drawMeasuredLines(Collections.singletonList(line(drawString)));
         GL11.glTranslatef(scroll, 0, 0);
-        Scissor.unscissor(context);
+        Stencil.remove();
     }
 
     public List<String> wrapLine(String line) {

@@ -17,6 +17,8 @@ public enum Mixin {
     //
 
     // Replace with your own mixins:
+    EntityAccessor("EntityAccessor", Side.CLIENT, VANILLA),
+    ForgeHooksClientMixin("ForgeHooksClientMixin", Side.CLIENT, VANILLA),
     GuiContainerAccessor("GuiContainerAccessor", Side.CLIENT, VANILLA),
     GuiContainerMixin("GuiContainerMixin", Side.CLIENT, VANILLA),
     MinecraftMixin("MinecraftMixin", Side.CLIENT, VANILLA),
