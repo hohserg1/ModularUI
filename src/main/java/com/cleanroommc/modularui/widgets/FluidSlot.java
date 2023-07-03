@@ -134,7 +134,7 @@ public class FluidSlot extends Widget<FluidSlot> implements Interactable, NEIDra
         }
         if (isHovering()) {
             GL11.glColorMask(true, true, true, false);
-            GuiDraw.drawRect(1, 1, 16, 16, getWidgetTheme(context.getTheme()).getSlotHoverColor());
+            GuiDraw.drawRect(1, 1, getArea().width - 2, getArea().height - 2, getWidgetTheme(context.getTheme()).getSlotHoverColor());
             GL11.glColorMask(true, true, true, true);
         }
     }
