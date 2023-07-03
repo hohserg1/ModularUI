@@ -19,7 +19,7 @@ public class MinecraftMixin {
                     target = "Lnet/minecraft/profiler/Profiler;startSection(Ljava/lang/String;)V",
                     ordinal = 2,
                     shift = At.Shift.AFTER))
-    public void timer(CallbackInfo ci) {
+    public void modularui$onRender(CallbackInfo ci) {
         if (ModularUI.getTimer60Fps() == null) return;
         ModularUI.getTimer60Fps().updateTimer();
         ModularScreen screen = ModularScreen.getCurrent();

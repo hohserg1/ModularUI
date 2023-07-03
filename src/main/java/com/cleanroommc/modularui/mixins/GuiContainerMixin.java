@@ -16,7 +16,7 @@ public class GuiContainerMixin {
     private Slot theSlot;
 
     @Inject(method = "getSlotAtPosition", at = @At("HEAD"), cancellable = true)
-    public void getSlot(int x, int y, CallbackInfoReturnable<Slot> cir) {
+    public void modularui$injectGetSlotAtPosition(int x, int y, CallbackInfoReturnable<Slot> cir) {
         //noinspection ConstantValue
         if (((Object) this).getClass() == GuiScreenWrapper.class) {
             cir.setReturnValue(theSlot);
