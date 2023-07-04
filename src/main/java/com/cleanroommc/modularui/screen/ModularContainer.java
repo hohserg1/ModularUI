@@ -143,7 +143,7 @@ public class ModularContainer extends Container {
         for (ItemSlotSH slot : this.shiftClickSlots) {
             SlotGroup slotGroup = getSlotGroup(slot);
             boolean valid = slotGroup != null && slotGroup != fromSlotGroup;
-            // nh todo slot is enabled
+            // func_111238_b: isEnabled
             if (valid && slot.getSlot().func_111238_b() && slot.isItemValid(stack)) {
                 ItemStack itemstack = slot.getSlot().getStack();
                 if (slot.isPhantom()) {
@@ -176,7 +176,7 @@ public class ModularContainer extends Container {
             ItemStack itemstack = slot.getStack();
             SlotGroup slotGroup = getSlotGroup(syncHandler);
             boolean valid = slotGroup != null && slotGroup != fromSlotGroup;
-            // nh todo slot is enabled
+            // func_111238_b: isEnabled
             if (valid && slot.func_111238_b() && itemstack == null && slot.isItemValid(stack)) {
                 if (stack.stackSize > slot.getSlotStackLimit()) {
                     slot.putStack(stack.splitStack(slot.getSlotStackLimit()));
