@@ -32,6 +32,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
 
+/**
+ * This must be added by {@link ModularScreen#openPanel}, not as child widget.
+ */
 public class ModularPanel extends ParentWidget<ModularPanel> implements IViewport {
 
     public static ModularPanel defaultPanel(GuiContext context) {
