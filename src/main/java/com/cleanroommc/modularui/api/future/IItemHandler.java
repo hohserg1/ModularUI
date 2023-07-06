@@ -2,8 +2,13 @@ package com.cleanroommc.modularui.api.future;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.IFluidHandler;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 public interface IItemHandler {
 
@@ -41,7 +46,7 @@ public interface IItemHandler {
      * Inserts an ItemStack into the given slot and return the remainder.
      * The ItemStack <em>should not</em> be modified in this function!
      * </p>
-     * Note: This behaviour is subtly different from {@link IFluidHandler#fill(FluidStack, boolean)}
+     * Note: This behaviour is subtly different from {@link IFluidHandler#fill(ForgeDirection, FluidStack, boolean)}
      *
      * @param slot     Slot to insert into.
      * @param stack    ItemStack to insert. This must not be modified by the item handler.
@@ -98,5 +103,15 @@ public interface IItemHandler {
      */
     default boolean isItemValid(int slot, @Nullable ItemStack stack) {
         return true;
+    }
+
+    // This method doesn't exist in 1.12
+    @SuppressWarnings("unused")
+    default List<ItemStack> getStacks() {
+        List<ItemStack> ret = new ArrayList<>();
+        for (int i = 0; i < getSlots(); i++) {
+            ret.add(getStackInSlot(i));
+        }
+        return ret;
     }
 }
