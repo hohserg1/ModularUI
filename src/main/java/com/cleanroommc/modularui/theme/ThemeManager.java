@@ -3,6 +3,7 @@ package com.cleanroommc.modularui.theme;
 import com.cleanroommc.modularui.ModularUI;
 import com.cleanroommc.modularui.Tags;
 import com.cleanroommc.modularui.api.ITheme;
+import com.cleanroommc.modularui.drawable.FallbackableUITexture;
 import com.cleanroommc.modularui.utils.AssetHelper;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.utils.JsonBuilder;
@@ -40,6 +41,7 @@ public class ThemeManager implements IResourceManagerReloadListener {
         ThemeAPI.INSTANCE.onReload();
         loadThemes();
         loadScreenThemes();
+        FallbackableUITexture.reload();
         MinecraftForge.EVENT_BUS.post(new ReloadThemeEvent.Post());
     }
 
