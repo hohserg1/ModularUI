@@ -401,6 +401,9 @@ public class GuiScreenWrapper extends GuiContainer implements INEIGuiHandler {
             ModularUIConfig.guiDebugMode = !ModularUIConfig.guiDebugMode;
             return;
         }
+        if (GuiContainerManager.getManager().lastKeyTyped(keyCode, typedChar)) {
+            return;
+        }
         if (keyCode == Keyboard.KEY_ESCAPE || keyCode == this.mc.gameSettings.keyBindInventory.getKeyCode()) {
             this.screen.close();
         }
