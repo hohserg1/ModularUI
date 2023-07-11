@@ -18,6 +18,7 @@ public class ModularUIConfig {
     public static boolean useDarkThemeByDefault = false;
 
     public static boolean guiDebugMode = ModularUI.isDevEnv;
+    public static boolean forceEnableDebugBlock = false;
 
     public static final String CATEGORY_RENDERING = "rendering";
     public static final String CATEGORY_DEBUG = "debug";
@@ -117,6 +118,13 @@ public class ModularUIConfig {
             "If true, widget outlines and widget information will be drawn."
         )
             .setLanguageKey(LANG_PREFIX + CATEGORY_DEBUG + ".guiDebugMode")
+            .getBoolean();
+
+        forceEnableDebugBlock = config.get(
+                CATEGORY_DEBUG,
+                "forceEnableDebugBlock",
+                false,
+                "Add debug block even in non-dev env. Used only for testing.")
             .getBoolean();
 
         if (config.hasChanged()) {

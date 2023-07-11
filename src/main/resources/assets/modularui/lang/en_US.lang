@@ -30,3 +30,5 @@ modularui.config.animations.useDarkThemeByDefault=Dark theme
 modularui.config.animations.useDarkThemeByDefault.tooltip=If true and not specified otherwise, screens will try to use the 'vanilla_dark' theme.
 modularui.config.debug.guiDebugMode=GUI debug mode
 modularui.config.debug.guiDebugMode.tooltip=If true, widget outlines and widget information will be drawn.
+modularui.config.debug.forceEnableDebugBlock=Enable debug block
+modularui.config.debug.forceEnableDebugBlock.tooltip=Add debug block even in non-dev env
