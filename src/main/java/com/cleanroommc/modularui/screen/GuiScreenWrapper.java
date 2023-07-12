@@ -322,6 +322,7 @@ public class GuiScreenWrapper extends GuiContainer implements INEIGuiHandler {
     public void onGuiClosed() {
         super.onGuiClosed();
         this.screen.onClose();
+        this.init = true;
     }
 
     public ModularScreen getScreen() {
