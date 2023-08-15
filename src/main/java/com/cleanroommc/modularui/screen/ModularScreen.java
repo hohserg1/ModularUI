@@ -92,9 +92,8 @@ public abstract class ModularScreen {
         this(Tags.MODID, name);
     }
 
-    @ApiStatus.Internal
     @MustBeInvokedByOverriders
-    public void construct(GuiScreenWrapper wrapper, GuiSyncHandler syncHandler) {
+    void construct(GuiScreenWrapper wrapper, GuiSyncHandler syncHandler) {
         if (this.screenWrapper != null) throw new IllegalStateException("ModularScreen is already constructed!");
         if (wrapper == null) throw new NullPointerException("GuiScreenWrapper must not be null!");
         this.screenWrapper = wrapper;
