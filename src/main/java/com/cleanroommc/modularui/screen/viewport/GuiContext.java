@@ -2,16 +2,15 @@ package com.cleanroommc.modularui.screen.viewport;
 
 import com.cleanroommc.modularui.ModularUI;
 import com.cleanroommc.modularui.api.ITheme;
-import com.cleanroommc.modularui.api.IThemeApi;
 import com.cleanroommc.modularui.api.layout.IViewport;
 import com.cleanroommc.modularui.api.widget.IDraggable;
 import com.cleanroommc.modularui.api.widget.IFocusedWidget;
 import com.cleanroommc.modularui.api.widget.IGuiElement;
 import com.cleanroommc.modularui.api.widget.IVanillaSlot;
 import com.cleanroommc.modularui.api.widget.IWidget;
-import com.cleanroommc.modularui.integration.nei.NEIState;
 import com.cleanroommc.modularui.mixins.early.minecraft.GuiContainerAccessor;
 import com.cleanroommc.modularui.screen.DraggablePanelWrapper;
+import com.cleanroommc.modularui.screen.NEISettings;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.screen.WindowManager;
@@ -24,12 +23,10 @@ import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 public class GuiContext extends GuiViewportStack {
 
@@ -38,7 +35,6 @@ public class GuiContext extends GuiViewportStack {
 
     /* GUI elements */
     public final ModularScreen screen;
-    private ITheme currentTheme;
     private LocatedWidget focusedWidget = LocatedWidget.EMPTY;
     @Nullable
     private IGuiElement hovered;
@@ -64,25 +60,19 @@ public class GuiContext extends GuiViewportStack {
     private float partialTicks;
     private long tick;
 
-    private NEIState neiState = NEIState.DEFAULT;
-
     public List<Consumer<GuiContext>> postRenderCallbacks = new ArrayList<>();
 
-    private final List<IWidget> neiExclusionWidgets = new ArrayList<>();
-    private final List<Rectangle> neiExclusionAreas = new ArrayList<>();
+    private NEISettings neiSettings = new NEISettings();
 
     public GuiContext(ModularScreen screen) {
         this.screen = screen;
         this.hoveredWidgets = new HoveredIterable(this.screen.getWindowManager());
         this.mc = ModularUI.getMC();
         this.font = this.mc.fontRenderer;
-        if (this.currentTheme == null) {
-            this.currentTheme = IThemeApi.get().getThemeForScreen(screen, null);
-        }
     }
 
     public boolean isAbove(IGuiElement widget) {
-        return widget.getArea().isInside(mouseX, mouseY);
+        return widget.getArea().isInside(this.mouseX, this.mouseY);
     }
 
     /* Element focusing */
@@ -101,11 +91,11 @@ public class GuiContext extends GuiViewportStack {
 
     @Nullable
     public IGuiElement getHovered() {
-        return hovered;
+        return this.hovered;
     }
 
     public Iterable<IGuiElement> getAllBelowMouse() {
-        return hoveredWidgets;
+        return this.hoveredWidgets;
     }
 
     /**
@@ -423,85 +413,35 @@ public class GuiContext extends GuiViewportStack {
     }
 
     public int getMouseButton() {
-        return mouseButton;
+        return this.mouseButton;
     }
 
     public int getMouseWheel() {
-        return mouseWheel;
+        return this.mouseWheel;
     }
 
     public int getKeyCode() {
-        return keyCode;
+        return this.keyCode;
     }
 
     public char getTypedChar() {
-        return typedChar;
+        return this.typedChar;
     }
 
     public float getPartialTicks() {
-        return partialTicks;
-    }
-
-    public void enableNEI() {
-        this.neiState = NEIState.ENABLED;
-    }
-
-    public void disableNEI() {
-        this.neiState = NEIState.DISABLED;
-    }
-
-    public void defaultNEI() {
-        this.neiState = NEIState.DEFAULT;
-    }
-
-    public boolean isNEIEnabled() {
-        return this.neiState.test(this.screen);
-    }
-
-    public void addNEIExclusionArea(Rectangle area) {
-        if (!this.neiExclusionAreas.contains(area)) {
-            this.neiExclusionAreas.add(area);
-        }
-    }
-
-    public void removeNEIExclusionArea(Rectangle area) {
-        this.neiExclusionAreas.remove(area);
-    }
-
-    public void addNEIExclusionArea(IWidget area) {
-        if (!this.neiExclusionWidgets.contains(area)) {
-            this.neiExclusionWidgets.add(area);
-        }
-    }
-
-    public void removeNEIExclusionArea(IWidget area) {
-        this.neiExclusionWidgets.remove(area);
-    }
-
-    public List<Rectangle> getNEIExclusionAreas() {
-        return neiExclusionAreas;
-    }
-
-    public List<IWidget> getNEIExclusionWidgets() {
-        return neiExclusionWidgets;
-    }
-
-    public List<Rectangle> getAllNEIExclusionAreas() {
-        this.neiExclusionWidgets.removeIf(widget -> !widget.isValid());
-        List<Rectangle> areas = new ArrayList<>(this.neiExclusionAreas);
-        areas.addAll(this.neiExclusionWidgets.stream()
-                .filter(IWidget::isEnabled)
-                .map(IWidget::getArea)
-                .collect(Collectors.toList()));
-        return areas;
+        return this.partialTicks;
     }
 
     public ITheme getTheme() {
-        return currentTheme;
+        return this.screen.getCurrentTheme();
     }
 
-    public void useTheme(String theme) {
-        this.currentTheme = IThemeApi.get().getThemeForScreen(this.screen, theme);
+    public NEISettings getNEISettings() {
+        return this.neiSettings;
+    }
+
+    public void setNEISettings(NEISettings neiSettings) {
+        this.neiSettings = neiSettings;
     }
 
     private static class HoveredIterable implements Iterable<IGuiElement> {
@@ -517,26 +457,26 @@ public class GuiContext extends GuiViewportStack {
         public Iterator<IGuiElement> iterator() {
             return new Iterator<IGuiElement>() {
 
-                private final Iterator<ModularPanel> panelIt = windowManager.getOpenPanels().iterator();
+                private final Iterator<ModularPanel> panelIt = HoveredIterable.this.windowManager.getOpenPanels().iterator();
                 private Iterator<LocatedWidget> widgetIt;
 
                 @Override
                 public boolean hasNext() {
-                    if (widgetIt == null) {
-                        if (!panelIt.hasNext()) {
+                    if (this.widgetIt == null) {
+                        if (!this.panelIt.hasNext()) {
                             return false;
                         }
-                        widgetIt = panelIt.next().getHovering().iterator();
+                        this.widgetIt = this.panelIt.next().getHovering().iterator();
                     }
-                    return widgetIt.hasNext();
+                    return this.widgetIt.hasNext();
                 }
 
                 @Override
                 public IGuiElement next() {
-                    if (widgetIt == null || !widgetIt.hasNext()) {
-                        widgetIt = panelIt.next().getHovering().iterator();
+                    if (this.widgetIt == null || !this.widgetIt.hasNext()) {
+                        this.widgetIt = this.panelIt.next().getHovering().iterator();
                     }
-                    return widgetIt.next().getElement();
+                    return this.widgetIt.next().getElement();
                 }
             };
         }

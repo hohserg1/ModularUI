@@ -6,8 +6,8 @@ import com.cleanroommc.modularui.api.future.ItemHandlerHelper;
 import com.cleanroommc.modularui.api.future.PlayerMainInvWrapper;
 import com.cleanroommc.modularui.api.future.SlotItemHandler;
 import com.cleanroommc.modularui.network.NetworkUtils;
-import com.cleanroommc.modularui.sync.GuiSyncHandler;
-import com.cleanroommc.modularui.sync.ItemSlotSH;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import com.cleanroommc.modularui.widgets.slot.SlotGroup;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -16,6 +16,7 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,64 +35,62 @@ public class ModularContainer extends Container {
         return null;
     }
 
-    private final GuiSyncHandler guiSyncHandler;
+    private final GuiSyncManager guiSyncManager;
     private boolean init = true;
-    private final List<ItemSlotSH> slots = new ArrayList<>();
-    private final List<ItemSlotSH> shiftClickSlots = new ArrayList<>();
+    private final List<ModularSlot> slots = new ArrayList<>();
+    private final List<ModularSlot> shiftClickSlots = new ArrayList<>();
 
-    public ModularContainer(GuiSyncHandler guiSyncHandler) {
-        this.guiSyncHandler = Objects.requireNonNull(guiSyncHandler);
-        this.guiSyncHandler.construct(this);
+    public ModularContainer(GuiSyncManager guiSyncManager) {
+        this.guiSyncManager = Objects.requireNonNull(guiSyncManager);
+        this.guiSyncManager.construct(this);
         sortShiftClickSlots();
     }
 
     @SideOnly(Side.CLIENT)
     public ModularContainer() {
-        this.guiSyncHandler = null;
+        this.guiSyncManager = null;
     }
 
     @Override
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
-        this.guiSyncHandler.detectAndSendChanges(this.init);
+        this.guiSyncManager.detectAndSendChanges(this.init);
         this.init = false;
     }
 
-    public SlotGroup getSlotGroup(ItemSlotSH syncHandler) {
-        if (syncHandler.getSlotGroup() == null) return null;
-        return this.guiSyncHandler.getSlotGroup(syncHandler.getSlotGroup());
-    }
-
     private void sortShiftClickSlots() {
-        this.shiftClickSlots.sort(Comparator.comparingInt(slot -> getSlotGroup(slot).getShiftClickPriority()));
+        this.shiftClickSlots.sort(Comparator.comparingInt(slot -> Objects.requireNonNull(slot.getSlotGroup()).getShiftClickPriority()));
     }
 
     @Override
     public void putStacksInSlots(ItemStack[] items) {
         if (this.inventorySlots.size() != items.length) {
-            ModularUI.LOGGER.error("Here are {} slots, but expected {}", inventorySlots.size(), items.length);
+            ModularUI.LOGGER.error("Here are {} slots, but expected {}", this.inventorySlots.size(), items.length);
         }
         for (int i = 0; i < Math.min(this.inventorySlots.size(), items.length); ++i) {
             this.getSlot(i).putStack(items[i]);
         }
     }
 
-    public void registerSlot(ItemSlotSH syncHandler) {
-        Slot slot = syncHandler.getSlot();
+    @ApiStatus.Internal
+    public void registerSlot(ModularSlot slot) {
         if (this.inventorySlots.contains(slot)) {
             throw new IllegalArgumentException();
         }
         addSlotToContainer(slot);
-        this.slots.add(syncHandler);
-        if (syncHandler.getSlotGroup() != null) {
-            SlotGroup slotGroup = this.getSyncHandler().getSlotGroup(syncHandler.getSlotGroup());
+        this.slots.add(slot);
+        if (slot.getSlotGroupName() != null) {
+            SlotGroup slotGroup = getSyncManager().getSlotGroup(slot.getSlotGroupName());
             if (slotGroup == null) {
-                ModularUI.LOGGER.throwing(new IllegalArgumentException("SlotGroup '" + syncHandler.getSlotGroup() + "' is not registered!"));
+                ModularUI.LOGGER.throwing(new IllegalArgumentException("SlotGroup '" + slot.getSlotGroupName() + "' is not registered!"));
                 return;
             }
-            slotGroup.addSlot(slot);
+            slot.slotGroup(slotGroup);
+        }
+        if (slot.getSlotGroup() != null) {
+            SlotGroup slotGroup = slot.getSlotGroup();
             if (slotGroup.allowShiftTransfer()) {
-                this.shiftClickSlots.add(syncHandler);
+                this.shiftClickSlots.add(slot);
                 if (!this.init) {
                     sortShiftClickSlots();
                 }
@@ -99,19 +98,19 @@ public class ModularContainer extends Container {
         }
     }
 
-    public GuiSyncHandler getSyncHandler() {
-        if (this.guiSyncHandler == null) {
-            throw new IllegalStateException("GuiSyncHandler is not available for client only GUI's.");
+    public GuiSyncManager getSyncManager() {
+        if (this.guiSyncManager == null) {
+            throw new IllegalStateException("GuiSyncManager is not available for client only GUI's.");
         }
-        return guiSyncHandler;
+        return this.guiSyncManager;
     }
 
     public boolean isClient() {
-        return this.guiSyncHandler == null || NetworkUtils.isClient(this.guiSyncHandler.getPlayer());
+        return this.guiSyncManager == null || NetworkUtils.isClient(this.guiSyncManager.getPlayer());
     }
 
     public boolean isClientOnly() {
-        return this.guiSyncHandler == null;
+        return this.guiSyncManager == null;
     }
 
     @Override
@@ -122,14 +121,14 @@ public class ModularContainer extends Container {
     @Override
     @Nullable
     public ItemStack transferStackInSlot(@NotNull EntityPlayer playerIn, int index) {
-        ItemSlotSH slot = this.slots.get(index);
+        ModularSlot slot = this.slots.get(index);
         if (!slot.isPhantom()) {
-            ItemStack stack = slot.getSlot().getStack();
+            ItemStack stack = slot.getStack();
             if (stack != null) {
                 ItemStack remainder = transferItem(slot, stack.copy());
                 stack.stackSize = remainder.stackSize;
                 if (stack.stackSize < 1) {
-                    slot.getSlot().putStack(null);
+                    slot.putStack(null);
                 }
                 return null;
             }
@@ -138,31 +137,31 @@ public class ModularContainer extends Container {
     }
 
     // TODO: Don't insert to slot when a parent is disabled
-    protected ItemStack transferItem(ItemSlotSH fromSlot, ItemStack stack) {
-        SlotGroup fromSlotGroup = getSlotGroup(fromSlot);
-        for (ItemSlotSH slot : this.shiftClickSlots) {
-            SlotGroup slotGroup = getSlotGroup(slot);
+    protected ItemStack transferItem(ModularSlot fromSlot, ItemStack stack) {
+        SlotGroup fromSlotGroup = Objects.requireNonNull(fromSlot.getSlotGroup());
+        for (ModularSlot slot : this.shiftClickSlots) {
+            SlotGroup slotGroup = Objects.requireNonNull(slot.getSlotGroup());
             boolean valid = slotGroup != null && slotGroup != fromSlotGroup;
             // func_111238_b: isEnabled
-            if (valid && slot.getSlot().func_111238_b() && slot.isItemValid(stack)) {
-                ItemStack itemstack = slot.getSlot().getStack();
+            if (valid && slot.func_111238_b() && slot.isItemValid(stack)) {
+                ItemStack itemstack = slot.getStack();
                 if (slot.isPhantom()) {
-                    if (itemstack == null || (ItemHandlerHelper.canItemStacksStack(stack, itemstack) && itemstack.stackSize < slot.getSlot().getSlotStackLimit())) {
-                        slot.getSlot().putStack(stack.copy());
+                    if (itemstack == null || (ItemHandlerHelper.canItemStacksStack(stack, itemstack) && itemstack.stackSize < slot.getSlotStackLimit())) {
+                        slot.putStack(stack.copy());
                         return stack;
                     }
                 } else if (ItemHandlerHelper.canItemStacksStack(stack, itemstack)) {
                     int j = itemstack.stackSize + stack.stackSize;
-                    int maxSize = Math.min(slot.getSlot().getSlotStackLimit(), stack.getMaxStackSize());
+                    int maxSize = Math.min(slot.getSlotStackLimit(), stack.getMaxStackSize());
 
                     if (j <= maxSize) {
                         stack.stackSize = 0;
                         itemstack.stackSize = j;
-                        slot.getSlot().onSlotChanged();
+                        slot.onSlotChanged();
                     } else if (itemstack.stackSize < maxSize) {
                         stack.stackSize -= maxSize - itemstack.stackSize;
                         itemstack.stackSize = maxSize;
-                        slot.getSlot().onSlotChanged();
+                        slot.onSlotChanged();
                     }
 
                     if (stack.stackSize < 1) {
@@ -171,10 +170,9 @@ public class ModularContainer extends Container {
                 }
             }
         }
-        for (ItemSlotSH syncHandler : this.shiftClickSlots) {
-            Slot slot = syncHandler.getSlot();
+        for (ModularSlot slot : this.shiftClickSlots) {
             ItemStack itemstack = slot.getStack();
-            SlotGroup slotGroup = getSlotGroup(syncHandler);
+            SlotGroup slotGroup = slot.getSlotGroup();
             boolean valid = slotGroup != null && slotGroup != fromSlotGroup;
             // func_111238_b: isEnabled
             if (valid && slot.func_111238_b() && itemstack == null && slot.isItemValid(stack)) {

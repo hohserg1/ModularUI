@@ -20,9 +20,9 @@ import org.lwjgl.opengl.GL12;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class Tooltip {
 
@@ -49,30 +49,29 @@ public class Tooltip {
         this.dirty = false;
         this.lines.clear();
         List<IDrawable> additionalLines = this.additionalLines;
-        this.additionalLines = lines;
+        this.additionalLines = this.lines;
         if (this.tooltipBuilder != null) {
             this.tooltipBuilder.accept(this);
         }
         this.lines.addAll(additionalLines);
         this.additionalLines = additionalLines;
-        if (hasSpaceAfterFirstLine && lines.size() > 1) {
-            lines.add(1, Icon.EMPTY_2PX);
+        if (this.hasSpaceAfterFirstLine && this.lines.size() > 1) {
+            this.lines.add(1, Icon.EMPTY_2PX);
         }
     }
 
     public void draw(GuiContext context) {
-        if (updateTooltipEveryTick) {
+        if (this.updateTooltipEveryTick) {
             markDirty();
         }
         if (isEmpty()) return;
 
-        if (maxWidth <= 0) {
-            maxWidth = Integer.MAX_VALUE;
+        if (this.maxWidth <= 0) {
+            this.maxWidth = Integer.MAX_VALUE;
         }
         int mouseX = context.getAbsMouseX(), mouseY = context.getAbsMouseY();
         IconRenderer renderer = IconRenderer.SHARED;
-        //List<IIcon> icons = renderer.measureLines(this.lines);
-        List<String> textLines = Collections.emptyList();//icons.stream().filter(iIcon -> iIcon instanceof TextIcon).map(icon -> ((TextIcon) icon).getText()).collect(Collectors.toList());
+        List<String> textLines = lines.stream().filter(drawable -> drawable instanceof IKey).map(key -> ((IKey) key).get()).collect(Collectors.toList());
         Dimension displaySize = codechicken.lib.gui.GuiDraw.displaySize();
         int screenWidth = displaySize.width, screenHeight = displaySize.height;
 
@@ -80,7 +79,7 @@ public class Tooltip {
         renderer.setColor(this.textColor);
         renderer.setScale(this.scale);
         renderer.setAlignment(this.alignment, this.maxWidth);
-        renderer.setLinePadding(linePadding);
+        renderer.setLinePadding(this.linePadding);
         renderer.setSimulate(true);
         renderer.setPos(0, 0);
 
@@ -238,16 +237,16 @@ public class Tooltip {
     }
 
     public Area getExcludeArea() {
-        return excludeArea;
+        return this.excludeArea;
     }
 
     public int getShowUpTimer() {
-        return showUpTimer;
+        return this.showUpTimer;
     }
 
     @Nullable
     public Consumer<Tooltip> getTooltipBuilder() {
-        return tooltipBuilder;
+        return this.tooltipBuilder;
     }
 
     public Tooltip excludeArea(Area area) {

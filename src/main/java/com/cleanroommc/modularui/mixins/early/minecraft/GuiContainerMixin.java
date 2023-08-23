@@ -19,7 +19,7 @@ public class GuiContainerMixin {
     public void modularui$injectGetSlotAtPosition(int x, int y, CallbackInfoReturnable<Slot> cir) {
         //noinspection ConstantValue
         if (((Object) this).getClass() == GuiScreenWrapper.class) {
-            cir.setReturnValue(theSlot);
+            cir.setReturnValue(this.theSlot);
         }
     }
 }

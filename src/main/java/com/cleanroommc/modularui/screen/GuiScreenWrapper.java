@@ -21,6 +21,7 @@ import com.cleanroommc.modularui.screen.viewport.LocatedWidget;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.widget.sizer.Area;
 import com.cleanroommc.modularui.widgets.ItemSlot;
+import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import com.cleanroommc.modularui.widgets.slot.SlotGroup;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -38,12 +39,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.MathHelper;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
 import java.awt.*;
-import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Set;
 
@@ -60,7 +59,7 @@ public class GuiScreenWrapper extends GuiContainer implements INEIGuiHandler {
     public GuiScreenWrapper(ModularContainer container, ModularScreen screen) {
         super(container);
         this.screen = screen;
-        this.screen.construct(this, container.isClientOnly() ? null : container.getSyncHandler());
+        this.screen.construct(this);
     }
 
     @Override
@@ -71,7 +70,7 @@ public class GuiScreenWrapper extends GuiContainer implements INEIGuiHandler {
             this.screen.onOpen();
             this.init = false;
         }
-        this.screen.onResize(width, height);
+        this.screen.onResize(this.width, this.height);
     }
 
     public void updateArea(Area mainViewport) {
@@ -87,12 +86,12 @@ public class GuiScreenWrapper extends GuiContainer implements INEIGuiHandler {
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        frameCount++;
+        this.frameCount++;
         long time = Minecraft.getSystemTime();
-        if (time - timer >= 1000) {
-            fps = frameCount;
-            frameCount = 0;
-            timer += 1000;
+        if (time - this.timer >= 1000) {
+            this.fps = this.frameCount;
+            this.frameCount = 0;
+            this.timer += 1000;
         }
 
         Stencil.apply(this.screen.getScreenArea(), null);
@@ -115,7 +114,7 @@ public class GuiScreenWrapper extends GuiContainer implements INEIGuiHandler {
         GL11.glEnable(GL12.GL_RESCALE_NORMAL);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         RenderHelper.enableGUIStandardItemLighting();
-        if (this.screen.context.isNEIEnabled()) {
+        if (this.screen.context.getNEISettings().isNEIEnabled(this.screen)) {
             // Copied from GuiContainerManager#renderObjects but without translation
             for (IContainerDrawHandler drawHandler : GuiContainerManager.drawHandlers) {
                 drawHandler.renderObjects(this, mouseX, mouseY);
@@ -223,7 +222,7 @@ public class GuiScreenWrapper extends GuiContainer implements INEIGuiHandler {
         this.zLevel = 200.0F;
         itemRender.zLevel = 200.0F;
         FontRenderer font = stack.getItem().getFontRenderer(stack);
-        if (font == null) font = getFontRenderer();
+        if (font == null) font = this.fontRendererObj;
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         itemRender.renderItemAndEffectIntoGUI(font, mc.getTextureManager(), stack, x, y);
         itemRender.renderItemOverlayIntoGUI(font, mc.getTextureManager(), stack, x, y - (getAccessor().getDraggedStack() == null ? 0 : 8), altText);
@@ -243,14 +242,14 @@ public class GuiScreenWrapper extends GuiContainer implements INEIGuiHandler {
     }
 
     public void drawDebugScreen() {
-        GuiContext context = screen.context;
+        GuiContext context = this.screen.context;
         int mouseX = context.getAbsMouseX(), mouseY = context.getAbsMouseY();
-        int screenW = this.screen.getScreenArea().width, screenH = this.screen.getScreenArea().height;
+        int screenH = this.screen.getScreenArea().height;
         int color = Color.rgb(180, 40, 115);
-        int lineY = screenH - 13 - (this.screen.context.isNEIEnabled() ? 20 : 0);
-        drawString(getFontRenderer(), "Mouse Pos: " + mouseX + ", " + mouseY, 5, lineY, color);
+        int lineY = screenH - 13 - (this.screen.context.getNEISettings().isNEIEnabled(this.screen) ? 20 : 0);
+        drawString(this.fontRendererObj, "Mouse Pos: " + mouseX + ", " + mouseY, 5, lineY, color);
         lineY -= 11;
-        drawString(getFontRenderer(), "FPS: " + fps, 5, lineY, color);
+        drawString(this.fontRendererObj, "FPS: " + this.fps, 5, lineY, color);
         lineY -= 11;
         LocatedWidget locatedHovered = this.screen.getWindowManager().getTopWidgetLocated();
         if (locatedHovered != null) {
@@ -280,31 +279,18 @@ public class GuiScreenWrapper extends GuiContainer implements INEIGuiHandler {
             lineY -= 11;
             if (hovered instanceof ItemSlot) {
                 ItemSlot slotWidget = (ItemSlot) hovered;
-                Slot slot = slotWidget.getSlot();
+                ModularSlot slot = slotWidget.getSlot();
                 GuiDraw.drawText("Slot Index: " + slot.getSlotIndex(), 5, lineY, 1, color, false);
                 lineY -= 11;
                 GuiDraw.drawText("Slot Number: " + slot.slotNumber, 5, lineY, 1, color, false);
                 lineY -= 11;
                 if (slotWidget.isSynced()) {
-                    SlotGroup slotGroup = ((ModularContainer) inventorySlots).getSlotGroup(slotWidget.getSyncHandler());
+                    SlotGroup slotGroup = slot.getSlotGroup();
                     boolean allowShiftTransfer = slotGroup != null && slotGroup.allowShiftTransfer();
                     GuiDraw.drawText("Shift-Click Priority: " + (allowShiftTransfer ? slotGroup.getShiftClickPriority() : "DISABLED"), 5, lineY, 1, color, false);
-                    lineY -= 11;
                 }
             }
         }
-        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(1);
-        GL11.glReadPixels(Mouse.getX(), Mouse.getY(), 1, 1, GL11.GL_STENCIL_INDEX, GL11.GL_UNSIGNED_BYTE, byteBuffer);
-        GuiDraw.drawText("Stencil: " + (0xFF & byteBuffer.get()), 5, lineY, 1, color, false);
-
-        /*color = Color.withAlpha(color, 25);
-        for (int i = 5; i < screenW; i += 5) {
-            drawVerticalLine(i, 0, screenH, color);
-        }
-
-        for (int i = 5; i < screenH; i += 5) {
-            drawHorizontalLine(0, screenW, i, color);
-        }*/
         drawRect(mouseX, mouseY, mouseX + 1, mouseY + 1, Color.withAlpha(Color.GREEN.normal, 0.8f));
     }
 
@@ -326,13 +312,13 @@ public class GuiScreenWrapper extends GuiContainer implements INEIGuiHandler {
     }
 
     public ModularScreen getScreen() {
-        return screen;
+        return this.screen;
     }
 
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
         if (this.screen.onMousePressed(mouseButton)) {
-            if (this.screen.context.isNEIEnabled()) {
+            if (this.screen.context.getNEISettings().isNEIEnabled(this.screen)) {
                 for (IContainerInputHandler inputhander : GuiContainerManager.inputHandlers) {
                     inputhander.onMouseClicked(this, mouseX, mouseY, mouseButton);
                 }
@@ -346,7 +332,7 @@ public class GuiScreenWrapper extends GuiContainer implements INEIGuiHandler {
     }
 
     public void clickSlot() {
-        super.mouseClicked(screen.context.getAbsMouseX(), screen.context.getAbsMouseY(), screen.context.getMouseButton());
+        super.mouseClicked(this.screen.context.getAbsMouseX(), this.screen.context.getAbsMouseY(), this.screen.context.getMouseButton());
     }
 
     @Override
@@ -356,7 +342,7 @@ public class GuiScreenWrapper extends GuiContainer implements INEIGuiHandler {
     }
 
     public void releaseSlot() {
-        super.mouseMovedOrUp(screen.context.getAbsMouseX(), screen.context.getAbsMouseY(), screen.context.getMouseButton());
+        super.mouseMovedOrUp(this.screen.context.getAbsMouseX(), this.screen.context.getAbsMouseY(), this.screen.context.getMouseButton());
     }
 
     @Override
@@ -366,7 +352,7 @@ public class GuiScreenWrapper extends GuiContainer implements INEIGuiHandler {
     }
 
     public void dragSlot(long timeSinceLastClick) {
-        super.mouseClickMove(screen.context.getAbsMouseX(), screen.context.getAbsMouseY(), screen.context.getMouseButton(), timeSinceLastClick);
+        super.mouseClickMove(this.screen.context.getAbsMouseX(), this.screen.context.getAbsMouseY(), this.screen.context.getMouseButton(), timeSinceLastClick);
     }
 
     /**
@@ -433,7 +419,7 @@ public class GuiScreenWrapper extends GuiContainer implements INEIGuiHandler {
     }
 
     public float getZ() {
-        return zLevel;
+        return this.zLevel;
     }
 
     public void setZ(float z) {
@@ -441,7 +427,7 @@ public class GuiScreenWrapper extends GuiContainer implements INEIGuiHandler {
     }
 
     public FontRenderer getFontRenderer() {
-        return Minecraft.getMinecraft().fontRenderer;
+        return this.fontRendererObj;
     }
 
     // === NEI overrides ===
@@ -474,8 +460,8 @@ public class GuiScreenWrapper extends GuiContainer implements INEIGuiHandler {
     @Override
     public boolean hideItemPanelSlot(GuiContainer gui, int x, int y, int w, int h) {
         if (!(gui instanceof GuiScreenWrapper)) return false;
-        if (!this.screen.context.isNEIEnabled()) return false;
-        return this.screen.context.getAllNEIExclusionAreas().stream().anyMatch(
+        if (!this.screen.context.getNEISettings().isNEIEnabled(this.screen)) return false;
+        return this.screen.context.getNEISettings().getAllNEIExclusionAreas().stream().anyMatch(
             a -> a.intersects(new Rectangle(x, y, w, h))
         );
     }

@@ -14,7 +14,7 @@ public class ParentWidget<W extends ParentWidget<W>> extends Widget<W> {
     @NotNull
     @Override
     public List<IWidget> getChildren() {
-        return children;
+        return this.children;
     }
 
     @Override

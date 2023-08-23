@@ -3,24 +3,25 @@ package com.cleanroommc.modularui.widgets;
 import codechicken.nei.guihook.GuiContainerManager;
 import codechicken.nei.guihook.IContainerTooltipHandler;
 import com.cleanroommc.modularui.api.ITheme;
-import com.cleanroommc.modularui.api.sync.SyncHandler;
 import com.cleanroommc.modularui.api.widget.IVanillaSlot;
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.drawable.TextRenderer;
-import com.cleanroommc.modularui.mixins.early.minecraft.GuiContainerAccessor;
 import com.cleanroommc.modularui.integration.nei.NEIDragAndDropHandler;
 import com.cleanroommc.modularui.integration.nei.NEIIngredientProvider;
-import com.cleanroommc.modularui.screen.viewport.GuiContext;
+import com.cleanroommc.modularui.mixins.early.minecraft.GuiContainerAccessor;
 import com.cleanroommc.modularui.screen.GuiScreenWrapper;
 import com.cleanroommc.modularui.screen.ModularScreen;
-import com.cleanroommc.modularui.sync.ItemSlotSH;
+import com.cleanroommc.modularui.screen.viewport.GuiContext;
 import com.cleanroommc.modularui.theme.WidgetSlotTheme;
 import com.cleanroommc.modularui.utils.Alignment;
-import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.utils.Color;
+import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.utils.NumberFormat;
+import com.cleanroommc.modularui.value.sync.ItemSlotSH;
+import com.cleanroommc.modularui.value.sync.SyncHandler;
 import com.cleanroommc.modularui.widget.Widget;
+import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
@@ -30,9 +31,9 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -88,11 +89,6 @@ public class ItemSlot extends Widget<ItemSlot> implements IVanillaSlot, Interact
     }
 
     @Override
-    public boolean canHover() {
-        return true;
-    }
-
-    @Override
     public @NotNull Result onMousePressed(int mouseButton) {
         if (this.syncHandler.isPhantom()) {
             MouseData mouseData = MouseData.create(mouseButton);
@@ -105,7 +101,9 @@ public class ItemSlot extends Widget<ItemSlot> implements IVanillaSlot, Interact
 
     @Override
     public boolean onMouseRelease(int mouseButton) {
-        getScreen().getScreenWrapper().releaseSlot();
+        if (!this.syncHandler.isPhantom()) {
+            getScreen().getScreenWrapper().releaseSlot();
+        }
         return true;
     }
 
@@ -124,26 +122,26 @@ public class ItemSlot extends Widget<ItemSlot> implements IVanillaSlot, Interact
         getScreen().getScreenWrapper().dragSlot(timeSinceClick);
     }
 
-    public Slot getSlot() {
-        return syncHandler.getSlot();
+    public ModularSlot getSlot() {
+        return this.syncHandler.getSlot();
     }
 
     @Override
     public Slot getVanillaSlot() {
-        return syncHandler.getSlot();
+        return this.syncHandler.getSlot();
     }
 
     @Override
     public boolean isSynced() {
-        return syncHandler != null;
+        return this.syncHandler != null;
     }
 
     @Override
-    public ItemSlotSH getSyncHandler() {
+    public @NotNull ItemSlotSH getSyncHandler() {
         if (this.syncHandler == null) {
             throw new IllegalStateException("Widget is not initialised!");
         }
-        return syncHandler;
+        return this.syncHandler;
     }
 
     protected List<String> getItemTooltip(ItemStack stack) {
@@ -157,6 +155,12 @@ public class ItemSlot extends Widget<ItemSlot> implements IVanillaSlot, Interact
         }
 
         return tooltips;
+    }
+
+    public ItemSlot slot(ModularSlot slot) {
+        this.syncHandler = new ItemSlotSH(slot);
+        setSyncHandler(this.syncHandler);
+        return this;
     }
 
     @SideOnly(Side.CLIENT)

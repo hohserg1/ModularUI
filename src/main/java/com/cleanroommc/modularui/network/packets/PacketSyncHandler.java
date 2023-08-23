@@ -33,8 +33,8 @@ public class PacketSyncHandler implements IPacket {
 
     @Override
     public void read(PacketBuffer buf) {
-        key = NetworkUtils.readStringSafe(buf);
-        packet = NetworkUtils.readPacketBuffer(buf);
+        this.key = NetworkUtils.readStringSafe(buf);
+        this.packet = NetworkUtils.readPacketBuffer(buf);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class PacketSyncHandler implements IPacket {
         Container container = handler.playerEntity.openContainer;
         if (container instanceof ModularContainer) {
             try {
-                ((ModularContainer) container).getSyncHandler().receiveWidgetUpdate(this.key, this.packet.readVarIntFromBuffer(), this.packet);
+                ((ModularContainer) container).getSyncManager().receiveWidgetUpdate(this.key, this.packet.readVarIntFromBuffer(), this.packet);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

@@ -3,6 +3,8 @@ package com.cleanroommc.modularui.drawable;
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.screen.GuiScreenWrapper;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderItem;
@@ -21,16 +23,17 @@ public class ItemDrawable implements IDrawable {
         this.item = item;
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public void draw(GuiContext context, int x, int y, int width, int height) {
-        if (item == null) return;
+        if (this.item == null) return;
         GL11.glPushMatrix();
         RenderHelper.enableGUIStandardItemLighting();
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         GL11.glScalef(width / 16f, height / 16f, 1);
         RenderItem renderItem = GuiScreenWrapper.getItemRenderer();
         renderItem.zLevel = 200;
-        renderItem.renderItemAndEffectIntoGUI(Minecraft.getMinecraft().fontRenderer, Minecraft.getMinecraft().getTextureManager(), item, x, y);
+        renderItem.renderItemAndEffectIntoGUI(Minecraft.getMinecraft().fontRenderer, Minecraft.getMinecraft().getTextureManager(), this.item, x, y);
         renderItem.zLevel = 0;
         GuiDraw.afterRenderItemAndEffectIntoGUI(item);
         GL11.glDisable(GL11.GL_DEPTH_TEST);

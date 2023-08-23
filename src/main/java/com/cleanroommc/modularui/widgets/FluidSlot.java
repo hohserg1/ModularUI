@@ -3,7 +3,6 @@ package com.cleanroommc.modularui.widgets;
 import com.cleanroommc.modularui.api.ITheme;
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.api.sync.SyncHandler;
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.drawable.TextRenderer;
@@ -12,12 +11,13 @@ import com.cleanroommc.modularui.integration.nei.NEIIngredientProvider;
 import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.screen.Tooltip;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
-import com.cleanroommc.modularui.sync.FluidSlotSyncHandler;
 import com.cleanroommc.modularui.theme.WidgetSlotTheme;
 import com.cleanroommc.modularui.utils.Alignment;
-import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.utils.Color;
+import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.utils.NumberFormat;
+import com.cleanroommc.modularui.value.sync.FluidSlotSyncHandler;
+import com.cleanroommc.modularui.value.sync.SyncHandler;
 import com.cleanroommc.modularui.widget.Widget;
 import gregtech.api.util.GT_Utility;
 import net.minecraft.client.Minecraft;
@@ -51,7 +51,7 @@ public class FluidSlot extends Widget<FluidSlot> implements Interactable, NEIDra
         tooltipBuilder(tooltip -> {
             tooltip.setHasSpaceAfterFirstLine(true);
             IFluidTank fluidTank = getFluidTank();
-            FluidStack fluid = this.syncHandler.getCachedValue();
+            FluidStack fluid = this.syncHandler.getValue();
             if (this.syncHandler.isPhantom()) {
                 if (fluid != null) {
                     tooltip.addLine(IKey.str(fluid.getLocalizedName()));
@@ -112,29 +112,29 @@ public class FluidSlot extends Widget<FluidSlot> implements Interactable, NEIDra
     @Override
     public void draw(GuiContext context) {
         IFluidTank fluidTank = getFluidTank();
-        FluidStack content = this.syncHandler.getCachedValue();
+        FluidStack content = this.syncHandler.getValue();
         if (content != null) {
-            int y = contentOffsetY;
+            int y = this.contentOffsetY;
             float height = getArea().height - y * 2;
-            if (!alwaysShowFull) {
+            if (!this.alwaysShowFull) {
                 float newHeight = height * content.amount * 1f / fluidTank.getCapacity();
                 y += height - newHeight;
                 height = newHeight;
             }
-            GuiDraw.drawFluidTexture(content, contentOffsetX, y, getArea().width - contentOffsetX * 2, height, 0);
+            GuiDraw.drawFluidTexture(content, this.contentOffsetX, y, getArea().width - this.contentOffsetX * 2, height, 0);
         }
-        if (overlayTexture != null) {
-            overlayTexture.draw(context, getArea());
+        if (this.overlayTexture != null) {
+            this.overlayTexture.draw(context, getArea());
         }
-        if (content != null && syncHandler.controlsAmount()) {
+        if (content != null && this.syncHandler.controlsAmount()) {
             String s = NumberFormat.format(content.amount);
-            textRenderer.setAlignment(Alignment.CenterRight, getArea().width - contentOffsetX - 1f);
-            textRenderer.setPos((int) (contentOffsetX + 0.5f), (int) (getArea().height - 5.5f));
-            textRenderer.draw(s);
+            this.textRenderer.setAlignment(Alignment.CenterRight, getArea().width - this.contentOffsetX - 1f);
+            this.textRenderer.setPos((int) (this.contentOffsetX + 0.5f), (int) (getArea().height - 5.5f));
+            this.textRenderer.draw(s);
         }
         if (isHovering()) {
             GL11.glColorMask(true, true, true, false);
-            GuiDraw.drawRect(1, 1, getArea().width - 2, getArea().height - 2, getWidgetTheme(context.getTheme()).getSlotHoverColor());
+            GuiDraw.drawRect(1, 1, getArea().w() - 2, getArea().h() - 2, getWidgetTheme(context.getTheme()).getSlotHoverColor());
             GL11.glColorMask(true, true, true, true);
         }
     }
@@ -190,7 +190,7 @@ public class FluidSlot extends Widget<FluidSlot> implements Interactable, NEIDra
 
     @Nullable
     public FluidStack getFluidStack() {
-        return this.syncHandler == null ? null : this.syncHandler.getCachedValue();
+        return this.syncHandler == null ? null : this.syncHandler.getValue();
     }
 
     public IFluidTank getFluidTank() {
@@ -230,7 +230,7 @@ public class FluidSlot extends Widget<FluidSlot> implements Interactable, NEIDra
     public boolean handleDragAndDrop(@NotNull ItemStack draggedStack, int button) {
         if (!this.syncHandler.isPhantom()) return false;
         // nh todo
-        this.syncHandler.updateFromClient(null);
+        this.syncHandler.setValue(null);
         draggedStack.stackSize = 0;
         return true;
     }
@@ -241,5 +241,11 @@ public class FluidSlot extends Widget<FluidSlot> implements Interactable, NEIDra
             return GT_Utility.getFluidDisplayStack(getFluidStack(), false);
         }
         return null;
+    }
+
+    public FluidSlot syncHandler(FluidSlotSyncHandler syncHandler) {
+        setSyncHandler(syncHandler);
+        this.syncHandler = syncHandler;
+        return this;
     }
 }

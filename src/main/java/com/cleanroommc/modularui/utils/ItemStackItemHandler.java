@@ -25,7 +25,7 @@ public class ItemStackItemHandler implements IItemHandlerModifiable {
 
     @Override
     public int getSlots() {
-        return slots;
+        return this.slots;
     }
 
     @Nullable

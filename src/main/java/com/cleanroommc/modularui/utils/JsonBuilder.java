@@ -19,7 +19,7 @@ public class JsonBuilder {
     }
 
     public JsonObject getJson() {
-        return json;
+        return this.json;
     }
 
     public JsonBuilder add(String key, JsonElement element) {

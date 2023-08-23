@@ -1,14 +1,17 @@
 package com.cleanroommc.modularui.screen;
 
 import com.cleanroommc.modularui.Tags;
+import com.cleanroommc.modularui.api.ITheme;
+import com.cleanroommc.modularui.api.IThemeApi;
+import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IGuiAction;
+import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.drawable.GuiTextures;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
-import com.cleanroommc.modularui.sync.GuiSyncHandler;
-import com.cleanroommc.modularui.sync.ItemSlotSH;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.Color;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.widget.WidgetTree;
 import com.cleanroommc.modularui.widget.sizer.Area;
 import com.cleanroommc.modularui.widgets.Dialog;
@@ -18,6 +21,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
@@ -31,11 +35,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
+/**
+ * This is the base class for all modular ui's. It only exists on client side.
+ * It handles drawing the screen, all panels and widget interactions.
+ */
 @SideOnly(Side.CLIENT)
-public abstract class ModularScreen {
+public class ModularScreen {
 
     public static boolean isScreen(@Nullable GuiScreen guiScreen, String owner, String name) {
         if (guiScreen instanceof GuiScreenWrapper) {
@@ -65,6 +73,13 @@ public abstract class ModularScreen {
         return null;
     }
 
+    private static final ModularPanel DEFAULT = new ModularPanel("default") {
+        @Override
+        public boolean addChild(IWidget child, int index) {
+            return false;
+        }
+    }.overlay(IKey.str(EnumChatFormatting.RED + "Either use a ModularScreen constructor, that accepts a ModularPanel directly or override the 'buildUI(GuiContext context)' function!"));
+
     private final String owner;
     private final String name;
     private final WindowManager windowManager;
@@ -72,33 +87,69 @@ public abstract class ModularScreen {
     private final Area screenArea = new Area();
     private final Map<Class<?>, List<IGuiAction>> guiActionListeners = new Object2ObjectOpenHashMap<>();
 
+    private ITheme currentTheme;
     private GuiScreenWrapper screenWrapper;
-    private GuiSyncHandler syncHandler;
 
-    public ModularScreen(@NotNull String owner, @NotNull String name) {
-        this.owner = owner;
-        this.name = name;
-        this.windowManager = new WindowManager(this);
-        this.context = new GuiContext(this);
-
-        ModularPanel panel = buildUI(this.context);
-        if (panel.getFlex() == null) {
-            panel.flex().sizeRel(1f, 1f);
-        }
-        this.windowManager.construct(panel);
+    /**
+     * If this constructor is used the method {@link #buildUI(GuiContext)} should be overriden!
+     */
+    public ModularScreen() {
+        this(Tags.MODID);
     }
 
-    public ModularScreen(@NotNull String name) {
-        this(Tags.MODID, name);
+    /**
+     * If this constructor is used the method {@link #buildUI(GuiContext)} should be overriden!
+     *
+     * @param owner the mod that owns this screen
+     */
+    public ModularScreen(@NotNull String owner) {
+        Objects.requireNonNull(owner, "The owner must not be null!");
+        this.owner = owner;
+        this.windowManager = new WindowManager(this);
+        this.context = new GuiContext(this);
+        this.currentTheme = IThemeApi.get().getThemeForScreen(this, null);
+
+        ModularPanel mainPanel = buildUI(this.context);
+        Objects.requireNonNull(mainPanel, "The main panel must not be null!");
+        this.name = mainPanel.getName();
+        this.windowManager.construct(mainPanel);
+    }
+
+    public ModularScreen(@NotNull ModularPanel mainPanel) {
+        this(Tags.MODID, mainPanel);
+    }
+
+    public ModularScreen(@NotNull String owner, @NotNull ModularPanel mainPanel) {
+        Objects.requireNonNull(owner, "The owner must not be null!");
+        Objects.requireNonNull(mainPanel, "The main panel must not be null!");
+        this.owner = owner;
+        this.name = mainPanel.getName();
+        this.windowManager = new WindowManager(this);
+        this.context = new GuiContext(this);
+        this.currentTheme = IThemeApi.get().getThemeForScreen(this, null);
+        this.windowManager.construct(mainPanel);
     }
 
     @MustBeInvokedByOverriders
-    void construct(GuiScreenWrapper wrapper, GuiSyncHandler syncHandler) {
+    void construct(GuiScreenWrapper wrapper) {
         if (this.screenWrapper != null) throw new IllegalStateException("ModularScreen is already constructed!");
         if (wrapper == null) throw new NullPointerException("GuiScreenWrapper must not be null!");
         this.screenWrapper = wrapper;
-        this.syncHandler = syncHandler;
         this.screenWrapper.updateArea(this.windowManager.getMainPanel().getArea());
+    }
+
+    /**
+     * If a constructor without a modular panel is used, then this method should be overriden.
+     * This must also return a non-null value.
+     *
+     * @param context context used to build the panel
+     * @return the created panel
+     */
+    @NotNull
+    @ApiStatus.OverrideOnly
+    @SideOnly(Side.CLIENT)
+    public ModularPanel buildUI(GuiContext context) {
+        return DEFAULT.size(176, 166);
     }
 
     public void onResize(int width, int height) {
@@ -118,11 +169,8 @@ public abstract class ModularScreen {
         this.screenWrapper.updateArea(this.windowManager.getMainPanel().getArea());
     }
 
-    @ApiStatus.OverrideOnly
-    public abstract ModularPanel buildUI(GuiContext context);
-
     public void onOpen() {
-        windowManager.init();
+        this.windowManager.init();
     }
 
     @MustBeInvokedByOverriders
@@ -169,7 +217,7 @@ public abstract class ModularScreen {
         for (ModularPanel panel : this.windowManager.getOpenPanels()) {
             WidgetTree.onFrameUpdate(panel);
         }
-        context.onFrameUpdate();
+        this.context.onFrameUpdate();
     }
 
     protected void viewportSet() {
@@ -326,12 +374,12 @@ public abstract class ModularScreen {
         return false;
     }
 
-    public <T> void openDialog(Consumer<Dialog<T>> dialogBuilder) {
-        openDialog(dialogBuilder, null);
+    public <T> void openDialog(String name, Consumer<Dialog<T>> dialogBuilder) {
+        openDialog(name, dialogBuilder, null);
     }
 
-    public <T> void openDialog(Consumer<Dialog<T>> dialogBuilder, Consumer<T> resultConsumer) {
-        Dialog<T> dialog = new Dialog<>(this.context, resultConsumer);
+    public <T> void openDialog(String name, Consumer<Dialog<T>> dialogBuilder, Consumer<T> resultConsumer) {
+        Dialog<T> dialog = new Dialog<>(name, resultConsumer);
         dialog.flex().size(150, 100).align(Alignment.Center);
         dialog.background(GuiTextures.BACKGROUND);
         dialogBuilder.accept(dialog);
@@ -349,24 +397,24 @@ public abstract class ModularScreen {
 
     @NotNull
     public String getOwner() {
-        return owner;
+        return this.owner;
     }
 
     @NotNull
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public ResourceLocation getResourceLocation() {
-        return new ResourceLocation(owner, name);
+        return new ResourceLocation(this.owner, this.name);
     }
 
     public WindowManager getWindowManager() {
-        return windowManager;
+        return this.windowManager;
     }
 
-    public GuiSyncHandler getSyncHandler() {
-        return getContainer().getSyncHandler();
+    public GuiSyncManager getSyncHandler() {
+        return getContainer().getSyncManager();
     }
 
     public ModularPanel getMainPanel() {
@@ -374,15 +422,11 @@ public abstract class ModularScreen {
     }
 
     public GuiScreenWrapper getScreenWrapper() {
-        return screenWrapper;
+        return this.screenWrapper;
     }
 
     public Area getScreenArea() {
-        return screenArea;
-    }
-
-    public void registerItemSlot(ItemSlotSH syncHandler) {
-        getContainer().registerSlot(syncHandler);
+        return this.screenArea;
     }
 
     public boolean isClientOnly() {
@@ -417,17 +461,18 @@ public abstract class ModularScreen {
         throw new IllegalArgumentException();
     }
 
-    public static ModularScreen simple(@NotNull String name, Function<GuiContext, ModularPanel> panel) {
-        return simple(Tags.MODID, name, panel);
+    public ITheme getCurrentTheme() {
+        return this.currentTheme;
     }
 
-    public static ModularScreen simple(@NotNull String owner, @NotNull String name, Function<GuiContext, ModularPanel> panel) {
-        return new ModularScreen(owner, name) {
-            @Override
-            public ModularPanel buildUI(GuiContext context) {
-                return panel.apply(context);
-            }
-        };
+    public ModularScreen useTheme(String theme) {
+        this.currentTheme = IThemeApi.get().getThemeForScreen(this, theme);
+        return this;
+    }
+
+    public ModularScreen useNEISettings(NEISettings neiSettings) {
+        this.context.setNEISettings(neiSettings);
+        return this;
     }
 
     public enum UpOrDown {

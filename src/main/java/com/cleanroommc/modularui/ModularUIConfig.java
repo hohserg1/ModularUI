@@ -1,5 +1,6 @@
 package com.cleanroommc.modularui;
 
+import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.Tooltip;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.config.Configuration;
@@ -133,6 +134,6 @@ public class ModularUIConfig {
     }
 
     public static boolean placeTooltipNextToPanel() {
-        return placeTooltipNextToPanelByDefault && Minecraft.getMinecraft().gameSettings.guiScale > 0;
+        return NetworkUtils.isDedicatedClient() && placeTooltipNextToPanelByDefault && Minecraft.getMinecraft().gameSettings.guiScale > 0;
     }
 }
