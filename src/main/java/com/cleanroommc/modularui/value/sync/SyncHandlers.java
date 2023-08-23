@@ -1,6 +1,6 @@
 package com.cleanroommc.modularui.value.sync;
 
-import com.cleanroommc.modularui.api.future.IItemHandlerModifiable;
+import com.cleanroommc.modularui.future.IItemHandlerModifiable;
 import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import net.minecraftforge.fluids.IFluidTank;
 

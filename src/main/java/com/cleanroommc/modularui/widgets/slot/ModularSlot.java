@@ -1,7 +1,7 @@
 package com.cleanroommc.modularui.widgets.slot;
 
-import com.cleanroommc.modularui.api.future.IItemHandler;
-import com.cleanroommc.modularui.api.future.SlotItemHandler;
+import com.cleanroommc.modularui.future.IItemHandler;
+import com.cleanroommc.modularui.future.SlotItemHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;

@@ -1,10 +1,10 @@
 package com.cleanroommc.modularui.screen;
 
 import com.cleanroommc.modularui.ModularUI;
-import com.cleanroommc.modularui.api.future.IItemHandler;
-import com.cleanroommc.modularui.api.future.ItemHandlerHelper;
-import com.cleanroommc.modularui.api.future.PlayerMainInvWrapper;
-import com.cleanroommc.modularui.api.future.SlotItemHandler;
+import com.cleanroommc.modularui.future.IItemHandler;
+import com.cleanroommc.modularui.future.ItemHandlerHelper;
+import com.cleanroommc.modularui.future.PlayerMainInvWrapper;
+import com.cleanroommc.modularui.future.SlotItemHandler;
 import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.widgets.slot.ModularSlot;

@@ -1,4 +1,4 @@
-package com.cleanroommc.modularui.api.future;
+package com.cleanroommc.modularui.future;
 
 //
 // Source code recreated from a .class file by IntelliJ IDEA

@@ -1,6 +1,6 @@
 package com.cleanroommc.modularui.test;
 
-import com.cleanroommc.modularui.api.future.IItemHandlerModifiable;
+import com.cleanroommc.modularui.future.IItemHandlerModifiable;
 import com.cleanroommc.modularui.api.IGuiHolder;
 import com.cleanroommc.modularui.manager.GuiCreationContext;
 import com.cleanroommc.modularui.manager.GuiInfos;
