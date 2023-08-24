@@ -12,6 +12,7 @@ public class Area extends Rectangle implements IResizeable {
     public static final Area SHARED = new Area();
 
     public int rx, ry;
+    private byte panelLayer = 0;
     private int z;
     private final Box margin = new Box();
     private final Box padding = new Box();
@@ -89,6 +90,14 @@ public class Area extends Rectangle implements IResizeable {
 
     public void z(int z) {
         this.z = z;
+    }
+
+    public byte getPanelLayer() {
+        return this.panelLayer;
+    }
+
+    public void setPanelLayer(byte panelLayer) {
+        this.panelLayer = panelLayer;
     }
 
     /**
