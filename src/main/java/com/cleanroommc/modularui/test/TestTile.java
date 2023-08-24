@@ -227,7 +227,11 @@ public class TestTile extends TileEntity implements IGuiHolder {
                                         .top(25)
                                         .background(colorPickerBackground)
                                         .onMousePressed(mouseButton -> {
-                                            panel.getScreen().openPanel(new ColorPickerDialog(colorPickerBackground::setColor, colorPickerBackground.getColor(), true));
+                                            panel.getScreen().openPanel(new ColorPickerDialog(colorPickerBackground::setColor, colorPickerBackground.getColor(), true)
+                                                    .setDraggable(true)
+                                                    .relative(panel)
+                                                    .top(0)
+                                                    .rightRel(1f));
                                             return true;
                                         }))
                                 .child(new ListWidget<>()
