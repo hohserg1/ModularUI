@@ -20,7 +20,6 @@ import net.minecraft.util.Timer;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.MinecraftForge;
-import org.lwjgl.opengl.GL11;
 
 @SuppressWarnings("unused")
 public class ClientProxy extends CommonProxy {
@@ -44,7 +43,6 @@ public class ClientProxy extends CommonProxy {
         RenderingRegistry.registerEntityRenderingHandler(HoloScreenEntity.class, new ScreenEntityRender());
 
         // enable stencil buffer
-        GL11.glEnable(GL11.GL_STENCIL_TEST);
         if (MinecraftForgeClient.getStencilBits() == 0) {
             // is this correct way in 1.7.10?
             ForgeHooksClientMixin.setStencilBits(8);
