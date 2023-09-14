@@ -11,6 +11,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
+import java.util.Objects;
 import java.util.function.BiFunction;
 
 public class GuiInfo {
@@ -44,17 +45,15 @@ public class GuiInfo {
     }
 
     public ModularPanel createCommonGui(GuiCreationContext context, GuiSyncManager guiSyncManager) {
-        ModularPanel panel = this.mainPanelCreator.apply(context, guiSyncManager);
+        ModularPanel panel = Objects.requireNonNull(this.mainPanelCreator.apply(context, guiSyncManager), "The main panel must not be null!");
         WidgetTree.collectSyncValues(guiSyncManager, panel);
         return panel;
     }
 
     @SideOnly(Side.CLIENT)
     public ModularScreen createClientGui(GuiCreationContext context, ModularPanel panel) {
-        Object screen = this.clientGuiCreator.apply(context, panel);
-        if (!(screen instanceof ModularScreen)) {
-            throw new IllegalStateException("Client screen must be an instance of ModularScreen");
-        }
+        Object screen = Objects.requireNonNull(this.clientGuiCreator.apply(context, panel), "The modular screen must not be null!");
+        if (!(screen instanceof ModularScreen)) throw new IllegalStateException("Client screen must be an instance of ModularScreen");
         return (ModularScreen) screen;
     }
 

@@ -209,8 +209,8 @@ public class DropDownMenu extends SingleChildWidget<DropDownMenu> implements Int
         }
 
         @Override
-        public void resize() {
-            super.resize();
+        public void onResized() {
+            super.onResized();
             if (!isValid()) return;
             Area parentArea = getParent().getArea();
             size(parentArea.width, parentArea.height * maxItemsOnDisplay);

@@ -1,5 +1,6 @@
 package com.cleanroommc.modularui.manager;
 
+import com.cleanroommc.modularui.screen.NEISettings;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -11,14 +12,16 @@ public class GuiCreationContext {
     private final EntityPlayer player;
     private final World world;
     private final int x, y, z;
+    private final NEISettings neiSettings;
 
     @ApiStatus.Internal
-    public GuiCreationContext(EntityPlayer player, World world, int x, int y, int z) {
+    public GuiCreationContext(EntityPlayer player, World world, int x, int y, int z, NEISettings neiSettings) {
         this.player = player;
         this.world = world;
         this.x = x;
         this.y = y;
         this.z = z;
+        this.neiSettings = neiSettings;
     }
 
     public EntityPlayer getPlayer() {
@@ -47,6 +50,10 @@ public class GuiCreationContext {
 
     public void setItemInMainHand(ItemStack item) {
         this.player.setCurrentItemOrArmor(0, item);
+    }
+
+    public NEISettings getNEISettings() {
+        return this.neiSettings;
     }
 
     public TileEntity getTileEntity() {

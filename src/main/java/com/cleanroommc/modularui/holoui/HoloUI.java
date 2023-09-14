@@ -1,6 +1,7 @@
 package com.cleanroommc.modularui.holoui;
 
 import com.cleanroommc.modularui.screen.ModularScreen;
+import com.cleanroommc.modularui.screen.NEISettings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
@@ -78,6 +79,9 @@ public class HoloUI {
         }
 
         public void open(ModularScreen screen) {
+            NEISettings neiSettings = new NEISettings();
+            neiSettings.disableNEI();
+            screen.getContext().setNEISettings(neiSettings);
             HoloScreenEntity holoScreenEntity = new HoloScreenEntity(Minecraft.getMinecraft().theWorld, this.plane3D);
             holoScreenEntity.setPosition(this.x, this.y, this.z);
             holoScreenEntity.setScreen(screen);

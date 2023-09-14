@@ -102,8 +102,7 @@ public class SliderWidget extends Widget<SliderWidget> implements Interactable {
     }
 
     @Override
-    public void resize() {
-        super.resize();
+    public void onResized() {
         float sw = this.sliderWidth.getValue();
         if (this.sliderWidth.isRelative()) sw *= getArea().width;
         float sh = this.sliderHeight.getValue();

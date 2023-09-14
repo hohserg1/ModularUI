@@ -411,6 +411,10 @@ public class ModularScreen {
         return new ResourceLocation(this.owner, this.name);
     }
 
+    public GuiContext getContext() {
+        return this.context;
+    }
+
     public WindowManager getWindowManager() {
         return this.windowManager;
     }
@@ -469,11 +473,6 @@ public class ModularScreen {
 
     public ModularScreen useTheme(String theme) {
         this.currentTheme = IThemeApi.get().getThemeForScreen(this, theme);
-        return this;
-    }
-
-    public ModularScreen useNEISettings(NEISettings neiSettings) {
-        this.context.setNEISettings(neiSettings);
         return this;
     }
 

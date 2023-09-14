@@ -6,6 +6,7 @@ import com.cleanroommc.modularui.screen.GuiScreenWrapper;
 import com.cleanroommc.modularui.screen.ModularContainer;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.ModularScreen;
+import com.cleanroommc.modularui.screen.NEISettings;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.IGuiHandler;
@@ -46,7 +47,7 @@ public final class GuiManager implements IGuiHandler {
         GuiInfo info = this.guiInfos.get(ID);
         if (info == null) return null;
         GuiSyncManager guiSyncManager = new GuiSyncManager(player);
-        info.createCommonGui(new GuiCreationContext(player, world, x, y, z), guiSyncManager);
+        info.createCommonGui(new GuiCreationContext(player, world, x, y, z, new NEISettings()), guiSyncManager);
         return new ModularContainer(guiSyncManager);
     }
 
@@ -56,8 +57,10 @@ public final class GuiManager implements IGuiHandler {
         GuiInfo info = this.guiInfos.get(ID);
         if (info == null) return null;
         GuiSyncManager guiSyncManager = new GuiSyncManager(player);
-        GuiCreationContext context = new GuiCreationContext(player, world, x, y, z);
+        GuiCreationContext context = new GuiCreationContext(player, world, x, y, z, new NEISettings());
         ModularPanel panel = info.createCommonGui(context, guiSyncManager);
-        return new GuiScreenWrapper(new ModularContainer(guiSyncManager), info.createClientGui(context, panel));
+        ModularScreen modularScreen = info.createClientGui(context, panel);
+        modularScreen.getContext().setNEISettings(context.getNEISettings());
+        return new GuiScreenWrapper(new ModularContainer(guiSyncManager), modularScreen);
     }
 }
