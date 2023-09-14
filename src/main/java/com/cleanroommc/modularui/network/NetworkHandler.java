@@ -2,6 +2,7 @@ package com.cleanroommc.modularui.network;
 
 import com.cleanroommc.modularui.Tags;
 import com.cleanroommc.modularui.network.packets.PacketSyncHandler;
+import com.cleanroommc.modularui.network.packets.SClipboard;
 import com.cleanroommc.modularui.network.packets.SyncConfig;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
@@ -18,6 +19,7 @@ public class NetworkHandler {
     private static int packetId = 0;
 
     public static void init() {
+        registerS2C(SClipboard.class);
         registerS2C(PacketSyncHandler.class);
         registerC2S(PacketSyncHandler.class);
         registerC2S(SyncConfig.class);

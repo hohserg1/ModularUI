@@ -5,12 +5,14 @@ import com.cleanroommc.modularui.manager.GuiInfos;
 import com.cleanroommc.modularui.manager.GuiManager;
 import com.cleanroommc.modularui.network.NetworkHandler;
 import com.cleanroommc.modularui.screen.ModularContainer;
+import com.cleanroommc.modularui.test.ItemEditorGui;
 import com.cleanroommc.modularui.test.TestBlock;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import cpw.mods.fml.client.event.ConfigChangedEvent;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;
@@ -38,6 +40,10 @@ public class CommonProxy {
     }
 
     public void postInit(FMLPostInitializationEvent event) {}
+
+    public void onServerLoad(FMLServerStartingEvent event) {
+        event.registerServerCommand(new ItemEditorGui.Command());
+    }
 
     @SubscribeEvent
     public void onConfigChange(ConfigChangedEvent.OnConfigChangedEvent event) {
