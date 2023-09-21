@@ -1,6 +1,6 @@
 package com.cleanroommc.modularui.test;
 
-import com.cleanroommc.modularui.holoui.HoloUI;
+import com.cleanroommc.modularui.manager.GuiManager;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.init.Items;
@@ -14,10 +14,11 @@ public class EventHandler {
         ItemStack heldItem = event.entityPlayer.getHeldItem();
         if (event.entityPlayer.getEntityWorld().isRemote && heldItem != null && heldItem.getItem() == Items.diamond) {
             //GuiManager.openClientUI(Minecraft.getMinecraft().player, new TestGui());
-            HoloUI.builder()
+            /*HoloUI.builder()
                     .inFrontOf(Minecraft.getMinecraft().thePlayer, 5, false)
                     .screenScale(0.5f)
-                    .open(new TestGui());
+                    .open(new TestGui());*/
+            GuiManager.openClientUI(Minecraft.getMinecraft().thePlayer, new ResizerTest());
         }
     }
 }

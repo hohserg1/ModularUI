@@ -1,7 +1,7 @@
 package com.cleanroommc.modularui.drawable;
 
 import com.cleanroommc.modularui.Tags;
-import com.cleanroommc.modularui.widget.sizer.GuiAxis;
+import com.cleanroommc.modularui.api.GuiAxis;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 

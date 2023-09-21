@@ -89,7 +89,7 @@ public class TestTile extends TileEntity implements IGuiHolder {
         panel.flex()                        // returns object which is responsible for sizing
                 .size(176, 220)       // set a static size for the main panel
                 .align(Alignment.Center);    // center the panel in the screen
-        panel.bindPlayerInventory()
+        panel
                 .child(new Row()
                         .debugName("Tab row")
                         .coverChildren()
@@ -108,12 +108,12 @@ public class TestTile extends TileEntity implements IGuiHolder {
                         .addPage(new ParentWidget<>()
                                 .debugName("page 1 parent")
                                 .sizeRel(1f, 1f)
-                                .child(SlotGroupWidget.playerInventory())
+                                .padding(7)
                                 .child(new Row()
                                         .debugName("buttons, slots and more tests")
                                         .height(137)
                                         .coverChildrenWidth()
-                                        .padding(7)
+                                        //.padding(7)
                                         .child(new Column()
                                                 .debugName("buttons and slots test")
                                                 .coverChildren()
@@ -187,9 +187,10 @@ public class TestTile extends TileEntity implements IGuiHolder {
                                         )))
                         .addPage(new Column()
                                         .debugName("Slots test page")
-                                        //.coverChildren()
+                                        .coverChildren()
                                         .padding(7)
-                                        .child(SlotGroupWidget.playerInventory())
+                                        .alignX(0.5f)
+                                        //.child(SlotGroupWidget.playerInventory().left(0))
                                         .child(SlotGroupWidget.builder()
                                                 .matrix("III", "III", "III")
                                                 .key('I', index -> {
@@ -227,7 +228,7 @@ public class TestTile extends TileEntity implements IGuiHolder {
                                 .debugName("page 3 parent")
                                 .sizeRel(1f, 1f)
                                 .padding(7)
-                                .child(SlotGroupWidget.playerInventory())
+                                //.child(SlotGroupWidget.playerInventory())
                                 .child(new SliderWidget()
                                         .widthRel(1f).height(16)
                                         .top(7)
@@ -301,7 +302,8 @@ public class TestTile extends TileEntity implements IGuiHolder {
                                         .addChoice(menu -> currentDropdownIndex = menu.getSelectedIndex(), "Help2")
                                         .size(60, 16)
                                         .syncHandler("drop_down_index")
-                                        .setSelectedIndex(currentDropdownIndex))));
+                                        .setSelectedIndex(currentDropdownIndex))))
+                .bindPlayerInventory();
         /*panel.child(new ButtonWidget<>()
                         .flex(flex -> flex.size(60, 20)
                                 .top(7)
