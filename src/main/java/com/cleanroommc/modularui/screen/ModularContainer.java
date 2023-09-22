@@ -144,14 +144,12 @@ public class ModularContainer extends Container {
         return null;
     }
 
-    // TODO: Don't insert to slot when a parent is disabled
     protected ItemStack transferItem(ModularSlot fromSlot, ItemStack stack) {
         SlotGroup fromSlotGroup = Objects.requireNonNull(fromSlot.getSlotGroup());
         for (ModularSlot slot : this.shiftClickSlots) {
             SlotGroup slotGroup = Objects.requireNonNull(slot.getSlotGroup());
-            boolean valid = slotGroup != null && slotGroup != fromSlotGroup;
             // func_111238_b: isEnabled
-            if (valid && slot.func_111238_b() && slot.isItemValid(stack)) {
+            if (slotGroup != fromSlotGroup && slot.func_111238_b() && slot.isItemValid(stack)) {
                 ItemStack itemstack = slot.getStack();
                 if (slot.isPhantom()) {
                     if (itemstack == null || (ItemHandlerHelper.canItemStacksStack(stack, itemstack) && itemstack.stackSize < slot.getSlotStackLimit())) {
@@ -180,10 +178,9 @@ public class ModularContainer extends Container {
         }
         for (ModularSlot slot : this.shiftClickSlots) {
             ItemStack itemstack = slot.getStack();
-            SlotGroup slotGroup = slot.getSlotGroup();
-            boolean valid = slotGroup != null && slotGroup != fromSlotGroup;
+            SlotGroup slotGroup = Objects.requireNonNull(slot.getSlotGroup());
             // func_111238_b: isEnabled
-            if (valid && slot.func_111238_b() && itemstack == null && slot.isItemValid(stack)) {
+            if (slotGroup != fromSlotGroup && slot.func_111238_b() && itemstack == null && slot.isItemValid(stack)) {
                 if (stack.stackSize > slot.getSlotStackLimit()) {
                     slot.putStack(stack.splitStack(slot.getSlotStackLimit()));
                 } else {

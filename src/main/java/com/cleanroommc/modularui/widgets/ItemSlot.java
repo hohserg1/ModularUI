@@ -68,6 +68,14 @@ public class ItemSlot extends Widget<ItemSlot> implements IVanillaSlot, Interact
     }
 
     @Override
+    public void onUpdate() {
+        boolean shouldBeEnabled = areAncestorsEnabled();
+        if (shouldBeEnabled != getSlot().func_111238_b()) {
+            this.syncHandler.setEnabled(shouldBeEnabled, true);
+        }
+    }
+
+    @Override
     public void draw(GuiContext context) {
         if (this.syncHandler == null) return;
         RenderHelper.enableGUIStandardItemLighting();
