@@ -29,6 +29,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 public class Widget<W extends Widget<W>> implements IWidget, IPositioned<W>, ITooltip<W>, ISynced<W> {
 
@@ -55,6 +57,7 @@ public class Widget<W extends Widget<W>> implements IWidget, IPositioned<W>, ITo
     @Nullable private Tooltip tooltip;
     // listener
     private List<IGuiAction> guiActionListeners;
+    private Consumer<W> onUpdateListener;
 
     @ApiStatus.Internal
     @Override
@@ -171,6 +174,9 @@ public class Widget<W extends Widget<W>> implements IWidget, IPositioned<W>, ITo
 
     @Override
     public void onUpdate() {
+        if (this.onUpdateListener != null) {
+            this.onUpdateListener.accept(getThis());
+        }
     }
 
     @Override
@@ -430,6 +436,35 @@ public class Widget<W extends Widget<W>> implements IWidget, IPositioned<W>, ITo
      */
     protected void setSyncHandler(@Nullable SyncHandler syncHandler) {
         this.syncHandler = syncHandler;
+    }
+
+    public W onUpdateListener(Consumer<W> listener) {
+        return onUpdateListener(listener, false);
+    }
+
+    public W onUpdateListener(Consumer<W> listener, boolean merge) {
+        if (merge && this.onUpdateListener != null) {
+            if (listener != null) {
+                this.onUpdateListener = w -> {
+                    this.onUpdateListener.accept(w);
+                    listener.accept(w);
+                };
+            }
+        } else {
+            this.onUpdateListener = listener;
+        }
+        return getThis();
+    }
+
+    public W setEnabledIf(Predicate<W> condition) {
+        return onUpdateListener(w -> {
+            setEnabled(condition.test(w));
+        }, true);
+    }
+
+    @Nullable
+    public Consumer<W> getOnUpdateListener() {
+        return onUpdateListener;
     }
 
     @Override
