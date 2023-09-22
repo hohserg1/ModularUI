@@ -1,12 +1,10 @@
 package com.cleanroommc.modularui.utils;
 
 import com.google.common.collect.ForwardingList;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -62,6 +60,8 @@ public interface ObjectList<V> extends List<V>, Comparable<List<? extends V>> {
 
     @Nullable
     V pollLast();
+
+    void trim();
 
     class ObjectArrayList<V> extends ForwardingList<V> implements ObjectList<V> {
 
@@ -148,7 +148,13 @@ public interface ObjectList<V> extends List<V>, Comparable<List<? extends V>> {
 
         @Override
         public int compareTo(@NotNull List<? extends V> o) {
+            // I don't think this will be used
             throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void trim() {
+            // Kept just for preserving consistency with 1.12.2 code. It looks to be not that important anyway.
         }
     }
 }
