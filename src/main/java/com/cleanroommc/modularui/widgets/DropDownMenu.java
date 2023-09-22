@@ -154,7 +154,7 @@ public class DropDownMenu extends SingleChildWidget<DropDownMenu> implements Int
         }
 
         @Override
-        public void onFrameUpdate() {
+        public void onUpdate() {
             if (!open) {
                 setEnabled(false);
             }

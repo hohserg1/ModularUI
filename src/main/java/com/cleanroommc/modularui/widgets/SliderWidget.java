@@ -118,7 +118,7 @@ public class SliderWidget extends Widget<SliderWidget> implements Interactable {
     }
 
     @Override
-    public void onFrameUpdate() {
+    public void onUpdate() {
         if (this.dragging) return;
         double val = getSliderValue();
         if (this.cache != val) {

@@ -33,6 +33,7 @@ import javax.annotation.Nonnegative;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -86,6 +87,7 @@ public class ModularScreen {
     public final GuiContext context;
     private final Area screenArea = new Area();
     private final Map<Class<?>, List<IGuiAction>> guiActionListeners = new HashMap<>();
+    private final Map<IWidget, Runnable> frameUpdates = new HashMap<>();
 
     private ITheme currentTheme;
     private GuiScreenWrapper screenWrapper;
@@ -211,13 +213,21 @@ public class ModularScreen {
     @MustBeInvokedByOverriders
     public void onUpdate() {
         this.context.tick();
+        for (ModularPanel panel : this.windowManager.getOpenPanels()) {
+            WidgetTree.onUpdate(panel);
+        }
     }
 
     @MustBeInvokedByOverriders
     public void onFrameUpdate() {
         this.windowManager.clearQueue();
-        for (ModularPanel panel : this.windowManager.getOpenPanels()) {
-            WidgetTree.onFrameUpdate(panel);
+        for (Iterator<Map.Entry<IWidget, Runnable>> iterator = this.frameUpdates.entrySet().iterator(); iterator.hasNext();) {
+            Map.Entry<IWidget, Runnable> entry = iterator.next();
+            if (!entry.getKey().isValid()) {
+                iterator.remove();
+                continue;
+            }
+            entry.getValue().run();
         }
         this.context.onFrameUpdate();
     }
@@ -455,6 +465,26 @@ public class ModularScreen {
     @ApiStatus.Internal
     public void removeGuiActionListener(IGuiAction action) {
         this.guiActionListeners.getOrDefault(getGuiActionClass(action), Collections.emptyList()).remove(action);
+    }
+
+    public void registerFrameUpdateListener(IWidget widget, Runnable runnable) {
+        registerFrameUpdateListener(widget, runnable, true);
+    }
+
+    public void registerFrameUpdateListener(IWidget widget, Runnable runnable, boolean merge) {
+        Objects.requireNonNull(runnable);
+        if (merge) {
+            this.frameUpdates.merge(widget, runnable, (old, now) -> () -> {
+                old.run();
+                now.run();
+            });
+        } else {
+            this.frameUpdates.put(widget, runnable);
+        }
+    }
+
+    public void removeFrameUpdateListener(IWidget widget) {
+        this.frameUpdates.remove(widget);
     }
 
     private static Class<?> getGuiActionClass(IGuiAction action) {
