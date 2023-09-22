@@ -145,7 +145,7 @@ public class ModularContainer extends Container {
     }
 
     protected ItemStack transferItem(ModularSlot fromSlot, ItemStack stack) {
-        SlotGroup fromSlotGroup = Objects.requireNonNull(fromSlot.getSlotGroup());
+        @Nullable SlotGroup fromSlotGroup = fromSlot.getSlotGroup();
         for (ModularSlot slot : this.shiftClickSlots) {
             SlotGroup slotGroup = Objects.requireNonNull(slot.getSlotGroup());
             // func_111238_b: isEnabled
