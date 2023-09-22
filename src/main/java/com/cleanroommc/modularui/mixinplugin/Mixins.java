@@ -20,7 +20,6 @@ public enum Mixins {
     SlotMixin("minecraft.SlotMixin", Phase.EARLY, Side.CLIENT, VANILLA),
 
     // Vanilla server & client
-    PacketBufferMixin("minecraft.PacketBufferMixin", Phase.EARLY, Side.BOTH, VANILLA),
     SimpleNetworkWrapperMixin("forge.SimpleNetworkWrapperMixin", Phase.EARLY, Side.BOTH, VANILLA),
 
     // Thaumcraft

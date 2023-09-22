@@ -1,8 +1,13 @@
-package com.cleanroommc.modularui.mixinplugin;
+package com.cleanroommc.modularui.core;
 
+import com.cleanroommc.modularui.mixinplugin.Mixins;
 import com.gtnewhorizon.gtnhmixins.IEarlyMixinLoader;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
+import net.minecraft.launchwrapper.Launch;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -11,8 +16,21 @@ import java.util.Set;
 
 @SuppressWarnings("unused")
 @IFMLLoadingPlugin.MCVersion("1.7.10")
-@IFMLLoadingPlugin.TransformerExclusions("com.cleanroommc.modularui.mixinplugin")
-public class ModularUIEarlyMixinLoader implements IFMLLoadingPlugin, IEarlyMixinLoader {
+@IFMLLoadingPlugin.TransformerExclusions("com.cleanroommc.modularui.core")
+public class ModularUICore implements IFMLLoadingPlugin, IEarlyMixinLoader {
+
+    public static final Logger LOGGER = LogManager.getLogger("modularui");
+    public static final boolean isDevEnv;
+
+    static {
+        boolean dev;
+        try {
+            dev = Launch.classLoader.getClassBytes("net.minecraft.world.World") != null;
+        } catch (IOException e) {
+            dev = false;
+        }
+        isDevEnv = dev;
+    }
 
     @Override
     public String getMixinConfig() {
@@ -32,7 +50,7 @@ public class ModularUIEarlyMixinLoader implements IFMLLoadingPlugin, IEarlyMixin
 
     @Override
     public String[] getASMTransformerClass() {
-        return new String[0];
+        return new String[]{"com.cleanroommc.modularui.core.ClassTransformer"};
     }
 
     @Override
