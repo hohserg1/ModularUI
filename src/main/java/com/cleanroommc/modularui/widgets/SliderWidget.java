@@ -71,8 +71,8 @@ public class SliderWidget extends Widget<SliderWidget> implements Interactable {
     }
 
     @Override
-    public void drawBackground(GuiContext context) {
-        super.drawBackground(context);
+    public void drawBackground(GuiContext context, WidgetTheme widgetTheme) {
+        super.drawBackground(context, widgetTheme);
         if (this.stopper != null && this.stopperDrawable != null && this.stopperWidth > 0 && this.stopperHeight > 0) {
             TDoubleIterator it = this.stopper.iterator();
             while (it.hasNext()) {
@@ -92,7 +92,7 @@ public class SliderWidget extends Widget<SliderWidget> implements Interactable {
     }
 
     @Override
-    public void draw(GuiContext context) {
+    public void draw(GuiContext context, WidgetTheme widgetTheme) {
         if (this.handleDrawable != null) {
             ITheme theme = getContext().getTheme();
             WidgetTheme buttonTheme = theme.getButtonTheme();

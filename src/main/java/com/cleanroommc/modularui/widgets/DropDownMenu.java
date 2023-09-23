@@ -92,14 +92,14 @@ public class DropDownMenu extends SingleChildWidget<DropDownMenu> implements Int
     }
 
     @Override
-    public void draw(GuiContext context) {
-        super.draw(context);
+    public void draw(GuiContext context, WidgetTheme widgetTheme) {
+        super.draw(context, widgetTheme);
         Area area = getArea();
         int smallerSide = Math.min(area.width, area.height);
         if (menu.getSelectedItem() != null) {
             menu.getSelectedItem().setEnabled(true);
-            menu.getSelectedItem().drawBackground(context);
-            menu.getSelectedItem().draw(context);
+            menu.getSelectedItem().drawBackground(context, widgetTheme);
+            menu.getSelectedItem().draw(context, widgetTheme);
             menu.getSelectedItem().drawForeground(context);
         } else {
             NONE.applyThemeColor(context.getTheme(), getWidgetTheme(context.getTheme()));

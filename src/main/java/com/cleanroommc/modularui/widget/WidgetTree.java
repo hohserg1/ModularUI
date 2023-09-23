@@ -8,6 +8,7 @@ import com.cleanroommc.modularui.api.widget.ISynced;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
+import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.utils.ObjectList;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import org.jetbrains.annotations.ApiStatus;
@@ -131,8 +132,10 @@ public class WidgetTree {
             GL11.glColorMask(true, true, true, true);
             GL11.glColor4f(1f, 1f, 1f, alpha);
             GL11.glEnable(GL11.GL_BLEND);
-            parent.drawBackground(context);
-            parent.draw(context);
+            WidgetTheme widgetTheme = parent.getWidgetTheme(context.getTheme());
+            parent.drawBackground(context, widgetTheme);
+            parent.draw(context, widgetTheme);
+            parent.drawOverlay(context, widgetTheme);
         }
 
         if (viewport != null) {
