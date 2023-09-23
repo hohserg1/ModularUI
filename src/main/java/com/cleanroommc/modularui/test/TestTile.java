@@ -3,7 +3,6 @@ package com.cleanroommc.modularui.test;
 import com.cleanroommc.modularui.ModularUI;
 import com.cleanroommc.modularui.api.IGuiHolder;
 import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.api.layout.CrossAxisAlignment;
 import com.cleanroommc.modularui.drawable.AnimatedText;
 import com.cleanroommc.modularui.drawable.Circle;
 import com.cleanroommc.modularui.drawable.GuiTextures;
@@ -120,7 +119,7 @@ public class TestTile extends TileEntity implements IGuiHolder {
                                                 .marginRight(8)
                                                 //.flex(flex -> flex.height(0.5f))
                                                 //.widthRel(0.5f)
-                                                .crossAxisAlignment(CrossAxisAlignment.CENTER)
+                                                .crossAxisAlignment(Alignment.CrossAxis.CENTER)
                                                 .child(new ButtonWidget<>()
                                                         .size(60, 18)
                                                         .overlay(IKey.dynamic(() -> "Button " + this.val)))
@@ -162,7 +161,7 @@ public class TestTile extends TileEntity implements IGuiHolder {
                                                 .debugName("button and slots test 2")
                                                 .coverChildren()
                                                 //.widthRel(0.5f)
-                                                .crossAxisAlignment(CrossAxisAlignment.CENTER)
+                                                .crossAxisAlignment(Alignment.CrossAxis.CENTER)
                                                 .child(new ProgressWidget()
                                                         .progress(() -> this.progress / (double) this.duration)
                                                         .texture(GuiTextures.PROGRESS_ARROW, 20))
@@ -255,7 +254,7 @@ public class TestTile extends TileEntity implements IGuiHolder {
                                         .child(new Row()
                                                 .debugName("bogo test config 1")
                                                 .widthRel(1f).coverChildrenHeight()
-                                                .crossAxisAlignment(CrossAxisAlignment.CENTER)
+                                                .crossAxisAlignment(Alignment.CrossAxis.CENTER)
                                                 .child(new CycleButtonWidget()
                                                         .value(new BoolValue(false))
                                                         .texture(GuiTextures.CHECK_BOX)
