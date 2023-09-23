@@ -17,6 +17,7 @@ public enum Mixins {
     GuiContainerAccessor("minecraft.GuiContainerAccessor", Phase.EARLY, Side.CLIENT, VANILLA),
     GuiContainerMixin("minecraft.GuiContainerMixin", Phase.EARLY, Side.CLIENT, VANILLA),
     MinecraftMixin("minecraft.MinecraftMixin", Phase.EARLY, Side.CLIENT, VANILLA),
+    SimpleResourceAccessor("minecraft.SimpleResourceAccessor", Phase.EARLY, Side.CLIENT, VANILLA),
     SlotMixin("minecraft.SlotMixin", Phase.EARLY, Side.CLIENT, VANILLA),
 
     // Vanilla server & client

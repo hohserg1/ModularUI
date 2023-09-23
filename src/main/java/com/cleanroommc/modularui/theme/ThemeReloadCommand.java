@@ -24,6 +24,7 @@ public class ThemeReloadCommand extends CommandBase {
     @Override
     public void processCommand(@NotNull ICommandSender sender, String @NotNull [] args) {
         try {
+            sender.addChatMessage(new ChatComponentText("Reloading ModularUI themes..."));
             ThemeManager.reload();
             sender.addChatMessage(new ChatComponentText(EnumChatFormatting.GREEN + "Successfully reloaded themes"));
         } catch (Exception e) {
