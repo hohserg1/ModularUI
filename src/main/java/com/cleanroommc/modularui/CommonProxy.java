@@ -26,7 +26,7 @@ public class CommonProxy {
         NetworkRegistry.INSTANCE.registerGuiHandler(Tags.MODID, GuiManager.INSTANCE);
         GuiInfos.init();
 
-        if (ModularUI.isDevEnv || ModularUIConfig.forceEnableDebugBlock) {
+        if (ModularUIConfig.enableTestGuis) {
             MinecraftForge.EVENT_BUS.register(TestBlock.class);
             TestBlock.preInit();
         }

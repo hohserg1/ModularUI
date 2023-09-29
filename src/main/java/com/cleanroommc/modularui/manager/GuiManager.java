@@ -16,6 +16,7 @@ import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 public final class GuiManager implements IGuiHandler {
@@ -23,6 +24,8 @@ public final class GuiManager implements IGuiHandler {
     public static final GuiManager INSTANCE = new GuiManager();
 
     private final TIntObjectMap<GuiInfo> guiInfos = new TIntObjectHashMap<>();
+    private static ModularScreen queuedClientScreen;
+    private static NEISettings queuedJeiSettings;
 
     private GuiManager() {
     }
@@ -42,9 +45,21 @@ public final class GuiManager implements IGuiHandler {
             ModularUI.LOGGER.info("Tried opening client ui on server!");
             return;
         }
-        screen.getContext().setNEISettings(jeiSettings);
-        GuiScreenWrapper screenWrapper = new GuiScreenWrapper(new ModularContainer(), screen);
-        FMLCommonHandler.instance().showGuiScreen(screenWrapper);
+        // we need to queue the screen, because we might break the current gui
+        queuedClientScreen = screen;
+        queuedJeiSettings = jeiSettings;
+    }
+
+    @SideOnly(Side.CLIENT)
+    @ApiStatus.Internal
+    public static void checkQueuedScreen() {
+        if (queuedClientScreen != null) {
+            queuedClientScreen.getContext().setNEISettings(queuedJeiSettings);
+            GuiScreenWrapper screenWrapper = new GuiScreenWrapper(new ModularContainer(), queuedClientScreen);
+            FMLCommonHandler.instance().showGuiScreen(screenWrapper);
+            queuedClientScreen = null;
+            queuedJeiSettings = null;
+        }
     }
 
     @Nullable

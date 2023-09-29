@@ -1,6 +1,7 @@
 package com.cleanroommc.modularui;
 
 import com.cleanroommc.modularui.drawable.Stencil;
+import com.cleanroommc.modularui.manager.GuiManager;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
@@ -16,5 +17,12 @@ public class ClientEventHandler {
             GL11.glEnable(GL11.GL_STENCIL_TEST);
         }
         Stencil.reset();
+    }
+
+    @SubscribeEvent
+    public static void onClientTick(TickEvent.ClientTickEvent event) {
+        if (event.phase == TickEvent.Phase.START) {
+            GuiManager.checkQueuedScreen();
+        }
     }
 }

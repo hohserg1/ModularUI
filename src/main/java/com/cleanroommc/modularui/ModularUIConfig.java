@@ -19,7 +19,7 @@ public class ModularUIConfig {
     public static boolean useDarkThemeByDefault = false;
 
     public static boolean guiDebugMode = ModularUI.isDevEnv;
-    public static boolean forceEnableDebugBlock = false;
+    public static boolean enableTestGuis = ModularUI.isDevEnv;
 
     public static final String CATEGORY_RENDERING = "rendering";
     public static final String CATEGORY_DEBUG = "debug";
@@ -121,11 +121,13 @@ public class ModularUIConfig {
             .setLanguageKey(LANG_PREFIX + CATEGORY_DEBUG + ".guiDebugMode")
             .getBoolean();
 
-        forceEnableDebugBlock = config.get(
-                CATEGORY_DEBUG,
-                "forceEnableDebugBlock",
-                false,
-                "Add debug block even in non-dev env. Used only for testing.")
+        enableTestGuis = config.get(
+            CATEGORY_DEBUG,
+            "enableTestGuis",
+            ModularUI.isDevEnv,
+            "Enables a test block, test item with a test gui and opening a gui by right clicking a diamond."
+        )
+            .setLanguageKey(LANG_PREFIX + CATEGORY_DEBUG + ".enableTestGuis")
             .getBoolean();
 
         if (config.hasChanged()) {
