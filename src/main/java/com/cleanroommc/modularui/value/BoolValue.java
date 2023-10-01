@@ -21,8 +21,8 @@ public class BoolValue implements IBoolValue<Boolean>, IIntValue<Boolean>, IStri
     }
 
     @Override
-    public void setValue(Boolean value, boolean setSource) {
-        setBoolValue(value, setSource);
+    public void setValue(Boolean value) {
+        setBoolValue(value);
     }
 
     @Override
@@ -31,7 +31,7 @@ public class BoolValue implements IBoolValue<Boolean>, IIntValue<Boolean>, IStri
     }
 
     @Override
-    public void setBoolValue(boolean val, boolean setSource) {
+    public void setBoolValue(boolean val) {
         this.value = val;
     }
 
@@ -41,8 +41,8 @@ public class BoolValue implements IBoolValue<Boolean>, IIntValue<Boolean>, IStri
     }
 
     @Override
-    public void setStringValue(String val, boolean setSource) {
-        setBoolValue(Boolean.parseBoolean(val), setSource);
+    public void setStringValue(String val) {
+        setBoolValue(Boolean.parseBoolean(val));
     }
 
     @Override
@@ -51,8 +51,8 @@ public class BoolValue implements IBoolValue<Boolean>, IIntValue<Boolean>, IStri
     }
 
     @Override
-    public void setIntValue(int val, boolean setSource) {
-        setBoolValue(val == 1, setSource);
+    public void setIntValue(int val) {
+        setBoolValue(val == 1);
     }
 
     public static class Dynamic implements IBoolValue<Boolean>, IIntValue<Boolean>, IStringValue<Boolean> {
@@ -71,7 +71,7 @@ public class BoolValue implements IBoolValue<Boolean>, IIntValue<Boolean>, IStri
         }
 
         @Override
-        public void setBoolValue(boolean val, boolean setSource) {
+        public void setBoolValue(boolean val) {
             this.setter.accept(val);
         }
 
@@ -81,8 +81,8 @@ public class BoolValue implements IBoolValue<Boolean>, IIntValue<Boolean>, IStri
         }
 
         @Override
-        public void setStringValue(String val, boolean setSource) {
-            setBoolValue(Boolean.parseBoolean(val), setSource);
+        public void setStringValue(String val) {
+            setBoolValue(Boolean.parseBoolean(val));
         }
 
         @Override
@@ -91,8 +91,8 @@ public class BoolValue implements IBoolValue<Boolean>, IIntValue<Boolean>, IStri
         }
 
         @Override
-        public void setValue(Boolean value, boolean setSource) {
-            setBoolValue(value, setSource);
+        public void setValue(Boolean value) {
+            setBoolValue(value);
         }
 
         @Override
@@ -101,8 +101,8 @@ public class BoolValue implements IBoolValue<Boolean>, IIntValue<Boolean>, IStri
         }
 
         @Override
-        public void setIntValue(int val, boolean setSource) {
-            setBoolValue(val == 1, setSource);
+        public void setIntValue(int val) {
+            setBoolValue(val == 1);
         }
     }
 }
