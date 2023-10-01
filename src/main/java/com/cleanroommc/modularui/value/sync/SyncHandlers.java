@@ -1,6 +1,7 @@
 package com.cleanroommc.modularui.value.sync;
 
 import com.cleanroommc.modularui.future.IItemHandlerModifiable;
+import com.cleanroommc.modularui.utils.BooleanConsumer;
 import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import net.minecraftforge.fluids.IFluidTank;
 
@@ -27,7 +28,7 @@ public class SyncHandlers {
         return new LongSyncValue(getter, setter);
     }
 
-    public static BooleanSyncValue bool(BooleanSupplier getter, Consumer<Boolean> setter) {
+    public static BooleanSyncValue bool(BooleanSupplier getter, BooleanConsumer setter) {
         return new BooleanSyncValue(getter, setter);
     }
 
