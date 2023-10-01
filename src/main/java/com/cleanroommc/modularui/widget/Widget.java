@@ -84,7 +84,7 @@ public class Widget<W extends Widget<W>> implements IWidget, IPositioned<W>, ITo
         }
         this.valid = true;
         if (!getScreen().isClientOnly()) {
-            initialiseSyncHandler(getScreen().getSyncHandler());
+            initialiseSyncHandler(getScreen().getSyncManager());
         }
         applyTheme(this.context.getTheme());
         onInit();
@@ -128,6 +128,9 @@ public class Widget<W extends Widget<W>> implements IWidget, IPositioned<W>, ITo
             for (IGuiAction action : this.guiActionListeners) {
                 this.context.screen.removeGuiActionListener(action);
             }
+        }
+        if (this.syncHandler != null) {
+            getScreen().getSyncManager().disposeSyncHandler(this.syncHandler);
         }
         if (!(this instanceof ModularPanel)) {
             this.panel = null;
