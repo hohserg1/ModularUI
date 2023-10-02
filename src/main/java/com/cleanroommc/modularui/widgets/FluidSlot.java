@@ -50,7 +50,7 @@ public class FluidSlot extends Widget<FluidSlot> implements Interactable, NEIDra
                 .endDefaultMode();
 
         tooltipBuilder(tooltip -> {
-            tooltip.setHasSpaceAfterFirstLine(true);
+            tooltip.setHasTitleMargin(true);
             IFluidTank fluidTank = getFluidTank();
             FluidStack fluid = this.syncHandler.getValue();
             if (this.syncHandler.isPhantom()) {

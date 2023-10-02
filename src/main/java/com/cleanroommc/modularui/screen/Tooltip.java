@@ -40,8 +40,8 @@ public class Tooltip {
     private int textColor = Color.WHITE.normal;
     private float scale = 1.0f;
     private Alignment alignment = Alignment.TopLeft;
-    private boolean updateTooltipEveryTick = false;
-    private boolean hasSpaceAfterFirstLine = false;
+    private boolean autoUpdate = false;
+    private boolean hasTitleMargin = false;
     private int linePadding = 1;
 
     private boolean dirty = true;
@@ -56,13 +56,13 @@ public class Tooltip {
         }
         this.lines.addAll(additionalLines);
         this.additionalLines = additionalLines;
-        if (this.hasSpaceAfterFirstLine && this.lines.size() > 1) {
+        if (this.hasTitleMargin && this.lines.size() > 1) {
             this.lines.add(1, Icon.EMPTY_2PX);
         }
     }
 
     public void draw(GuiContext context) {
-        if (this.updateTooltipEveryTick) {
+        if (this.autoUpdate) {
             markDirty();
         }
         if (isEmpty()) return;
@@ -250,6 +250,14 @@ public class Tooltip {
         return this.tooltipBuilder;
     }
 
+    public boolean isAutoUpdate() {
+        return this.autoUpdate;
+    }
+
+    public boolean hasTitleMargin() {
+        return this.hasTitleMargin;
+    }
+
     public Tooltip excludeArea(Area area) {
         this.excludeArea = area;
         return this;
@@ -305,13 +313,13 @@ public class Tooltip {
         return this;
     }
 
-    public Tooltip setUpdateTooltipEveryTick(boolean update) {
-        this.updateTooltipEveryTick = update;
+    public Tooltip setAutoUpdate(boolean update) {
+        this.autoUpdate = update;
         return this;
     }
 
-    public Tooltip setHasSpaceAfterFirstLine(boolean hasSpaceAfterFirstLine) {
-        this.hasSpaceAfterFirstLine = hasSpaceAfterFirstLine;
+    public Tooltip setHasTitleMargin(boolean hasTitleMargin) {
+        this.hasTitleMargin = hasTitleMargin;
         return this;
     }
 
