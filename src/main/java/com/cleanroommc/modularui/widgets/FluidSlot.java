@@ -35,6 +35,9 @@ import static com.cleanroommc.modularui.ModularUI.isGT5ULoaded;
 
 public class FluidSlot extends Widget<FluidSlot> implements Interactable, NEIDragAndDropHandler, NEIIngredientProvider {
 
+    private static final String UNIT_BUCKET = "B";
+    private static final String UNIT_LITER = "L";
+
     private static final IFluidTank EMPTY = new FluidTank(0);
 
     private final TextRenderer textRenderer = new TextRenderer();
@@ -48,16 +51,15 @@ public class FluidSlot extends Widget<FluidSlot> implements Interactable, NEIDra
         flex().startDefaultMode()
                 .size(18, 18)
                 .endDefaultMode();
-
+        tooltip().setAutoUpdate(true).setHasTitleMargin(true);
         tooltipBuilder(tooltip -> {
-            tooltip.setHasTitleMargin(true);
             IFluidTank fluidTank = getFluidTank();
             FluidStack fluid = this.syncHandler.getValue();
             if (this.syncHandler.isPhantom()) {
                 if (fluid != null) {
                     tooltip.addLine(IKey.str(fluid.getLocalizedName()));
                     if (this.syncHandler.controlsAmount()) {
-                        tooltip.addLine(IKey.format("modularui.fluid.phantom.amount", fluid.amount));
+                        tooltip.addLine(IKey.format("modularui.fluid.phantom.amount", formatFluidAmount(fluid.amount), getBaseUnit()));
                     }
                 } else {
                     tooltip.addLine(IKey.format("modularui.fluid.empty"));
@@ -68,7 +70,7 @@ public class FluidSlot extends Widget<FluidSlot> implements Interactable, NEIDra
             } else {
                 if (fluid != null) {
                     tooltip.addLine(IKey.str(fluid.getLocalizedName()));
-                    tooltip.addLine(IKey.format("modularui.fluid.amount", fluid.amount, fluidTank.getCapacity()));
+                    tooltip.addLine(IKey.format("modularui.fluid.amount", formatFluidAmount(fluid.amount), formatFluidAmount(fluidTank.getCapacity()), getBaseUnit()));
                     addAdditionalFluidInfo(tooltip, fluid);
                 } else {
                     tooltip.addLine(IKey.format("modularui.fluid.empty"));
@@ -92,6 +94,19 @@ public class FluidSlot extends Widget<FluidSlot> implements Interactable, NEIDra
     }
 
     public void addAdditionalFluidInfo(Tooltip tooltip, FluidStack fluidStack) {
+    }
+
+    public String formatFluidAmount(double amount) {
+        NumberFormat.FORMAT.setMaximumFractionDigits(3);
+        return NumberFormat.FORMAT.format(getBaseUnitAmount(amount));
+    }
+
+    protected double getBaseUnitAmount(double amount) {
+        return amount / 1000;
+    }
+
+    protected String getBaseUnit() {
+        return UNIT_BUCKET;
     }
 
     @Override
@@ -128,7 +143,7 @@ public class FluidSlot extends Widget<FluidSlot> implements Interactable, NEIDra
             this.overlayTexture.draw(context, getArea());
         }
         if (content != null && this.syncHandler.controlsAmount()) {
-            String s = NumberFormat.format(content.amount);
+            String s = NumberFormat.formatWithMaxDigits(getBaseUnitAmount(content.amount)) + getBaseUnit();
             this.textRenderer.setAlignment(Alignment.CenterRight, getArea().width - this.contentOffsetX - 1f);
             this.textRenderer.setPos((int) (this.contentOffsetX + 0.5f), (int) (getArea().height - 5.5f));
             this.textRenderer.draw(s);
