@@ -1,5 +1,6 @@
 package com.cleanroommc.modularui.drawable;
 
+import com.cleanroommc.modularui.ModularUI;
 import com.cleanroommc.modularui.Tags;
 import com.cleanroommc.modularui.api.GuiAxis;
 import net.minecraft.util.ResourceLocation;
@@ -183,7 +184,9 @@ public class GuiTextures {
             .imageSize(18, 54)
             .build();
 
-    public static final UITexture CHECK_BOX = UITexture.fullImage(Tags.MODID, "gui/widgets/toggle_config", false);
+    public static final UITexture CHECK_BOX = UITexture.fullImage(Tags.MODID, "gui/widgets/toggle_config");
+    public static final UITexture CROSS = UITexture.fullImage(Tags.MODID, "gui/icons/cross");
+    public static final UITexture CROSS_TINY = UITexture.fullImage(Tags.MODID, "gui/icons/cross_tiny");
 
     public static final TabTexture TAB_TOP = TabTexture.of(UITexture.fullImage(Tags.MODID, "gui/tab/tabs_top", true), GuiAxis.Y, false, 28, 32, 4);
     public static final TabTexture TAB_BOTTOM = TabTexture.of(UITexture.fullImage(Tags.MODID, "gui/tab/tabs_bottom", true), GuiAxis.Y, true, 28, 32, 4);

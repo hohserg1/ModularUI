@@ -14,14 +14,12 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.util.ResourceLocation;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class UITexture implements IDrawable {
 
-    public static final Map<ResourceLocation, UITexture> JSON_TEXTURES = new HashMap<>();
-
     public static final UITexture DEFAULT = fullImage("gui/options_background", true);
+
+    private static final String TEXTURES_PREFIX = "textures/";
+    private static final String PNG_SUFFIX = ".png";
 
     public final ResourceLocation location;
     public final float u0, v0, u1, v1;
@@ -39,11 +37,12 @@ public class UITexture implements IDrawable {
      */
     public UITexture(ResourceLocation location, float u0, float v0, float u1, float v1, boolean canApplyTheme) {
         this.canApplyTheme = canApplyTheme;
-        if (!location.getResourcePath().endsWith(".png")) {
-            location = new ResourceLocation(location.getResourceDomain(), location.getResourcePath() + ".png");
-        }
-        if (!location.getResourcePath().startsWith("textures/")) {
-            location = new ResourceLocation(location.getResourceDomain(), "textures/" + location.getResourcePath());
+        boolean png = !location.getResourcePath().endsWith(".png");
+        boolean textures = !location.getResourcePath().startsWith("textures/");
+        if (png || textures) {
+            String path = location.getResourcePath();
+            path = png ? (textures ? TEXTURES_PREFIX + path + PNG_SUFFIX : path + PNG_SUFFIX) : TEXTURES_PREFIX + path;
+            location = new ResourceLocation(location.getResourceDomain(), path);
         }
         this.location = location;
         this.u0 = u0;
@@ -398,7 +397,8 @@ public class UITexture implements IDrawable {
                 this.mode = 2;
             }
             if (this.mode == 2) {
-                if (this.u0 < 0 || this.v0 < 0 || this.u1 > 1 || this.v1 > 1) throw new IllegalArgumentException("UV values must be 0 - 1");
+                if (this.u0 < 0 || this.v0 < 0 || this.u1 > 1 || this.v1 > 1)
+                    throw new IllegalArgumentException("UV values must be 0 - 1");
                 if (this.borderX > 0 || this.borderY > 0) {
                     return new AdaptableUITexture(this.location, this.u0, this.v0, this.u1, this.v1, this.canApplyTheme, this.iw, this.ih, this.borderX, this.borderY, this.tiled);
                 }
