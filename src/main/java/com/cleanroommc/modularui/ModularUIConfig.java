@@ -1,8 +1,6 @@
 package com.cleanroommc.modularui;
 
-import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.Tooltip;
-import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.config.Configuration;
 
 import java.io.File;
@@ -14,7 +12,6 @@ public class ModularUIConfig {
     public static int defaultScrollSpeed = 30;
     public static boolean smoothProgressBar = true;
     public static int panelOpenCloseAnimationTime = 0;
-    public static boolean placeTooltipNextToPanelByDefault = true;
     public static Tooltip.Pos tooltipPos = Tooltip.Pos.NEXT_TO_MOUSE;
     public static boolean useDarkThemeByDefault = false;
 
@@ -73,15 +70,6 @@ public class ModularUIConfig {
             .setLanguageKey(LANG_PREFIX + CATEGORY_RENDERING + ".panelOpenCloseAnimationTime")
             .getInt();
 
-        placeTooltipNextToPanelByDefault = config.get(
-            CATEGORY_RENDERING,
-            "placeTooltipNextToPanelByDefault",
-            true,
-            "If tooltips should be placed next to a widget's panel or the widget by default."
-        )
-            .setLanguageKey(LANG_PREFIX + CATEGORY_RENDERING + ".placeTooltipNextToPanelByDefault")
-            .getBoolean();
-
         tooltipPos = Tooltip.Pos.fromString(
             config.get(
                 CATEGORY_RENDERING,
@@ -133,9 +121,5 @@ public class ModularUIConfig {
         if (config.hasChanged()) {
             config.save();
         }
-    }
-
-    public static boolean placeTooltipNextToPanel() {
-        return NetworkUtils.isDedicatedClient() && placeTooltipNextToPanelByDefault && Minecraft.getMinecraft().gameSettings.guiScale > 0;
     }
 }
