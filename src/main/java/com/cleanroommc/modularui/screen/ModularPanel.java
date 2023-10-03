@@ -561,6 +561,10 @@ public class ModularPanel extends ParentWidget<ModularPanel> implements IViewpor
         return this.alpha;
     }
 
+    public boolean isMainPanel() {
+        return getScreen().getMainPanel() == this;
+    }
+
     public ModularPanel bindPlayerInventory() {
         return child(SlotGroupWidget.playerInventory());
     }

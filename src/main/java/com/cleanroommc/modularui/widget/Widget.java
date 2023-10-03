@@ -130,7 +130,7 @@ public class Widget<W extends Widget<W>> implements IWidget, IPositioned<W>, ITo
                 this.context.screen.removeGuiActionListener(action);
             }
         }
-        if (this.syncHandler != null) {
+        if (!getPanel().isMainPanel() && this.syncHandler != null) {
             getScreen().getSyncManager().disposeSyncHandler(this.syncHandler);
         }
         if (hasChildren()) {
@@ -306,7 +306,7 @@ public class Widget<W extends Widget<W>> implements IWidget, IPositioned<W>, ITo
 
     @Nullable
     public Consumer<W> getOnUpdateListener() {
-        return onUpdateListener;
+        return this.onUpdateListener;
     }
 
     public W listenGuiAction(IGuiAction action) {
