@@ -2,10 +2,13 @@ package com.cleanroommc.modularui;
 
 import com.cleanroommc.modularui.drawable.Stencil;
 import com.cleanroommc.modularui.manager.GuiManager;
+import com.cleanroommc.modularui.screen.GuiScreenWrapper;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.Minecraft;
+import net.minecraftforge.client.event.GuiOpenEvent;
 import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
@@ -23,6 +26,14 @@ public class ClientEventHandler {
     public static void onClientTick(TickEvent.ClientTickEvent event) {
         if (event.phase == TickEvent.Phase.START) {
             GuiManager.checkQueuedScreen();
+        }
+    }
+
+    @SubscribeEvent
+    public static void onOpenScreen(GuiOpenEvent event) {
+        if (event.gui instanceof GuiScreenWrapper && Minecraft.getMinecraft().currentScreen != null) {
+            // another screen is already open, don't fade in the dark background as it's already there
+            ((GuiScreenWrapper) event.gui).setAlphaFade(false);
         }
     }
 }
