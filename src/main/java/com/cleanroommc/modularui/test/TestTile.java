@@ -21,6 +21,7 @@ import com.cleanroommc.modularui.value.BoolValue;
 import com.cleanroommc.modularui.value.IntValue;
 import com.cleanroommc.modularui.value.StringValue;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
@@ -36,6 +37,7 @@ import com.cleanroommc.modularui.widgets.PagedWidget;
 import com.cleanroommc.modularui.widgets.ProgressWidget;
 import com.cleanroommc.modularui.widgets.SliderWidget;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
+import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Column;
 import com.cleanroommc.modularui.widgets.layout.Row;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
@@ -82,6 +84,8 @@ public class TestTile extends TileEntity implements IGuiHolder {
 
         guiSyncManager.syncValue("mixer_fluids", 0, SyncHandlers.fluidSlot(this.mixerFluids1));
         guiSyncManager.syncValue("mixer_fluids", 1, SyncHandlers.fluidSlot(this.mixerFluids2));
+        IntSyncValue cycleStateValue = new IntSyncValue(() -> this.cycleState, val -> this.cycleState = val);
+        guiSyncManager.syncValue("cycle_state", cycleStateValue);
 
         Rectangle colorPickerBackground = new Rectangle().setColor(Color.RED.normal);
         ModularPanel panel = new ModularPanel("test_tile");
@@ -170,14 +174,24 @@ public class TestTile extends TileEntity implements IGuiHolder {
                                                         .progress(() -> this.progress / (double) this.duration)
                                                         .texture(GuiTextures.PROGRESS_CYCLE, 20)
                                                         .direction(ProgressWidget.Direction.CIRCULAR_CW))
-                                                .child(new CycleButtonWidget()
+                                                .child(new Row().widthRel(1f).height(18)
+                                                        .child(new ToggleButton()
+                                                                .value(new BoolValue.Dynamic(() -> cycleStateValue.getIntValue() == 0, val -> cycleStateValue.setIntValue(0)))
+                                                                .overlay(GuiTextures.CYCLE_BUTTON_DEMO.getSubArea(0, 0, 1, 1/3f)))
+                                                        .child(new ToggleButton()
+                                                                .value(new BoolValue.Dynamic(() -> cycleStateValue.getIntValue() == 1, val -> cycleStateValue.setIntValue(1)))
+                                                                .overlay(GuiTextures.CYCLE_BUTTON_DEMO.getSubArea(0, 1/3f, 1, 2/3f)))
+                                                        .child(new ToggleButton()
+                                                                .value(new BoolValue.Dynamic(() -> cycleStateValue.getIntValue() == 2, val -> cycleStateValue.setIntValue(2)))
+                                                                .overlay(GuiTextures.CYCLE_BUTTON_DEMO.getSubArea(0, 2/3f, 1, 1))))
+                                                /*.child(new CycleButtonWidget()
                                                         .length(3)
                                                         .texture(GuiTextures.CYCLE_BUTTON_DEMO)
                                                         .addTooltip(0, "State 1")
                                                         .addTooltip(1, "State 2")
                                                         .addTooltip(2, "State 3")
                                                         .background(GuiTextures.BUTTON)
-                                                        .value(SyncHandlers.intNumber(() -> this.cycleState, val -> this.cycleState = val)))
+                                                        .value(SyncHandlers.intNumber(() -> this.cycleState, val -> this.cycleState = val)))*/
                                                 .child(new ItemSlot()
                                                         .slot(SyncHandlers.phantomItemSlot(this.inventory, 0).ignoreMaxStackSize(true)))
                                                 .child(new FluidSlot()
