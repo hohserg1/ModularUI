@@ -6,6 +6,4 @@ package com.cleanroommc.modularui.api.drawable;
 public interface IInterpolation {
 
     float interpolate(float a, float b, float x);
-
-    String getName();
 }
