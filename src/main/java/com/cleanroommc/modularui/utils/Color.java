@@ -71,10 +71,22 @@ public class Color implements Iterable<Integer> {
      * @param hue        value from 0 to 360 (wraps around)
      * @param saturation value from 0 to 1
      * @param value      value from 0 to 1
+     * @return the color with fully opacity
+     */
+    public static int ofHSV(float hue, float saturation, float value) {
+        return ofHSV(hue, saturation, value, 1f);
+    }
+
+    /**
+     * Converts the HSV format into ARGB. With H being hue, S being saturation and V being value.
+     *
+     * @param hue        value from 0 to 360 (wraps around)
+     * @param saturation value from 0 to 1
+     * @param value      value from 0 to 1
      * @param alpha      value from 0 to 1
      * @return the color
      */
-    public static int ofHSV(int hue, float saturation, float value, float alpha) {
+    public static int ofHSV(float hue, float saturation, float value, float alpha) {
         hue %= 360;
         if (hue < 0) hue += 360;
         saturation = MathHelper.clamp_float(saturation, 0f, 1f);
@@ -92,11 +104,24 @@ public class Color implements Iterable<Integer> {
      * @param hue        value from 0 to 360 (wraps around)
      * @param saturation value from 0 to 1
      * @param lightness  value from 0 to 1
+     * @return the color with fully opacity
+     */
+    public static int ofHSL(float hue, float saturation, float lightness) {
+        return ofHSL(hue, saturation, lightness, 1f);
+    }
+
+    /**
+     * Converts the HSL format into ARGB. With H being hue, S being saturation and L being lightness.
+     *
+     * @param hue        value from 0 to 360 (wraps around)
+     * @param saturation value from 0 to 1
+     * @param lightness  value from 0 to 1
      * @param alpha      value from 0 to 1
      * @return the color
      */
-    public static int ofHSL(int hue, float saturation, float lightness, float alpha) {
+    public static int ofHSL(float hue, float saturation, float lightness, float alpha) {
         hue %= 360;
+        if (hue < 0) hue += 360;
         saturation = MathHelper.clamp_float(saturation, 0f, 1f);
         lightness = MathHelper.clamp_float(lightness, 0f, 1f);
         alpha = MathHelper.clamp_float(alpha, 0f, 1f);
@@ -107,9 +132,9 @@ public class Color implements Iterable<Integer> {
     }
 
     /**
-     * Helper method to calculate hue based argb's
+     * Helper method to calculate argb's of hue based formats.
      */
-    private static int ofHxcm(int hue, float c, float x, float m, float alpha) {
+    private static int ofHxcm(float hue, float c, float x, float m, float alpha) {
         if (hue < 60) return argb(c + m, x + m, m, alpha);
         if (hue < 120) return argb(x + m, c + m, m, alpha);
         if (hue < 180) return argb(m, c + m, x + m, alpha);
@@ -119,7 +144,20 @@ public class Color implements Iterable<Integer> {
     }
 
     /**
-     * Converts the CMYK format into ARGB.
+     * Converts the CMYK format into ARGB. All values are from 0 to 1.
+     *
+     * @param cyan    cyan value
+     * @param magenta magenta value
+     * @param yellow  yellow value
+     * @param black   black value
+     * @return ARGB color with fully opacity
+     */
+    public static int ofCMYK(float cyan, float magenta, float yellow, float black) {
+        return ofCMYK(cyan, magenta, yellow, black, 1f);
+    }
+
+    /**
+     * Converts the CMYK format into ARGB. All values are from 0 to 1.
      *
      * @param cyan    cyan value
      * @param magenta magenta value
@@ -301,28 +339,30 @@ public class Color implements Iterable<Integer> {
      * Calculates the hue value (HSV or HSL format) from the ARGB color.
      *
      * @param argb color
-     * @return hue value
+     * @return hue value from 0 to 360
      */
-    public static int getHue(int argb) {
+    public static float getHue(int argb) {
         float r = getRedF(argb), g = getGreenF(argb), b = getBlueF(argb);
         if (r == g && r == b) return 0;
         float min = Math.min(r, Math.min(g, b));
-        float result = 0;
+        float hue = 0;
         if (r >= g && r >= b) {
-            result = ((g - b) / (r - min)) % 6;
+            hue = ((g - b) / (r - min)) % 6;
         } else if (g >= r && g >= b) {
-            result = ((b - r) / (g - min)) + 2;
+            hue = ((b - r) / (g - min)) + 2;
         } else if (b >= r && b >= g) {
-            result = ((r - g) / (b - min)) + 4;
+            hue = ((r - g) / (b - min)) + 4;
         }
-        return (int) (result * 60 + 0.5f);
+        hue *= 60;
+        if (hue < 0) hue += 360;
+        return hue;
     }
 
     /**
      * Calculates the HSV saturation value from the ARGB color.
      *
      * @param argb color
-     * @return HSV saturation value.
+     * @return HSV saturation value from 0 to 1
      */
     public static float getHSVSaturation(int argb) {
         float r = getRedF(argb), g = getGreenF(argb), b = getBlueF(argb);
@@ -335,7 +375,7 @@ public class Color implements Iterable<Integer> {
      * Calculates the HSL saturation value from the ARGB color.
      *
      * @param argb color
-     * @return HSL saturation value.
+     * @return HSL saturation value from 0 to 1
      */
     public static float getHSLSaturation(int argb) {
         float r = getRedF(argb), g = getGreenF(argb), b = getBlueF(argb);
@@ -348,7 +388,7 @@ public class Color implements Iterable<Integer> {
      * Calculates the HSV value from the ARGB color.
      *
      * @param argb color
-     * @return HSV value.
+     * @return HSV value from 0 to 1
      */
     public static float getValue(int argb) {
         float r = getRedF(argb), g = getGreenF(argb), b = getBlueF(argb);
@@ -359,7 +399,7 @@ public class Color implements Iterable<Integer> {
      * Calculates the HSL lightness value from the ARGB color.
      *
      * @param argb color
-     * @return HSL lightness value.
+     * @return HSL lightness value from 0 to 1
      */
     public static float getLightness(int argb) {
         float r = getRedF(argb), g = getGreenF(argb), b = getBlueF(argb);
@@ -372,10 +412,10 @@ public class Color implements Iterable<Integer> {
      * Replaces the hue value in the ARGB color in the HSV format.
      *
      * @param argb color
-     * @param hue  new hue
+     * @param hue  new hue from 0 to 360
      * @return new ARGB color
      */
-    public static int withHSVHue(int argb, int hue) {
+    public static int withHSVHue(int argb, float hue) {
         return ofHSV(hue, getHSVSaturation(argb), getValue(argb), getAlphaF(argb));
     }
 
@@ -383,7 +423,7 @@ public class Color implements Iterable<Integer> {
      * Replaces the saturation value in the ARGB color in the HSV format.
      *
      * @param argb       color
-     * @param saturation new saturation
+     * @param saturation new saturation from 0 to 1
      * @return new ARGB color
      */
     public static int withHSVSaturation(int argb, float saturation) {
@@ -394,7 +434,7 @@ public class Color implements Iterable<Integer> {
      * Replaces the value in the ARGB color in the HSV format.
      *
      * @param argb  color
-     * @param value new value
+     * @param value new value from 0 to 1
      * @return new ARGB color
      */
     public static int withValue(int argb, float value) {
@@ -405,10 +445,10 @@ public class Color implements Iterable<Integer> {
      * Replaces the hue value in the ARGB color in the HSL format.
      *
      * @param argb color
-     * @param hue  new hue
+     * @param hue  new hue from 0 to 360
      * @return new ARGB color
      */
-    public static int withHSLHue(int argb, int hue) {
+    public static int withHSLHue(int argb, float hue) {
         return ofHSL(hue, getHSLSaturation(argb), getLightness(argb), getAlphaF(argb));
     }
 
@@ -416,7 +456,7 @@ public class Color implements Iterable<Integer> {
      * Replaces the saturation value in the ARGB color in the HSL format.
      *
      * @param argb       color
-     * @param saturation new saturation
+     * @param saturation new saturation from 0 to 1
      * @return new ARGB color
      */
     public static int withHSLSaturation(int argb, float saturation) {
@@ -427,7 +467,7 @@ public class Color implements Iterable<Integer> {
      * Replaces the lightness value in the ARGB color in the HSL format.
      *
      * @param argb      color
-     * @param lightness new lightness
+     * @param lightness new lightness from 0 to 1
      * @return new ARGB color
      */
     public static int withLightness(int argb, float lightness) {
@@ -438,7 +478,7 @@ public class Color implements Iterable<Integer> {
      * Calculates the CMYK cyan value from the ARGB color.
      *
      * @param argb color
-     * @return cyan value
+     * @return cyan value from 0 to 1
      */
     public static float getCyan(int argb) {
         float r = getRedF(argb), g = getGreenF(argb), b = getBlueF(argb);
@@ -450,7 +490,7 @@ public class Color implements Iterable<Integer> {
      * Calculates the CMYK magenta value from the ARGB color.
      *
      * @param argb color
-     * @return magenta value
+     * @return magenta value from 0 to 1
      */
     public static float getMagenta(int argb) {
         float r = getRedF(argb), g = getGreenF(argb), b = getBlueF(argb);
@@ -462,7 +502,7 @@ public class Color implements Iterable<Integer> {
      * Calculates the CMYK yellow value from the ARGB color.
      *
      * @param argb color
-     * @return yellow value
+     * @return yellow value from 0 to 1
      */
     public static float getYellow(int argb) {
         float r = getRedF(argb), g = getGreenF(argb), b = getBlueF(argb);
@@ -474,7 +514,7 @@ public class Color implements Iterable<Integer> {
      * Calculates the CMYK black value from the ARGB color.
      *
      * @param argb color
-     * @return black value
+     * @return black value from 0 to 1
      */
     public static float getBlack(int argb) {
         float r = getRedF(argb), g = getGreenF(argb), b = getBlueF(argb);
@@ -485,7 +525,7 @@ public class Color implements Iterable<Integer> {
      * Replaces the cyan value in the ARGB color in the CMYK format.
      *
      * @param argb color
-     * @param cyan new cyan
+     * @param cyan new cyan from 0 to 1
      * @return new ARGB color
      */
     public static int withCyan(int argb, float cyan) {
@@ -496,7 +536,7 @@ public class Color implements Iterable<Integer> {
      * Replaces the magenta value in the ARGB color in the CMYK format.
      *
      * @param argb    color
-     * @param magenta new magenta
+     * @param magenta new magenta from 0 to 1
      * @return new ARGB color
      */
     public static int withMagenta(int argb, float magenta) {
@@ -507,7 +547,7 @@ public class Color implements Iterable<Integer> {
      * Replaces the yellow value in the ARGB color in the CMYK format.
      *
      * @param argb   color
-     * @param yellow new yellow
+     * @param yellow new yellow from 0 to 1
      * @return new ARGB color
      */
     public static int withYellow(int argb, float yellow) {
@@ -518,7 +558,7 @@ public class Color implements Iterable<Integer> {
      * Replaces the black value in the ARGB color in the CMYK format.
      *
      * @param argb  color
-     * @param black new black
+     * @param black new black from 0 to 1
      * @return new ARGB color
      */
     public static int withBlack(int argb, float black) {
@@ -541,6 +581,26 @@ public class Color implements Iterable<Integer> {
      */
     public static int[] getARGBValues(int argb) {
         return new int[]{getRed(argb), getGreen(argb), getBlue(argb), getAlpha(argb)};
+    }
+
+    /**
+     * Calculates the HSV values and puts them into an array.
+     *
+     * @param argb ARGB color
+     * @return HSV values array
+     */
+    public static float[] getHSVValues(int argb) {
+        return new float[]{getHue(argb), getHSVSaturation(argb), getValue(argb)};
+    }
+
+    /**
+     * Calculates the HSL values and puts them into an array.
+     *
+     * @param argb ARGB color
+     * @return HSL values array
+     */
+    public static float[] getHSLValues(int argb) {
+        return new float[]{getHue(argb), getHSLSaturation(argb), getLightness(argb)};
     }
 
     /**
