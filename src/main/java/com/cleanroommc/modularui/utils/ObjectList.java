@@ -63,6 +63,8 @@ public interface ObjectList<V> extends List<V>, Comparable<List<? extends V>> {
 
     void trim();
 
+    V[] elements();
+
     class ObjectArrayList<V> extends ForwardingList<V> implements ObjectList<V> {
 
         final List<V> delegate;
@@ -155,6 +157,11 @@ public interface ObjectList<V> extends List<V>, Comparable<List<? extends V>> {
         @Override
         public void trim() {
             // Kept just for preserving consistency with 1.12.2 code. It looks to be not that important anyway.
+        }
+
+        @Override
+        public V[] elements() {
+            return (V[]) delegate.toArray();
         }
     }
 }
