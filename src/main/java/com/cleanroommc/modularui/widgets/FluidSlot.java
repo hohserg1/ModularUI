@@ -242,6 +242,16 @@ public class FluidSlot extends Widget<FluidSlot> implements Interactable, NEIDra
         return this;
     }
 
+    public FluidSlot syncHandler(IFluidTank fluidTank) {
+        return syncHandler(new FluidSlotSyncHandler(fluidTank));
+    }
+
+    public FluidSlot syncHandler(FluidSlotSyncHandler syncHandler) {
+        setSyncHandler(syncHandler);
+        this.syncHandler = syncHandler;
+        return this;
+    }
+
     @Override
     public boolean handleDragAndDrop(@NotNull ItemStack draggedStack, int button) {
         if (!this.syncHandler.isPhantom()) return false;
@@ -257,11 +267,5 @@ public class FluidSlot extends Widget<FluidSlot> implements Interactable, NEIDra
             return GT_Utility.getFluidDisplayStack(getFluidStack(), false);
         }
         return null;
-    }
-
-    public FluidSlot syncHandler(FluidSlotSyncHandler syncHandler) {
-        setSyncHandler(syncHandler);
-        this.syncHandler = syncHandler;
-        return this;
     }
 }
