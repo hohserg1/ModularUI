@@ -41,7 +41,7 @@ public class Tooltip {
     private float scale = 1.0f;
     private Alignment alignment = Alignment.TopLeft;
     private boolean autoUpdate = false;
-    private boolean hasTitleMargin = false;
+    private boolean hasTitleMargin = true;
     private int linePadding = 1;
 
     private boolean dirty = true;
