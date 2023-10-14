@@ -315,7 +315,6 @@ public class TestTile extends TileEntity implements IGuiHolder {
                                         .addChoice(menu -> currentDropdownIndex = menu.getSelectedIndex(), "Help")
                                         .addChoice(menu -> currentDropdownIndex = menu.getSelectedIndex(), "Help2")
                                         .size(60, 16)
-                                        .syncHandler("drop_down_index")
                                         .setSelectedIndex(currentDropdownIndex))))
                 .bindPlayerInventory();
         /*panel.child(new ButtonWidget<>()
