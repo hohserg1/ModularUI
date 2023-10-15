@@ -1,7 +1,5 @@
 package com.cleanroommc.modularui.manager;
 
-import com.cleanroommc.modularui.ModularUI;
-import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.GuiScreenWrapper;
 import com.cleanroommc.modularui.screen.ModularContainer;
 import com.cleanroommc.modularui.screen.ModularPanel;
@@ -19,13 +17,14 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
+@ApiStatus.Internal
 public final class GuiManager implements IGuiHandler {
 
     public static final GuiManager INSTANCE = new GuiManager();
 
-    private final TIntObjectMap<GuiInfo> guiInfos = new TIntObjectHashMap<>();
-    private static ModularScreen queuedClientScreen;
-    private static NEISettings queuedJeiSettings;
+    final TIntObjectMap<GuiInfo> guiInfos = new TIntObjectHashMap<>();
+    static ModularScreen queuedClientScreen;
+    static NEISettings queuedNEISettings;
 
     private GuiManager() {
     }
@@ -35,30 +34,13 @@ public final class GuiManager implements IGuiHandler {
     }
 
     @SideOnly(Side.CLIENT)
-    public static void openClientUI(EntityPlayer player, ModularScreen screen) {
-        openClientUI(player, screen, new NEISettings());
-    }
-
-    @SideOnly(Side.CLIENT)
-    public static void openClientUI(EntityPlayer player, ModularScreen screen, NEISettings jeiSettings) {
-        if (!NetworkUtils.isClient(player)) {
-            ModularUI.LOGGER.info("Tried opening client ui on server!");
-            return;
-        }
-        // we need to queue the screen, because we might break the current gui
-        queuedClientScreen = screen;
-        queuedJeiSettings = jeiSettings;
-    }
-
-    @SideOnly(Side.CLIENT)
-    @ApiStatus.Internal
     public static void checkQueuedScreen() {
         if (queuedClientScreen != null) {
-            queuedClientScreen.getContext().setNEISettings(queuedJeiSettings);
+            queuedClientScreen.getContext().setNEISettings(queuedNEISettings);
             GuiScreenWrapper screenWrapper = new GuiScreenWrapper(new ModularContainer(), queuedClientScreen);
             FMLCommonHandler.instance().showGuiScreen(screenWrapper);
             queuedClientScreen = null;
-            queuedJeiSettings = null;
+            queuedNEISettings = null;
         }
     }
 

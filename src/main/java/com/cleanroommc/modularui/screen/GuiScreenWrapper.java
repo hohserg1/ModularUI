@@ -117,7 +117,7 @@ public class GuiScreenWrapper extends GuiContainer implements INEIGuiHandler {
         GL11.glEnable(GL12.GL_RESCALE_NORMAL);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         RenderHelper.enableGUIStandardItemLighting();
-        if (this.screen.context.getNEISettings().isNEIEnabled(this.screen)) {
+        if (this.screen.getContext().getNEISettings().isNEIEnabled(this.screen)) {
             // Copied from GuiContainerManager#renderObjects but without translation
             for (IContainerDrawHandler drawHandler : GuiContainerManager.drawHandlers) {
                 drawHandler.renderObjects(this, mouseX, mouseY);
@@ -140,7 +140,7 @@ public class GuiScreenWrapper extends GuiContainer implements INEIGuiHandler {
         RenderHelper.enableGUIStandardItemLighting();
 
         getAccessor().setHoveredSlot(null);
-        IGuiElement hovered = this.screen.context.getHovered();
+        IGuiElement hovered = this.screen.getContext().getHovered();
         if (hovered instanceof IVanillaSlot) {
             getAccessor().setHoveredSlot(((IVanillaSlot) hovered).getVanillaSlot());
         }
@@ -245,11 +245,11 @@ public class GuiScreenWrapper extends GuiContainer implements INEIGuiHandler {
     }
 
     public void drawDebugScreen() {
-        GuiContext context = this.screen.context;
+        GuiContext context = this.screen.getContext();
         int mouseX = context.getAbsMouseX(), mouseY = context.getAbsMouseY();
         int screenH = this.screen.getScreenArea().height;
         int color = Color.rgb(180, 40, 115);
-        int lineY = screenH - 13 - (this.screen.context.getNEISettings().isNEIEnabled(this.screen) ? 20 : 0);
+        int lineY = screenH - 13 - (this.screen.getContext().getNEISettings().isNEIEnabled(this.screen) ? 20 : 0);
         drawString(this.fontRendererObj, "Mouse Pos: " + mouseX + ", " + mouseY, 5, lineY, color);
         lineY -= 11;
         drawString(this.fontRendererObj, "FPS: " + this.fps, 5, lineY, color);
@@ -334,7 +334,7 @@ public class GuiScreenWrapper extends GuiContainer implements INEIGuiHandler {
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
         if (this.screen.onMousePressed(mouseButton)) {
-            if (this.screen.context.getNEISettings().isNEIEnabled(this.screen)) {
+            if (this.screen.getContext().getNEISettings().isNEIEnabled(this.screen)) {
                 for (IContainerInputHandler inputhander : GuiContainerManager.inputHandlers) {
                     inputhander.onMouseClicked(this, mouseX, mouseY, mouseButton);
                 }
@@ -348,7 +348,7 @@ public class GuiScreenWrapper extends GuiContainer implements INEIGuiHandler {
     }
 
     public void clickSlot() {
-        super.mouseClicked(this.screen.context.getAbsMouseX(), this.screen.context.getAbsMouseY(), this.screen.context.getMouseButton());
+        super.mouseClicked(this.screen.getContext().getAbsMouseX(), this.screen.getContext().getAbsMouseY(), this.screen.getContext().getMouseButton());
     }
 
     @Override
@@ -358,7 +358,7 @@ public class GuiScreenWrapper extends GuiContainer implements INEIGuiHandler {
     }
 
     public void releaseSlot() {
-        super.mouseMovedOrUp(this.screen.context.getAbsMouseX(), this.screen.context.getAbsMouseY(), this.screen.context.getMouseButton());
+        super.mouseMovedOrUp(this.screen.getContext().getAbsMouseX(), this.screen.getContext().getAbsMouseY(), this.screen.getContext().getMouseButton());
     }
 
     @Override
@@ -368,7 +368,7 @@ public class GuiScreenWrapper extends GuiContainer implements INEIGuiHandler {
     }
 
     public void dragSlot(long timeSinceLastClick) {
-        super.mouseClickMove(this.screen.context.getAbsMouseX(), this.screen.context.getAbsMouseY(), this.screen.context.getMouseButton(), timeSinceLastClick);
+        super.mouseClickMove(this.screen.getContext().getAbsMouseX(), this.screen.getContext().getAbsMouseY(), this.screen.getContext().getMouseButton(), timeSinceLastClick);
     }
 
     /**
@@ -466,7 +466,7 @@ public class GuiScreenWrapper extends GuiContainer implements INEIGuiHandler {
     @Override
     public boolean handleDragNDrop(GuiContainer gui, int mousex, int mousey, ItemStack draggedStack, int button) {
         if (!(gui instanceof GuiScreenWrapper) || NEIClientUtils.getHeldItem() != null) return false;
-        IGuiElement hovered = ((GuiScreenWrapper) gui).getScreen().context.getHovered();
+        IGuiElement hovered = ((GuiScreenWrapper) gui).getScreen().getContext().getHovered();
         if (hovered instanceof NEIDragAndDropHandler) {
             return ((NEIDragAndDropHandler) hovered).handleDragAndDrop(draggedStack, button);
         }
@@ -476,8 +476,8 @@ public class GuiScreenWrapper extends GuiContainer implements INEIGuiHandler {
     @Override
     public boolean hideItemPanelSlot(GuiContainer gui, int x, int y, int w, int h) {
         if (!(gui instanceof GuiScreenWrapper)) return false;
-        if (!this.screen.context.getNEISettings().isNEIEnabled(this.screen)) return false;
-        return this.screen.context.getNEISettings().getAllNEIExclusionAreas().stream().anyMatch(
+        if (!this.screen.getContext().getNEISettings().isNEIEnabled(this.screen)) return false;
+        return this.screen.getContext().getNEISettings().getAllNEIExclusionAreas().stream().anyMatch(
             a -> a.intersects(new Rectangle(x, y, w, h))
         );
     }

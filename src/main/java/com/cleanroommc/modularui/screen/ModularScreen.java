@@ -3,7 +3,6 @@ package com.cleanroommc.modularui.screen;
 import com.cleanroommc.modularui.Tags;
 import com.cleanroommc.modularui.api.ITheme;
 import com.cleanroommc.modularui.api.IThemeApi;
-import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IGuiAction;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.drawable.GuiDraw;
@@ -20,7 +19,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
@@ -38,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * This is the base class for all modular ui's. It only exists on client side.
@@ -54,16 +53,8 @@ public class ModularScreen {
         return false;
     }
 
-    public static boolean isScreen(@Nullable GuiScreen guiScreen, String name) {
-        return isScreen(guiScreen, Tags.MODID, name);
-    }
-
     public static boolean isActive(String owner, String name) {
         return isScreen(Minecraft.getMinecraft().currentScreen, owner, name);
-    }
-
-    public static boolean isActive(String name) {
-        return isActive(Tags.MODID, name);
     }
 
     @Nullable
@@ -74,17 +65,10 @@ public class ModularScreen {
         return null;
     }
 
-    private static final ModularPanel DEFAULT = new ModularPanel("default") {
-        @Override
-        public boolean addChild(IWidget child, int index) {
-            return false;
-        }
-    }.overlay(IKey.str(EnumChatFormatting.RED + "Either use a ModularScreen constructor, that accepts a ModularPanel directly or override the 'buildUI(GuiContext context)' function!"));
-
     private final String owner;
     private final String name;
-    private final WindowManager windowManager;
-    public final GuiContext context;
+    private final WindowManager windowManager = new WindowManager(this);
+    private final GuiContext context = new GuiContext(this);
     private final Area screenArea = new Area();
     private final Map<Class<?>, List<IGuiAction>> guiActionListeners = new HashMap<>();
     private final Map<IWidget, Runnable> frameUpdates = new HashMap<>();
@@ -93,43 +77,56 @@ public class ModularScreen {
     private GuiScreenWrapper screenWrapper;
 
     /**
-     * If this constructor is used the method {@link #buildUI(GuiContext)} should be overriden!
-     */
-    public ModularScreen() {
-        this(Tags.MODID);
-    }
-
-    /**
-     * If this constructor is used the method {@link #buildUI(GuiContext)} should be overriden!
+     * Creates a new screen with a ModularUI as its owner and a given {@link ModularPanel}.
      *
-     * @param owner the mod that owns this screen
+     * @param mainPanel main panel of this screen
      */
-    public ModularScreen(@NotNull String owner) {
-        Objects.requireNonNull(owner, "The owner must not be null!");
-        this.owner = owner;
-        this.windowManager = new WindowManager(this);
-        this.context = new GuiContext(this);
-
-        ModularPanel mainPanel = buildUI(this.context);
-        Objects.requireNonNull(mainPanel, "The main panel must not be null!");
-        this.name = mainPanel.getName();
-        this.currentTheme = IThemeApi.get().getThemeForScreen(this, null);
-        this.windowManager.construct(mainPanel);
-    }
-
     public ModularScreen(@NotNull ModularPanel mainPanel) {
         this(Tags.MODID, mainPanel);
     }
 
+    /**
+     * Creates a new screen with a given owner and {@link ModularPanel}.
+     *
+     * @param owner     owner of this screen (usually a mod id)
+     * @param mainPanel main panel of this screen
+     */
     public ModularScreen(@NotNull String owner, @NotNull ModularPanel mainPanel) {
+        this(owner, context -> mainPanel);
+    }
+
+    /**
+     * Creates a new screen with the given owner and a main panel function. The function must return a non-null value.
+     *
+     * @param owner            owner of this screen (usually a mod id)
+     * @param mainPanelCreator function which creates the main panel of this screen
+     */
+    public ModularScreen(@NotNull String owner, @NotNull Function<GuiContext, ModularPanel> mainPanelCreator) {
+        this(owner, Objects.requireNonNull(mainPanelCreator, "The main panel function must not be null!"), false);
+    }
+
+    private ModularScreen(@NotNull String owner, @Nullable Function<GuiContext, ModularPanel> mainPanelCreator, boolean unused) {
         Objects.requireNonNull(owner, "The owner must not be null!");
-        Objects.requireNonNull(mainPanel, "The main panel must not be null!");
         this.owner = owner;
+        ModularPanel mainPanel = mainPanelCreator != null ? mainPanelCreator.apply(this.context) : buildUI(this.context);
+        Objects.requireNonNull(mainPanel, "The main panel must not be null!");
         this.name = mainPanel.getName();
-        this.windowManager = new WindowManager(this);
-        this.context = new GuiContext(this);
         this.currentTheme = IThemeApi.get().getThemeForScreen(this, null);
         this.windowManager.construct(mainPanel);
+    }
+
+    /**
+     * Intended for use in {@link CustomModularScreen}
+     */
+    ModularScreen(@NotNull String owner) {
+        this(owner, null, false);
+    }
+
+    /**
+     * Intended for use in {@link CustomModularScreen}
+     */
+    ModularPanel buildUI(GuiContext context) {
+        throw new UnsupportedOperationException();
     }
 
     @MustBeInvokedByOverriders
@@ -138,20 +135,6 @@ public class ModularScreen {
         if (wrapper == null) throw new NullPointerException("GuiScreenWrapper must not be null!");
         this.screenWrapper = wrapper;
         this.screenWrapper.updateArea(this.windowManager.getMainPanel().getArea());
-    }
-
-    /**
-     * If a constructor without a modular panel is used, then this method should be overriden.
-     * This must also return a non-null value.
-     *
-     * @param context context used to build the panel
-     * @return the created panel
-     */
-    @NotNull
-    @ApiStatus.OverrideOnly
-    @SideOnly(Side.CLIENT)
-    public ModularPanel buildUI(GuiContext context) {
-        return DEFAULT.size(176, 166);
     }
 
     public void onResize(int width, int height) {
