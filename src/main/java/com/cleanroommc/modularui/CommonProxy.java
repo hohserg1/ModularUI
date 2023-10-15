@@ -7,6 +7,7 @@ import com.cleanroommc.modularui.network.NetworkHandler;
 import com.cleanroommc.modularui.screen.ModularContainer;
 import com.cleanroommc.modularui.test.ItemEditorGui;
 import com.cleanroommc.modularui.test.TestBlock;
+import com.cleanroommc.modularui.test.tutorial.TutorialBlock;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import cpw.mods.fml.client.event.ConfigChangedEvent;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -29,6 +30,9 @@ public class CommonProxy {
         if (ModularUIConfig.enableTestGuis) {
             MinecraftForge.EVENT_BUS.register(TestBlock.class);
             TestBlock.preInit();
+
+            MinecraftForge.EVENT_BUS.register(TutorialBlock.class);
+            TutorialBlock.preInit();
         }
 
         EntityRegistry.registerModEntity(HoloScreenEntity.class, "modular_screen", 0, ModularUI.INSTANCE, 0, 0, false);
