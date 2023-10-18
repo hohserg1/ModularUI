@@ -1,9 +1,7 @@
 package com.cleanroommc.modularui.utils;
 
 import com.cleanroommc.modularui.api.drawable.IDrawable;
-import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.DrawableSerialization;
-import com.cleanroommc.modularui.drawable.keys.KeyParser;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -24,7 +22,6 @@ public class JsonHelper {
             .setPrettyPrinting()
             .registerTypeAdapter(IDrawable.class, new DrawableSerialization())
             .registerTypeAdapter(Alignment.class, new Alignment.Json())
-            .registerTypeAdapter(IKey.class, new KeyParser())
             .create();
 
     public static final JsonParser parser = new JsonParser();

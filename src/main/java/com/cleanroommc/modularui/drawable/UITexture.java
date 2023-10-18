@@ -166,6 +166,9 @@ public class UITexture implements IDrawable {
         if (borderX > 0 || borderY > 0) {
             builder.adaptable(borderX, borderY);
         }
+        if (JsonHelper.getBoolean(json, false, "tiled")) {
+            builder.tiled();
+        }
         return builder.build();
     }
 
