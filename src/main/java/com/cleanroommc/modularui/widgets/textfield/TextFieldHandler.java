@@ -5,7 +5,7 @@ import com.cleanroommc.modularui.utils.ScrollArea;
 import com.google.common.base.Joiner;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;

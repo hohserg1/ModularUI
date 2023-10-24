@@ -11,7 +11,7 @@ import com.cleanroommc.modularui.value.sync.SyncHandler;
 import com.cleanroommc.modularui.value.sync.ValueSyncHandler;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
+import java.awt.Point;
 import java.text.ParsePosition;
 import java.util.function.Function;
 import java.util.function.Supplier;

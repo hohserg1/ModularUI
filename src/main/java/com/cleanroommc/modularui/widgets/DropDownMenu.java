@@ -1,12 +1,5 @@
 package com.cleanroommc.modularui.widgets;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.function.Function;
-
-import org.jetbrains.annotations.NotNull;
-
 import com.cleanroommc.modularui.api.ITheme;
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.widget.IWidget;
@@ -20,6 +13,12 @@ import com.cleanroommc.modularui.widget.SingleChildWidget;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widget.WidgetTree;
 import com.cleanroommc.modularui.widget.sizer.Area;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Function;
 
 public class DropDownMenu extends SingleChildWidget<DropDownMenu> implements Interactable {
     private static final StringKey NONE = new StringKey("None");

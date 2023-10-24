@@ -3,7 +3,7 @@ package com.cleanroommc.modularui.screen;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.integration.nei.NEIState;
 
-import java.awt.*;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;

@@ -7,7 +7,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.Tessellator;
 import org.lwjgl.opengl.GL11;
 
-import java.awt.*;
+import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.util.Collections;
 import java.util.List;

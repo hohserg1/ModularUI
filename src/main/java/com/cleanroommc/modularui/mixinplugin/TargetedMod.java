@@ -1,9 +1,5 @@
 package com.cleanroommc.modularui.mixinplugin;
 
-import com.google.common.io.Files;
-
-import java.nio.file.Path;
-
 public enum TargetedMod {
 
     VANILLA("Minecraft", null),

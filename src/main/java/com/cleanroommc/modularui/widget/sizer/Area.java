@@ -4,7 +4,7 @@ import com.cleanroommc.modularui.api.layout.IViewportStack;
 import com.cleanroommc.modularui.api.widget.IGuiElement;
 import com.cleanroommc.modularui.utils.MathUtils;
 
-import java.awt.*;
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 
 public class Area extends Rectangle implements IResizeable {

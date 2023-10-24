@@ -42,7 +42,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
-import java.awt.*;
+import java.awt.Rectangle;
 import java.util.List;
 import java.util.Set;
 
