@@ -20,7 +20,7 @@ public class PlayerMainInvWrapper extends RangedWrapper {
     @Override
     public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
         ItemStack rest = super.insertItem(slot, stack, simulate);
-        if (rest.stackSize != stack.stackSize) {
+        if (rest == null || rest.stackSize != stack.stackSize) {
             // the stack in the slot changed, animate it
             ItemStack inSlot = getStackInSlot(slot);
             if (inSlot != null) {

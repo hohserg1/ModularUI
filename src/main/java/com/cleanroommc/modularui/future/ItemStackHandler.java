@@ -131,6 +131,9 @@ public class ItemStackHandler implements IItemHandlerModifiable, INBTSerializabl
     }
 
     protected int getStackLimit(int slot, @Nullable ItemStack stack) {
+        if (stack == null) {
+            return 0;
+        }
         return Math.min(this.getSlotLimit(slot), stack.getMaxStackSize());
     }
 

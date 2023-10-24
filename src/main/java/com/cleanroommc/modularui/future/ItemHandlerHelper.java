@@ -58,7 +58,7 @@ public class ItemHandlerHelper {
 
     @Nullable
     public static ItemStack copyStackWithSize(@Nullable ItemStack itemStack, int size) {
-        if (size == 0) {
+        if (itemStack == null || size == 0) {
             return null;
         } else {
             ItemStack copy = itemStack.copy();

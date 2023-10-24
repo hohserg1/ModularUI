@@ -79,7 +79,7 @@ public class SlotItemHandler extends Slot {
             return remainder != null ? maxInput - remainder.stackSize : maxInput;
         } else {
             ItemStack remainder = handler.insertItem(this.index, maxAdd, true);
-            int current = currentStack.stackSize;
+            int current = currentStack != null ? currentStack.stackSize : 0;
             int added = remainder != null ? maxInput - remainder.stackSize : maxInput;
             return current + added;
         }
