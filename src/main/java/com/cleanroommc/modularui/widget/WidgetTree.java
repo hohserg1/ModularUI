@@ -160,7 +160,7 @@ public class WidgetTree {
         GL11.glPopMatrix();
 
         // render all children if there are any
-        List<? extends IWidget> children = parent.getChildren();
+        List<IWidget> children = parent.getChildren();
         if (!children.isEmpty()) {
             children.forEach(widget -> drawTree(widget, context, false));
         }
@@ -195,7 +195,7 @@ public class WidgetTree {
         GL11.glEnable(GL11.GL_BLEND);
         parent.drawForeground(context);
 
-        List<? extends IWidget> children = parent.getChildren();
+        List<IWidget> children = parent.getChildren();
         if (!children.isEmpty()) {
             children.forEach(widget -> drawTreeForeground(widget, context));
         }

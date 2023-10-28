@@ -202,7 +202,7 @@ public class GuiContext extends GuiViewportStack {
      * Focus next focusable GUI element
      */
     public boolean focus(IWidget parent, int index, int factor, boolean stop) {
-        List<? extends IWidget> children = parent.getChildren();
+        List<IWidget> children = parent.getChildren();
 
         factor = factor >= 0 ? 1 : -1;
         index += factor;
@@ -233,7 +233,7 @@ public class GuiContext extends GuiViewportStack {
         if (grandparent != null && !stop && (isRoot || grandparent.canBeSeen(this))) {
             /* Forgive me for this heresy, but I have no idea what other name I could give
              * to this variable */
-            List<? extends IWidget> childs = grandparent.getChildren();
+            List<IWidget> childs = grandparent.getChildren();
 
             if (this.focus(grandparent, childs.indexOf(parent), factor)) {
                 return true;

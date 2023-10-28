@@ -103,7 +103,7 @@ public interface IWidget extends IGuiElement {
      * @return all children of this widget
      */
     @NotNull
-    default List<? extends IWidget> getChildren() {
+    default List<IWidget> getChildren() {
         return Collections.emptyList();
     }
 
