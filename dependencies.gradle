@@ -30,7 +30,6 @@
  */
 dependencies {
     api("org.jetbrains:annotations:24.0.1")
-    shadowImplementation("it.unimi.dsi:fastutil:8.5.12")
 
     api("com.github.GTNewHorizons:NotEnoughItems:2.3.57-GTNH:dev")
 

@@ -2,18 +2,18 @@ package com.cleanroommc.modularui.drawable;
 
 import com.cleanroommc.modularui.Tags;
 import com.cleanroommc.modularui.widget.sizer.GuiAxis;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
 public class GuiTextures {
 
-    private static final Map<String, UITexture> ALL = new Object2ObjectOpenHashMap<>();
-    private static final Map<String, UITexture> ICONS = new Object2ObjectOpenHashMap<>();
-    private static final Map<String, UITexture> BACKGROUNDS = new Object2ObjectOpenHashMap<>();
+    private static final Map<String, UITexture> ALL = new HashMap<>();
+    private static final Map<String, UITexture> ICONS = new HashMap<>();
+    private static final Map<String, UITexture> BACKGROUNDS = new HashMap<>();
 
     public static void registerIcon(String key, UITexture texture) {
         Objects.requireNonNull(key);

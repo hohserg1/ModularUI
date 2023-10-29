@@ -17,7 +17,6 @@ import com.cleanroommc.modularui.widget.sizer.Area;
 import com.cleanroommc.modularui.widgets.Dialog;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.RenderHelper;
@@ -33,6 +32,7 @@ import org.lwjgl.opengl.GL12;
 import javax.annotation.Nonnegative;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -85,7 +85,7 @@ public class ModularScreen {
     private final WindowManager windowManager;
     public final GuiContext context;
     private final Area screenArea = new Area();
-    private final Map<Class<?>, List<IGuiAction>> guiActionListeners = new Object2ObjectOpenHashMap<>();
+    private final Map<Class<?>, List<IGuiAction>> guiActionListeners = new HashMap<>();
 
     private ITheme currentTheme;
     private GuiScreenWrapper screenWrapper;

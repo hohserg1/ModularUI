@@ -11,7 +11,8 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.IGuiHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import gnu.trove.map.TIntObjectMap;
+import gnu.trove.map.hash.TIntObjectHashMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -20,7 +21,7 @@ public final class GuiManager implements IGuiHandler {
 
     public static final GuiManager INSTANCE = new GuiManager();
 
-    private final Int2ObjectOpenHashMap<GuiInfo> guiInfos = new Int2ObjectOpenHashMap<>();
+    private final TIntObjectMap<GuiInfo> guiInfos = new TIntObjectHashMap<>();
 
     private GuiManager() {
     }

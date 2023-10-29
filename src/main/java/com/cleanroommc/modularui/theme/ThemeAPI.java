@@ -6,11 +6,11 @@ import com.cleanroommc.modularui.api.IThemeApi;
 import com.cleanroommc.modularui.drawable.GuiTextures;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.utils.JsonBuilder;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -21,12 +21,12 @@ public class ThemeAPI implements IThemeApi {
     public static final String DEFAULT = "DEFAULT";
     public static final ITheme DEFAULT_DEFAULT = new DefaultTheme(INSTANCE);
 
-    private final Map<String, ITheme> THEMES = new Object2ObjectOpenHashMap<>();
-    protected final Map<String, List<JsonBuilder>> defaultThemes = new Object2ObjectOpenHashMap<>();
-    protected final Map<String, WidgetTheme> defaultWidgetThemes = new Object2ObjectOpenHashMap<>();
-    protected final Map<String, WidgetThemeParser> widgetThemeFunctions = new Object2ObjectOpenHashMap<>();
-    protected final Map<String, String> jsonScreenThemes = new Object2ObjectOpenHashMap<>();
-    private final Map<String, String> screenThemes = new Object2ObjectOpenHashMap<>();
+    private final Map<String, ITheme> THEMES = new HashMap<>();
+    protected final Map<String, List<JsonBuilder>> defaultThemes = new HashMap<>();
+    protected final Map<String, WidgetTheme> defaultWidgetThemes = new HashMap<>();
+    protected final Map<String, WidgetThemeParser> widgetThemeFunctions = new HashMap<>();
+    protected final Map<String, String> jsonScreenThemes = new HashMap<>();
+    private final Map<String, String> screenThemes = new HashMap<>();
 
     private ThemeAPI() {
         registerWidgetTheme(Theme.PANEL, new WidgetTheme(GuiTextures.BACKGROUND, null, Color.WHITE.normal, 0xFF404040, false), (parent, json, fallback) -> new WidgetTheme(parent, fallback, json));

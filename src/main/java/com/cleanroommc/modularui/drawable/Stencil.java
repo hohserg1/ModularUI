@@ -2,8 +2,8 @@ package com.cleanroommc.modularui.drawable;
 
 import com.cleanroommc.modularui.api.layout.IViewportStack;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
+import com.cleanroommc.modularui.utils.ArrayListStack;
 import com.cleanroommc.modularui.widget.sizer.Area;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.renderer.Tessellator;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
@@ -13,9 +13,9 @@ import static com.cleanroommc.modularui.drawable.BufferBuilder.bufferbuilder;
 public class Stencil {
 
     // Stores a stack of areas that are transformed, so it represents the actual area
-    private final static ObjectArrayList<Area> stencils = new ObjectArrayList<>();
+    private final static ArrayListStack<Area> stencils = new ArrayListStack<>();
     // Stores a stack of stencilShapes which is used to mark and remove the stencil shape area
-    private final static ObjectArrayList<Runnable> stencilShapes = new ObjectArrayList<>();
+    private final static ArrayListStack<Runnable> stencilShapes = new ArrayListStack<>();
     // the current highest stencil value
     private static int stencilValue = 0;
 

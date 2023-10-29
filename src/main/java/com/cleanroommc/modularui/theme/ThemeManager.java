@@ -13,8 +13,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourceManagerReloadListener;
@@ -24,6 +22,8 @@ import org.jetbrains.annotations.ApiStatus;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -48,7 +48,7 @@ public class ThemeManager implements IResourceManagerReloadListener {
     public static void loadThemes() {
         // find registered paths of themes in themes.json files
         Map<String, List<String>> themesPaths = findRegisteredThemes();
-        Map<String, ThemeJson> themeMap = new Object2ObjectOpenHashMap<>();
+        Map<String, ThemeJson> themeMap = new HashMap<>();
         SortedJsonThemeList themeList = new SortedJsonThemeList(themeMap);
 
         // load json files from the path and parse their parent
@@ -79,12 +79,12 @@ public class ThemeManager implements IResourceManagerReloadListener {
     }
 
     private static void validateAncestorTree(Map<String, ThemeJson> themeMap) {
-        Set<ThemeJson> invalidThemes = new ObjectOpenHashSet<>();
+        Set<ThemeJson> invalidThemes = new HashSet<>();
         for (ThemeJson theme : themeMap.values()) {
             if (invalidThemes.contains(theme)) {
                 continue;
             }
-            Set<ThemeJson> parents = new ObjectOpenHashSet<>();
+            Set<ThemeJson> parents = new HashSet<>();
             parents.add(theme);
             ThemeJson parent = theme;
             do {
@@ -147,7 +147,7 @@ public class ThemeManager implements IResourceManagerReloadListener {
     }
 
     private static Map<String, List<String>> findRegisteredThemes() {
-        Map<String, List<String>> themes = new Object2ObjectOpenHashMap<>();
+        Map<String, List<String>> themes = new HashMap<>();
         for (IResource resource : AssetHelper.findAssets(Tags.MODID, "themes.json")) {
             try {
                 JsonElement element = JsonHelper.parse(resource.getInputStream());
@@ -246,7 +246,7 @@ public class ThemeManager implements IResourceManagerReloadListener {
             }
 
             // parse fallback theme for widget themes
-            Map<String, WidgetTheme> widgetThemes = new Object2ObjectOpenHashMap<>();
+            Map<String, WidgetTheme> widgetThemes = new HashMap<>();
             WidgetTheme parentWidgetTheme = parent.getFallback();
             WidgetTheme fallback = new WidgetTheme(parentWidgetTheme, jsonBuilder.getJson(), jsonBuilder.getJson());
             widgetThemes.put(Theme.FALLBACK, fallback);

@@ -2,8 +2,8 @@ package com.cleanroommc.modularui.theme;
 
 import com.cleanroommc.modularui.api.ITheme;
 import com.cleanroommc.modularui.api.IThemeApi;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class Theme implements ITheme {
@@ -15,7 +15,7 @@ public class Theme implements ITheme {
     public static final String FLUID_SLOT = "fluidSlot";
     public static final String TEXT_FIELD = "textField";
 
-    private final Map<String, WidgetTheme> widgetThemes = new Object2ObjectOpenHashMap<>();
+    private final Map<String, WidgetTheme> widgetThemes = new HashMap<>();
 
     private final String id;
     private final ITheme parentTheme;

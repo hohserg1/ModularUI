@@ -1,7 +1,6 @@
 package com.cleanroommc.modularui.utils.math;
 
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -131,7 +130,7 @@ public enum Operation {
         }
     };
 
-    public final static Set<String> OPERATORS = new ObjectOpenHashSet<>();
+    public final static Set<String> OPERATORS = new HashSet<>();
 
     public static boolean equals(double a, double b) {
         return Math.abs(a - b) < 0.00001;
