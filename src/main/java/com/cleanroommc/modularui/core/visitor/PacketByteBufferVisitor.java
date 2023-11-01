@@ -52,14 +52,14 @@ public class PacketByteBufferVisitor extends ClassVisitor implements Opcodes {
         @Override
         public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
             if ("writeByte".equals(name)) {
-                ModularUICore.LOGGER.debug("Patched writeByte");
-                skipPop = true;
                 name = WRITE_VAR_INT_METHOD;
                 desc = "(I)V";
+                ModularUICore.LOGGER.debug("Patched writeByte");
+                skipPop = true;
             } else if ("readByte".equals(name)) {
-                ModularUICore.LOGGER.debug("Patched readByte");
                 name = READ_VAR_INT_METHOD;
                 desc = "()I";
+                ModularUICore.LOGGER.debug("Patched readByte");
             }
             super.visitMethodInsn(opcode, owner, name, desc, itf);
         }
