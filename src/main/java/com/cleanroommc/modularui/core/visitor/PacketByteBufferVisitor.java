@@ -11,12 +11,12 @@ import org.objectweb.asm.Opcodes;
 public class PacketByteBufferVisitor extends ClassVisitor implements Opcodes {
 
     public static final String PACKET_BUFFER_CLASS = "net.minecraft.network.PacketBuffer";
-    private static final String WRITE_ITEMSTACK_METHOD = ModularUICore.isDevEnv ? "writeItemStackToBuffer" : "a";
-    private static final String READ_ITEMSTACK_METHOD = ModularUICore.isDevEnv ? "readItemStackFromBuffer" : "c";
-    private static final String WRITE_ITEMSTACK_DESC = ModularUICore.isDevEnv ? "(Lnet/minecraft/item/ItemStack;)V" : "(Ladd;)V";
-    private static final String READ_ITEMSTACK_DESC = ModularUICore.isDevEnv ? "()Lnet/minecraft/item/ItemStack;" : "()Ladd;";
-    private static final String WRITE_VAR_INT_METHOD = ModularUICore.isDevEnv ? "writeVarIntToBuffer" : "func_150787_b";
-    private static final String READ_VAR_INT_METHOD = ModularUICore.isDevEnv ? "readVarIntFromBuffer" : "func_150792_a";
+    private static final String WRITE_ITEMSTACK_METHOD = ModularUICore.isDevEnv() ? "writeItemStackToBuffer" : "a";
+    private static final String READ_ITEMSTACK_METHOD = ModularUICore.isDevEnv() ? "readItemStackFromBuffer" : "c";
+    private static final String WRITE_ITEMSTACK_DESC = ModularUICore.isDevEnv() ? "(Lnet/minecraft/item/ItemStack;)V" : "(Ladd;)V";
+    private static final String READ_ITEMSTACK_DESC = ModularUICore.isDevEnv() ? "()Lnet/minecraft/item/ItemStack;" : "()Ladd;";
+    private static final String WRITE_VAR_INT_METHOD = ModularUICore.isDevEnv() ? "writeVarIntToBuffer" : "func_150787_b";
+    private static final String READ_VAR_INT_METHOD = ModularUICore.isDevEnv() ? "readVarIntFromBuffer" : "func_150792_a";
 
     public PacketByteBufferVisitor(ClassVisitor cv) {
         super(ASM5, cv);

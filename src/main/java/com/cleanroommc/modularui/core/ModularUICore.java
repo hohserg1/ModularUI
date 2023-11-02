@@ -3,11 +3,9 @@ package com.cleanroommc.modularui.core;
 import com.cleanroommc.modularui.mixinplugin.Mixins;
 import com.gtnewhorizon.gtnhmixins.IEarlyMixinLoader;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
-import net.minecraft.launchwrapper.Launch;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -21,16 +19,10 @@ import java.util.Set;
 public class ModularUICore implements IFMLLoadingPlugin, IEarlyMixinLoader {
 
     public static final Logger LOGGER = LogManager.getLogger("modularui");
-    public static final boolean isDevEnv;
+    private static Boolean isDevEnv;
 
-    static {
-        boolean dev;
-        try {
-            dev = Launch.classLoader.getClassBytes("net.minecraft.world.World") != null;
-        } catch (IOException e) {
-            dev = false;
-        }
-        isDevEnv = dev;
+    public static boolean isDevEnv() {
+        return isDevEnv;
     }
 
     @Override
@@ -65,7 +57,9 @@ public class ModularUICore implements IFMLLoadingPlugin, IEarlyMixinLoader {
     }
 
     @Override
-    public void injectData(Map<String, Object> data) {}
+    public void injectData(Map<String, Object> data) {
+        isDevEnv = !(boolean) data.get("runtimeDeobfuscationEnabled");
+    }
 
     @Override
     public String getAccessTransformerClass() {
