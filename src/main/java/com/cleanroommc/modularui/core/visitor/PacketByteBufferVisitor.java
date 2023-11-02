@@ -11,8 +11,10 @@ import org.objectweb.asm.Opcodes;
 public class PacketByteBufferVisitor extends ClassVisitor implements Opcodes {
 
     public static final String PACKET_BUFFER_CLASS = "net.minecraft.network.PacketBuffer";
-    private static final String WRITE_ITEMSTACK_METHOD = ModularUICore.isDevEnv ? "writeItemStackToBuffer" : "func_150788_a";
-    private static final String READ_ITEMSTACK_METHOD = ModularUICore.isDevEnv ? "readItemStackFromBuffer" : "func_150791_c";
+    private static final String WRITE_ITEMSTACK_METHOD = ModularUICore.isDevEnv ? "writeItemStackToBuffer" : "a";
+    private static final String READ_ITEMSTACK_METHOD = ModularUICore.isDevEnv ? "readItemStackFromBuffer" : "c";
+    private static final String WRITE_ITEMSTACK_DESC = ModularUICore.isDevEnv ? "(Lnet/minecraft/item/ItemStack;)V" : "(Ladd;)V";
+    private static final String READ_ITEMSTACK_DESC = ModularUICore.isDevEnv ? "()Lnet/minecraft/item/ItemStack;" : "()Ladd;";
     private static final String WRITE_VAR_INT_METHOD = ModularUICore.isDevEnv ? "writeVarIntToBuffer" : "func_150787_b";
     private static final String READ_VAR_INT_METHOD = ModularUICore.isDevEnv ? "readVarIntFromBuffer" : "func_150792_a";
 
@@ -23,7 +25,8 @@ public class PacketByteBufferVisitor extends ClassVisitor implements Opcodes {
     @Override
     public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
         MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-        if (WRITE_ITEMSTACK_METHOD.equals(name) || READ_ITEMSTACK_METHOD.equals(name)) {
+        if ((WRITE_ITEMSTACK_METHOD.equals(name) && WRITE_ITEMSTACK_DESC.equals(desc))
+            || (READ_ITEMSTACK_METHOD.equals(name) && READ_ITEMSTACK_DESC.equals(desc))) {
             ModularUICore.LOGGER.debug("Start patching " + name);
             return new ReadWriteItemStackVisitor(mv);
         }

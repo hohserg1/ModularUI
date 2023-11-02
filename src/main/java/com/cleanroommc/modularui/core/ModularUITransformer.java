@@ -6,7 +6,7 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 
 @SuppressWarnings("unused")
-public class ClassTransformer implements IClassTransformer {
+public class ModularUITransformer implements IClassTransformer {
 
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
