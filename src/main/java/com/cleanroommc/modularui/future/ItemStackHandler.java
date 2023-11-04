@@ -55,7 +55,7 @@ public class ItemStackHandler implements IItemHandlerModifiable, INBTSerializabl
     @Override
     public ItemStack getStackInSlot(int slot) {
         this.validateSlotIndex(slot);
-        return (ItemStack) this.stacks.get(slot);
+        return this.stacks.get(slot);
     }
 
     @Override
@@ -64,7 +64,7 @@ public class ItemStackHandler implements IItemHandlerModifiable, INBTSerializabl
             return null;
         } else {
             this.validateSlotIndex(slot);
-            ItemStack existing = (ItemStack) this.stacks.get(slot);
+            ItemStack existing = this.stacks.get(slot);
             int limit = this.getStackLimit(slot, stack);
             if (existing != null) {
                 if (!ItemHandlerHelper.canItemStacksStack(stack, existing)) {
@@ -99,7 +99,7 @@ public class ItemStackHandler implements IItemHandlerModifiable, INBTSerializabl
             return null;
         } else {
             this.validateSlotIndex(slot);
-            ItemStack existing = (ItemStack) this.stacks.get(slot);
+            ItemStack existing = this.stacks.get(slot);
             if (existing == null) {
                 return null;
             } else {
@@ -147,10 +147,10 @@ public class ItemStackHandler implements IItemHandlerModifiable, INBTSerializabl
         NBTTagList nbtTagList = new NBTTagList();
 
         for (int i = 0; i < this.stacks.size(); ++i) {
-            if ((ItemStack) this.stacks.get(i) != null) {
+            if (this.stacks.get(i) != null) {
                 NBTTagCompound itemTag = new NBTTagCompound();
                 itemTag.setInteger("Slot", i);
-                ((ItemStack) this.stacks.get(i)).writeToNBT(itemTag);
+                this.stacks.get(i).writeToNBT(itemTag);
                 nbtTagList.appendTag(itemTag);
             }
         }

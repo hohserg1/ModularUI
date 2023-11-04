@@ -11,6 +11,8 @@ import org.objectweb.asm.Opcodes;
 public class PacketByteBufferVisitor extends ClassVisitor implements Opcodes {
 
     public static final String PACKET_BUFFER_CLASS = "net.minecraft.network.PacketBuffer";
+    // Due to the bug with Mixin, obfuscated names are given instead of SRG names,
+    // even if SortingIndex is set to higher value
     private static final String WRITE_ITEMSTACK_METHOD = ModularUICore.isDevEnv() ? "writeItemStackToBuffer" : "a";
     private static final String READ_ITEMSTACK_METHOD = ModularUICore.isDevEnv() ? "readItemStackFromBuffer" : "c";
     private static final String WRITE_ITEMSTACK_DESC = ModularUICore.isDevEnv() ? "(Lnet/minecraft/item/ItemStack;)V" : "(Ladd;)V";
