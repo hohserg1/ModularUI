@@ -251,7 +251,6 @@ public class GuiScreenWrapper extends GuiContainer implements INEIGuiHandler {
         drawString(this.fontRendererObj, "Mouse Pos: " + mouseX + ", " + mouseY, 5, lineY, color);
         lineY -= 11;
         drawString(this.fontRendererObj, "FPS: " + this.fps, 5, lineY, color);
-        lineY -= 11;
         LocatedWidget locatedHovered = this.screen.getWindowManager().getTopWidgetLocated(true);
         if (locatedHovered != null) {
             drawSegmentLine(lineY -= 4, color);
