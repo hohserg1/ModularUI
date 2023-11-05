@@ -1,7 +1,6 @@
 package com.cleanroommc.modularui.test;
 
 import com.cleanroommc.modularui.ModularUI;
-import com.cleanroommc.modularui.Tags;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.future.ItemStackHandler;
 import com.cleanroommc.modularui.manager.GuiCreationContext;
@@ -31,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
 public class ItemEditorGui {
 
     private static final GuiInfo GUI_INFO = GuiInfo.builder()
-            .clientGui((creationContext, panel) -> new ModularScreen(Tags.MODID, panel))
+            .clientGui((creationContext, panel) -> new ModularScreen(ModularUI.ID, panel))
             .commonGui((creationContext, syncManager) -> new ItemEditorGui().buildUI(creationContext, syncManager))
             .build();
 

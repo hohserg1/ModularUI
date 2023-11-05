@@ -1,6 +1,6 @@
 package com.cleanroommc.modularui.network;
 
-import com.cleanroommc.modularui.Tags;
+import com.cleanroommc.modularui.ModularUI;
 import com.cleanroommc.modularui.network.packets.PacketSyncHandler;
 import com.cleanroommc.modularui.network.packets.SClipboard;
 import com.cleanroommc.modularui.network.packets.SyncConfig;
@@ -15,7 +15,7 @@ import net.minecraft.world.World;
 
 public class NetworkHandler {
 
-    public static final SimpleNetworkWrapper CHANNEL = NetworkRegistry.INSTANCE.newSimpleChannel(Tags.MODID);
+    public static final SimpleNetworkWrapper CHANNEL = NetworkRegistry.INSTANCE.newSimpleChannel(ModularUI.ID);
     private static int packetId = 0;
 
     public static void init() {

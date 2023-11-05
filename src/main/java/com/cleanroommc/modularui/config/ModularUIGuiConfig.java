@@ -1,7 +1,7 @@
 package com.cleanroommc.modularui.config;
 
+import com.cleanroommc.modularui.ModularUI;
 import com.cleanroommc.modularui.ModularUIConfig;
-import com.cleanroommc.modularui.Tags;
 import cpw.mods.fml.client.config.GuiConfig;
 import cpw.mods.fml.client.config.IConfigElement;
 import net.minecraft.client.gui.GuiScreen;
@@ -18,7 +18,7 @@ public class ModularUIGuiConfig extends GuiConfig {
         super(
                 parentScreen,
                 getConfigElements(),
-                Tags.MODID,
+                ModularUI.ID,
                 false,
                 false,
                 GuiConfig.getAbridgedConfigPath(ModularUIConfig.config.toString()));

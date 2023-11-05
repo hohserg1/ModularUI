@@ -1,6 +1,6 @@
 package com.cleanroommc.modularui.screen;
 
-import com.cleanroommc.modularui.Tags;
+import com.cleanroommc.modularui.ModularUI;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -17,7 +17,7 @@ public abstract class CustomModularScreen extends ModularScreen {
      * Creates a new screen with ModularUI as its owner.
      */
     public CustomModularScreen() {
-        super(Tags.MODID);
+        super(ModularUI.ID);
     }
 
     /**

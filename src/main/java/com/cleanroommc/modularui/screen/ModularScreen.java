@@ -1,6 +1,6 @@
 package com.cleanroommc.modularui.screen;
 
-import com.cleanroommc.modularui.Tags;
+import com.cleanroommc.modularui.ModularUI;
 import com.cleanroommc.modularui.api.ITheme;
 import com.cleanroommc.modularui.api.IThemeApi;
 import com.cleanroommc.modularui.api.widget.IGuiAction;
@@ -82,7 +82,7 @@ public class ModularScreen {
      * @param mainPanel main panel of this screen
      */
     public ModularScreen(@NotNull ModularPanel mainPanel) {
-        this(Tags.MODID, mainPanel);
+        this(ModularUI.ID, mainPanel);
     }
 
     /**

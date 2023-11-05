@@ -27,7 +27,7 @@ public class CommonProxy {
 
     void preInit(FMLPreInitializationEvent event) {
         ModularUIConfig.init(event.getSuggestedConfigurationFile());
-        NetworkRegistry.INSTANCE.registerGuiHandler(Tags.MODID, GuiManager.INSTANCE);
+        NetworkRegistry.INSTANCE.registerGuiHandler(ModularUI.ID, GuiManager.INSTANCE);
         GuiInfos.init();
 
         if (ModularUIConfig.enableTestGuis) {
@@ -59,7 +59,7 @@ public class CommonProxy {
 
     @SubscribeEvent
     public final void onConfigChange(ConfigChangedEvent.OnConfigChangedEvent event) {
-        if (event.modID.equals(Tags.MODID)) {
+        if (event.modID.equals(ModularUI.ID)) {
             ModularUIConfig.syncConfig();
         }
     }

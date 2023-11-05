@@ -10,16 +10,18 @@ import net.minecraft.launchwrapper.Launch;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid = Tags.MODID, name = Tags.MODNAME, version = Tags.VERSION, dependencies = ModularUI.DEPENDENCIES, guiFactory = ModularUI.GUI_FACTORY)
+@Mod(modid = ModularUI.ID, name = Tags.MODNAME, version = Tags.VERSION, dependencies = ModularUI.DEPENDENCIES, guiFactory = ModularUI.GUI_FACTORY)
 public class ModularUI {
 
-    public static final String DEPENDENCIES = "required-after:gtnhmixins@[2.0.1,); "
+    static final String DEPENDENCIES = "required-after:gtnhmixins@[2.0.1,); "
         + "required-after:NotEnoughItems@[2.3.27-GTNH,);"
         + "after:hodgepodge@[2.0.0,);"
         + "before:gregtech";
-    public static final String GUI_FACTORY = Tags.GROUPNAME + ".config.GuiFactory";
+    static final String GUI_FACTORY = Tags.GROUPNAME + ".config.GuiFactory";
 
-    public static final Logger LOGGER = LogManager.getLogger(Tags.MODID);
+    public static final String ID = Tags.MODID;
+
+    public static final Logger LOGGER = LogManager.getLogger(ID);
 
     public static final String MODID_GT5U = "gregtech";
     public static final String MODID_GT6 = "gregapi_post";
@@ -27,7 +29,7 @@ public class ModularUI {
     public static final boolean isHodgepodgeLoaded = Loader.isModLoaded("hodgepodge");
 
     @SidedProxy(
-        modId = Tags.MODID,
+        modId = ModularUI.ID,
         clientSide = Tags.GROUPNAME + ".ClientProxy",
         serverSide = Tags.GROUPNAME + ".CommonProxy")
     public static CommonProxy proxy;

@@ -1,6 +1,6 @@
 package com.cleanroommc.modularui.manager;
 
-import com.cleanroommc.modularui.Tags;
+import com.cleanroommc.modularui.ModularUI;
 import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.ModularScreen;
@@ -70,7 +70,7 @@ public class GuiInfo {
         if (NetworkUtils.isClient(player)) {
             throw new IllegalStateException("Synced GUIs must be opened on server side only!");
         }
-        FMLNetworkHandler.openGui(player, Tags.MODID, this.id, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
+        FMLNetworkHandler.openGui(player, ModularUI.ID, this.id, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
     }
 
     /**
@@ -92,7 +92,7 @@ public class GuiInfo {
         if (world.isRemote) {
             throw new IllegalStateException("EntityPlayer is server side, but World isn't!");
         }
-        FMLNetworkHandler.openGui(player, Tags.MODID, this.id, world, x, y, z);
+        FMLNetworkHandler.openGui(player, ModularUI.ID, this.id, world, x, y, z);
     }
 
     ModularPanel createCommonGui(GuiCreationContext context, GuiSyncManager guiSyncManager) {

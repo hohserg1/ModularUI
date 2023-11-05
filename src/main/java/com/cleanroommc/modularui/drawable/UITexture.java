@@ -1,6 +1,6 @@
 package com.cleanroommc.modularui.drawable;
 
-import com.cleanroommc.modularui.Tags;
+import com.cleanroommc.modularui.ModularUI;
 import com.cleanroommc.modularui.api.ITheme;
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
@@ -143,7 +143,7 @@ public class UITexture implements IDrawable {
             if (drawable != null) return drawable;
         }
         Builder builder = builder();
-        builder.location(JsonHelper.getString(json, Tags.MODID + ":gui/widgets/error", "location"))
+        builder.location(JsonHelper.getString(json, ModularUI.ID + ":gui/widgets/error", "location"))
                 .imageSize(JsonHelper.getInt(json, defaultImageWidth, "imageWidth", "iw"), JsonHelper.getInt(json, defaultImageHeight, "imageHeight", "ih"));
         boolean mode1 = json.has("x") || json.has("y") || json.has("w") || json.has("h") || json.has("width") || json.has("height");
         boolean mode2 = json.has("u0") || json.has("v0") || json.has("u1") || json.has("u1");

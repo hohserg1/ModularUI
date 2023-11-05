@@ -21,7 +21,7 @@ public class ModularUIConfig {
     public static final String CATEGORY_RENDERING = "rendering";
     public static final String CATEGORY_DEBUG = "debug";
 
-    private static final String LANG_PREFIX = Tags.MODID + ".config.";
+    private static final String LANG_PREFIX = ModularUI.ID + ".config.";
 
     public static final String[] CATEGORIES = new String[] {
         CATEGORY_RENDERING,
