@@ -21,7 +21,7 @@ public class ClientEventHandler {
     }
 
     @SubscribeEvent
-    public static void preDraw(TickEvent.RenderTickEvent event) {
+    public void preDraw(TickEvent.RenderTickEvent event) {
         if (event.phase == TickEvent.Phase.START) {
             GL11.glEnable(GL11.GL_STENCIL_TEST);
         }
@@ -29,7 +29,7 @@ public class ClientEventHandler {
     }
 
     @SubscribeEvent
-    public static void onClientTick(TickEvent.ClientTickEvent event) {
+    public void onClientTick(TickEvent.ClientTickEvent event) {
         if (event.phase == TickEvent.Phase.START) {
             ticks++;
             GuiManager.checkQueuedScreen();
@@ -37,7 +37,7 @@ public class ClientEventHandler {
     }
 
     @SubscribeEvent
-    public static void onOpenScreen(GuiOpenEvent event) {
+    public void onOpenScreen(GuiOpenEvent event) {
         if (event.gui instanceof GuiScreenWrapper && Minecraft.getMinecraft().currentScreen != null) {
             // another screen is already open, don't fade in the dark background as it's already there
             ((GuiScreenWrapper) event.gui).setAlphaFade(false);

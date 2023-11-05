@@ -17,7 +17,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 public class TutorialGui {
 
     @SubscribeEvent
-    public static void onItemUse(PlayerInteractEvent event) {
+    public void onItemUse(PlayerInteractEvent event) {
         ItemStack heldItem = event.entityPlayer.getHeldItem();
         if (event.entityPlayer.getEntityWorld().isRemote && heldItem != null && heldItem.getItem() == Items.diamond) {
             ClientGUI.open(createGui());
