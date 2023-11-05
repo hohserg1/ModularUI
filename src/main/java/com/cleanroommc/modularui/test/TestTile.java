@@ -309,7 +309,6 @@ public class TestTile extends TileEntity implements IGuiHolder {
                             new ParentWidget<>()
                                 .sizeRel(1f, 1f)
                                 .padding(7)
-                                .child(SlotGroupWidget.playerInventory())
                                 .child(
                                     new DropDownMenu()
                                         .addChoice(menu -> currentDropdownIndex = menu.getSelectedIndex(), "Help")

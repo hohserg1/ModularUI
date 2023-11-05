@@ -15,7 +15,7 @@ public class TutorialTile extends TileEntity implements IGuiHolder {
 
     @Override
     public ModularPanel buildUI(GuiCreationContext guiCreationContext, GuiSyncManager guiSyncManager, boolean isClient) {
-        // disables jei
+        // disables NEI
         guiCreationContext.getNEISettings().disableNEI();
 
         ModularPanel panel = ModularPanel.defaultPanel("tutorial_gui");

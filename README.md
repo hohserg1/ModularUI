@@ -17,7 +17,7 @@ With ModularUI you simply call `.child(new FluidSlot().syncHandler(new FluidTank
 - syncing widget values
 - good for client only GUIs and client-server synced GUIs
 - GUI themes are loaded via JSON and can be added and modified by resourcepacks
-- JEI compat for things like exclusion zones
+- NEI compat for things like exclusion zones
 
 ### History
 - First appearance of ModularUI in GTCE by Archengius
