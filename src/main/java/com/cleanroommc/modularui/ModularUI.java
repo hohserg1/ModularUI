@@ -1,17 +1,12 @@
 package com.cleanroommc.modularui;
 
-import com.cleanroommc.modularui.test.ItemEditorGui;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.Minecraft;
 import net.minecraft.launchwrapper.Launch;
-import net.minecraft.util.Timer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -40,9 +35,6 @@ public class ModularUI {
     @Mod.Instance
     public static ModularUI INSTANCE;
 
-    @SideOnly(Side.CLIENT)
-    static Timer timer60Fps;
-
     public static final boolean isDevEnv = (boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment");
 
     @Mod.EventHandler
@@ -57,16 +49,6 @@ public class ModularUI {
 
     @Mod.EventHandler
     public void onServerLoad(FMLServerStartingEvent event) {
-        event.registerServerCommand(new ItemEditorGui.Command());
-    }
-
-    @SideOnly(Side.CLIENT)
-    public static Minecraft getMC() {
-        return Minecraft.getMinecraft();
-    }
-
-    @SideOnly(Side.CLIENT)
-    public static Timer getTimer60Fps() {
-        return timer60Fps;
+        proxy.onServerLoad(event);
     }
 }

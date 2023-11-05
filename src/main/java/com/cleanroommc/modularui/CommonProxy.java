@@ -17,12 +17,15 @@ import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.util.Timer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
 
 public class CommonProxy {
 
-    public void preInit(FMLPreInitializationEvent event) {
+    void preInit(FMLPreInitializationEvent event) {
         ModularUIConfig.init(event.getSuggestedConfigurationFile());
         NetworkRegistry.INSTANCE.registerGuiHandler(Tags.MODID, GuiManager.INSTANCE);
         GuiInfos.init();
@@ -43,21 +46,26 @@ public class CommonProxy {
         MinecraftForge.EVENT_BUS.register(this);
     }
 
-    public void postInit(FMLPostInitializationEvent event) {}
+    void postInit(FMLPostInitializationEvent event) {}
 
-    public void onServerLoad(FMLServerStartingEvent event) {
+    void onServerLoad(FMLServerStartingEvent event) {
         event.registerServerCommand(new ItemEditorGui.Command());
     }
 
+    @SideOnly(Side.CLIENT)
+    public Timer getTimer60Fps() {
+        throw new UnsupportedOperationException();
+    }
+
     @SubscribeEvent
-    public void onConfigChange(ConfigChangedEvent.OnConfigChangedEvent event) {
+    public final void onConfigChange(ConfigChangedEvent.OnConfigChangedEvent event) {
         if (event.modID.equals(Tags.MODID)) {
             ModularUIConfig.syncConfig();
         }
     }
 
     @SubscribeEvent
-    public void onCloseContainer(PlayerOpenContainerEvent event) {
+    public final void onCloseContainer(PlayerOpenContainerEvent event) {
         if (event.entityPlayer.openContainer instanceof ModularContainer) {
             GuiSyncManager syncManager = ((ModularContainer) event.entityPlayer.openContainer).getSyncManager();
             if (syncManager != null) {

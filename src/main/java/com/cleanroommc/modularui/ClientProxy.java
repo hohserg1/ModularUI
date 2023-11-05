@@ -15,7 +15,6 @@ import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.util.Timer;
@@ -26,14 +25,16 @@ import net.minecraftforge.common.MinecraftForge;
 @SuppressWarnings("unused")
 public class ClientProxy extends CommonProxy {
 
+    private Timer timer60Fps;
+
     @Override
-    public void preInit(FMLPreInitializationEvent event) {
+    void preInit(FMLPreInitializationEvent event) {
         super.preInit(event);
 
         GuiContainerManager.addInputHandler(new ModularUIInputHandler());
         GuiContainerManager.addObjectHandler(new ModularUIContainerObjectHandler());
 
-        ModularUI.timer60Fps = new Timer(60f);
+        timer60Fps = new Timer(60f);
 
         FMLCommonHandler.instance().bus().register(ClientEventHandler.class);
 
@@ -53,13 +54,13 @@ public class ClientProxy extends CommonProxy {
     }
 
     @Override
-    public void postInit(FMLPostInitializationEvent event) {
+    void postInit(FMLPostInitializationEvent event) {
         ClientCommandHandler.instance.registerCommand(new ThemeReloadCommand());
         ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(new ThemeManager());
     }
 
     @Override
-    public void onServerLoad(FMLServerStartingEvent event) {
-        super.onServerLoad(event);
+    public Timer getTimer60Fps() {
+        return timer60Fps;
     }
 }
