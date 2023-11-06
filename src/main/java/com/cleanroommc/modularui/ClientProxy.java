@@ -15,6 +15,8 @@ import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.util.Timer;
@@ -22,10 +24,11 @@ import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.MinecraftForge;
 
+@SideOnly(Side.CLIENT)
 @SuppressWarnings("unused")
 public class ClientProxy extends CommonProxy {
 
-    private Timer timer60Fps;
+    private final Timer timer60Fps = new Timer(60f);
 
     @Override
     void preInit(FMLPreInitializationEvent event) {
@@ -33,8 +36,6 @@ public class ClientProxy extends CommonProxy {
 
         GuiContainerManager.addInputHandler(new ModularUIInputHandler());
         GuiContainerManager.addObjectHandler(new ModularUIContainerObjectHandler());
-
-        timer60Fps = new Timer(60f);
 
         FMLCommonHandler.instance().bus().register(ClientEventHandler.class);
 
@@ -61,6 +62,6 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public Timer getTimer60Fps() {
-        return timer60Fps;
+        return this.timer60Fps;
     }
 }
