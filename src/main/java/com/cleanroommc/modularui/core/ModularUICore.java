@@ -14,7 +14,6 @@ import java.util.Set;
 
 @SuppressWarnings("unused")
 @IFMLLoadingPlugin.MCVersion("1.7.10")
-@IFMLLoadingPlugin.TransformerExclusions("com.cleanroommc.modularui.core")
 public class ModularUICore implements IFMLLoadingPlugin, IEarlyMixinLoader {
 
     public static final Logger LOGGER = LogManager.getLogger("modularui");
