@@ -8,7 +8,6 @@ import com.cleanroommc.modularui.integration.nei.ModularUIContainerObjectHandler
 import com.cleanroommc.modularui.integration.nei.ModularUIInputHandler;
 import com.cleanroommc.modularui.mixins.early.forge.ForgeHooksClientMixin;
 import com.cleanroommc.modularui.test.EventHandler;
-import com.cleanroommc.modularui.test.tutorial.TutorialGui;
 import com.cleanroommc.modularui.theme.ThemeManager;
 import com.cleanroommc.modularui.theme.ThemeReloadCommand;
 import cpw.mods.fml.client.registry.RenderingRegistry;
@@ -41,7 +40,6 @@ public class ClientProxy extends CommonProxy {
 
         if (ModularUIConfig.enableTestGuis) {
             MinecraftForge.EVENT_BUS.register(new EventHandler());
-            MinecraftForge.EVENT_BUS.register(new TutorialGui());
         }
 
         DrawableSerialization.init();
