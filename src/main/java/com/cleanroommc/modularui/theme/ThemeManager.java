@@ -4,6 +4,7 @@ import com.cleanroommc.modularui.ModularUI;
 import com.cleanroommc.modularui.api.ITheme;
 import com.cleanroommc.modularui.drawable.FallbackableUITexture;
 import com.cleanroommc.modularui.mixins.early.minecraft.SimpleResourceAccessor;
+import com.cleanroommc.modularui.screen.Tooltip;
 import com.cleanroommc.modularui.utils.AssetHelper;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.utils.JsonBuilder;
@@ -276,7 +277,18 @@ public class ThemeManager implements IResourceManagerReloadListener {
                 parentWidgetTheme = parent.getWidgetTheme(entry.getKey());
                 widgetThemes.put(entry.getKey(), entry.getValue().parse(parentWidgetTheme, widgetThemeJson, jsonBuilder.getJson()));
             }
-            return new Theme(this.id, parent, widgetThemes);
+            Theme theme = new Theme(this.id, parent, widgetThemes);
+            if (jsonBuilder.getJson().has("openCloseAnimation")) {
+                theme.setOpenCloseAnimationOverride(jsonBuilder.getJson().get("openCloseAnimation").getAsInt());
+            }
+            if (jsonBuilder.getJson().has("smoothProgressBar")) {
+                theme.setSmoothProgressBarOverride(jsonBuilder.getJson().get("smoothProgressBar").getAsBoolean());
+            }
+            if (jsonBuilder.getJson().has("tooltipPos")) {
+                String posName = jsonBuilder.getJson().get("tooltipPos").getAsString();
+                theme.setTooltipPosOverride(Tooltip.Pos.valueOf(posName));
+            }
+            return theme;
         }
     }
 
