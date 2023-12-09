@@ -31,7 +31,7 @@ public class SClipboard implements IPacket {
 
     @Override
     public void write(PacketBuffer buf) {
-        NetworkUtils.writeStringSafe(buf, s);
+        NetworkUtils.writeStringSafe(buf, this.s);
     }
 
     @Override

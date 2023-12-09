@@ -25,7 +25,7 @@ public class DoubleSyncValue extends ValueSyncHandler<Double> implements IDouble
 
     @Contract("null, _, null, _ -> fail")
     public DoubleSyncValue(@Nullable DoubleSupplier clientGetter, @Nullable DoubleConsumer clientSetter,
-                            @Nullable DoubleSupplier serverGetter, @Nullable DoubleConsumer serverSetter) {
+                           @Nullable DoubleSupplier serverGetter, @Nullable DoubleConsumer serverSetter) {
         if (clientGetter == null && serverGetter == null) {
             throw new NullPointerException("Client or server getter must not be null!");
         }

@@ -35,6 +35,8 @@ import static com.cleanroommc.modularui.ModularUI.isGT5ULoaded;
 
 public class FluidSlot extends Widget<FluidSlot> implements Interactable, NEIDragAndDropHandler, NEIIngredientProvider {
 
+    public static final int DEFAULT_SIZE = 18;
+
     private static final String UNIT_BUCKET = "B";
     private static final String UNIT_LITER = "L";
 
@@ -49,7 +51,7 @@ public class FluidSlot extends Widget<FluidSlot> implements Interactable, NEIDra
 
     public FluidSlot() {
         flex().startDefaultMode()
-                .size(18, 18)
+                .size(DEFAULT_SIZE, DEFAULT_SIZE)
                 .endDefaultMode();
         tooltip().setAutoUpdate(true).setHasTitleMargin(true);
         tooltipBuilder(tooltip -> {
@@ -113,7 +115,7 @@ public class FluidSlot extends Widget<FluidSlot> implements Interactable, NEIDra
     public void onInit() {
         textRenderer.setShadow(true);
         textRenderer.setScale(0.5f);
-        textRenderer.setColor(Color.WHITE.normal);
+        this.textRenderer.setColor(Color.WHITE.main);
     }
 
     @Override
@@ -134,7 +136,7 @@ public class FluidSlot extends Widget<FluidSlot> implements Interactable, NEIDra
             float height = getArea().height - y * 2;
             if (!this.alwaysShowFull) {
                 float newHeight = height * content.amount * 1f / fluidTank.getCapacity();
-                y += height - newHeight;
+                y += (int) (height - newHeight);
                 height = newHeight;
             }
             GuiDraw.drawFluidTexture(content, this.contentOffsetX, y, getArea().width - this.contentOffsetX * 2, height, 0);

@@ -8,6 +8,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import cpw.mods.fml.common.Loader;
 import net.minecraft.network.PacketBuffer;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -18,6 +19,8 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
+@ApiStatus.Experimental
+@Deprecated
 public class Config {
 
     private static final Map<String, Config> configs = new HashMap<>();
@@ -130,11 +133,11 @@ public class Config {
 
     public void readFromBuffer(PacketBuffer buffer) {
         for (int i = 0, n = buffer.readVarIntFromBuffer(); i < n; i++) {
-            Config category = this.categories.get(NetworkUtils.readStringSafe(buffer, 64));
+            Config category = this.categories.get(NetworkUtils.readStringSafe(buffer));
             category.readFromBuffer(buffer);
         }
         for (int i = 0, n = buffer.readVarIntFromBuffer(); i < n; i++) {
-            Value value = this.values.get(NetworkUtils.readStringSafe(buffer, 64));
+            Value value = this.values.get(NetworkUtils.readStringSafe(buffer));
             value.readFromPacket(buffer);
         }
     }

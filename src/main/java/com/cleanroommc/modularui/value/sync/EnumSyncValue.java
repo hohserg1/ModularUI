@@ -26,7 +26,7 @@ public class EnumSyncValue<T extends Enum<T>> extends ValueSyncHandler<T> implem
 
     @Contract("_, null, _, null, _ -> fail")
     public EnumSyncValue(Class<T> enumCLass, @Nullable Supplier<T> clientGetter, @Nullable Consumer<T> clientSetter,
-                           @Nullable Supplier<T> serverGetter, @Nullable Consumer<T> serverSetter) {
+                         @Nullable Supplier<T> serverGetter, @Nullable Consumer<T> serverSetter) {
         this.enumCLass = enumCLass;
         if (clientGetter == null && serverGetter == null) {
             throw new NullPointerException("Client or server getter must not be null!");

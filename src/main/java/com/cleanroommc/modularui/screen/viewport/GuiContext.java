@@ -11,7 +11,7 @@ import com.cleanroommc.modularui.mixins.early.minecraft.GuiContainerAccessor;
 import com.cleanroommc.modularui.screen.DraggablePanelWrapper;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.ModularScreen;
-import com.cleanroommc.modularui.screen.NEISettings;
+import com.cleanroommc.modularui.screen.NEISettingsImpl;
 import com.cleanroommc.modularui.screen.WindowManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -64,7 +64,7 @@ public class GuiContext extends GuiViewportStack {
 
     public List<Consumer<GuiContext>> postRenderCallbacks = new ArrayList<>();
 
-    private NEISettings neiSettings;
+    private NEISettingsImpl neiSettings;
 
     public GuiContext(ModularScreen screen) {
         this.screen = screen;
@@ -241,7 +241,7 @@ public class GuiContext extends GuiViewportStack {
         IWidget grandparent = widget.getParent();
         boolean isRoot = grandparent instanceof ModularPanel;//grandparent == this.screen.getRoot();
 
-        if (grandparent != null && !stop && (isRoot || grandparent.canBeSeen(this))) {
+        if (!stop && (isRoot || grandparent.canBeSeen(this))) {
             List<IWidget> siblings = grandparent.getChildren();
             if (focus(grandparent, siblings.indexOf(widget), factor)) {
                 return true;
@@ -454,7 +454,7 @@ public class GuiContext extends GuiViewportStack {
         return this.screen.getCurrentTheme();
     }
 
-    public NEISettings getNEISettings() {
+    public NEISettingsImpl getNEISettings() {
         if (this.neiSettings == null) {
             throw new IllegalStateException("The screen is not yet initialised!");
         }
@@ -462,7 +462,7 @@ public class GuiContext extends GuiViewportStack {
     }
 
     @ApiStatus.Internal
-    public void setNEISettings(NEISettings neiSettings) {
+    public void setNEISettings(NEISettingsImpl neiSettings) {
         if (this.neiSettings != null) {
             throw new IllegalStateException("Tried to set NEI settings twice");
         }

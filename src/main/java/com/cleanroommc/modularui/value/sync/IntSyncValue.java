@@ -23,7 +23,7 @@ public class IntSyncValue extends ValueSyncHandler<Integer> implements IIntSyncV
 
     @Contract("null, _, null, _ -> fail")
     public IntSyncValue(@Nullable IntSupplier clientGetter, @Nullable IntConsumer clientSetter,
-                           @Nullable IntSupplier serverGetter, @Nullable IntConsumer serverSetter) {
+                        @Nullable IntSupplier serverGetter, @Nullable IntConsumer serverSetter) {
         if (clientGetter == null && serverGetter == null) {
             throw new NullPointerException("Client or server getter must not be null!");
         }

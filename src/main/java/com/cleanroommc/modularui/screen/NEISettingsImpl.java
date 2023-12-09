@@ -1,7 +1,10 @@
 package com.cleanroommc.modularui.screen;
 
+import com.cleanroommc.modularui.api.NEISettings;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.integration.nei.NEIState;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.UnmodifiableView;
 
@@ -16,7 +19,8 @@ import java.util.stream.Collectors;
  * By default, NEI is disabled in client only GUIs.
  * This class can be safely interacted with even when NEI is not installed.
  */
-public class NEISettings {
+@SideOnly(Side.CLIENT)
+public class NEISettingsImpl implements NEISettings {
 
     private NEIState neiState = NEIState.DEFAULT;
     private final List<IWidget> neiExclusionWidgets = new ArrayList<>();
@@ -25,6 +29,7 @@ public class NEISettings {
     /**
      * Force NEI to be enabled
      */
+    @Override
     public void enableNEI() {
         this.neiState = NEIState.ENABLED;
     }
@@ -32,6 +37,7 @@ public class NEISettings {
     /**
      * Force NEI to be disabled
      */
+    @Override
     public void disableNEI() {
         this.neiState = NEIState.DISABLED;
     }
@@ -39,6 +45,7 @@ public class NEISettings {
     /**
      * Only enabled NEI in synced GUIs
      */
+    @Override
     public void defaultNEI() {
         this.neiState = NEIState.DEFAULT;
     }
@@ -49,6 +56,7 @@ public class NEISettings {
      * @param screen modular screen
      * @return true if NEI is enabled
      */
+    @Override
     public boolean isNEIEnabled(ModularScreen screen) {
         return this.neiState.test(screen);
     }
@@ -59,6 +67,7 @@ public class NEISettings {
      *
      * @param area exclusion area
      */
+    @Override
     public void addNEIExclusionArea(Rectangle area) {
         if (!this.neiExclusionAreas.contains(area)) {
             this.neiExclusionAreas.add(area);
@@ -70,6 +79,7 @@ public class NEISettings {
      *
      * @param area exclusion area to remove (must be the same instance)
      */
+    @Override
     public void removeNEIExclusionArea(Rectangle area) {
         this.neiExclusionAreas.remove(area);
     }
@@ -80,6 +90,7 @@ public class NEISettings {
      *
      * @param area widget
      */
+    @Override
     public void addNEIExclusionArea(IWidget area) {
         if (!this.neiExclusionWidgets.contains(area)) {
             this.neiExclusionWidgets.add(area);
@@ -91,6 +102,7 @@ public class NEISettings {
      *
      * @param area widget
      */
+    @Override
     public void removeNEIExclusionArea(IWidget area) {
         this.neiExclusionWidgets.remove(area);
     }

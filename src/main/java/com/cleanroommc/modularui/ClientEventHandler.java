@@ -1,7 +1,8 @@
 package com.cleanroommc.modularui;
 
 import com.cleanroommc.modularui.drawable.Stencil;
-import com.cleanroommc.modularui.manager.GuiManager;
+import com.cleanroommc.modularui.factory.ClientGUI;
+import com.cleanroommc.modularui.factory.GuiManager;
 import com.cleanroommc.modularui.screen.GuiScreenWrapper;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
@@ -40,7 +41,17 @@ public class ClientEventHandler {
     public void onOpenScreen(GuiOpenEvent event) {
         if (event.gui instanceof GuiScreenWrapper && Minecraft.getMinecraft().currentScreen != null) {
             // another screen is already open, don't fade in the dark background as it's already there
-            ((GuiScreenWrapper) event.gui).setAlphaFade(false);
+            ((GuiScreenWrapper) event.gui).setDoAnimateTransition(false);
+        }
+        if (!GuiManager.isOpeningQueue() && Minecraft.getMinecraft().currentScreen instanceof GuiScreenWrapper) {
+            // opening a screen while a modular screen is open can cause crashes
+            // queue the screen to open it on next tick
+            if (event.gui != null) {
+                ClientGUI.open(event.gui);
+            } else {
+                ClientGUI.close();
+            }
+            event.setCanceled(true);
         }
     }
 }

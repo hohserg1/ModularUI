@@ -28,7 +28,7 @@ public class DropDownMenu extends SingleChildWidget<DropDownMenu> implements Int
 
     public DropDownMenu() {
         menu.setEnabled(false);
-        menu.background(GuiTextures.BUTTON);
+        menu.background(GuiTextures.BUTTON_CLEAN);
         child(menu);
         setArrows(GuiTextures.ARROW_UP, GuiTextures.ARROW_DOWN);
     }

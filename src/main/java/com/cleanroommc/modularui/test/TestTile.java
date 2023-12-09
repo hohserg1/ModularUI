@@ -10,7 +10,7 @@ import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.drawable.Rectangle;
 import com.cleanroommc.modularui.future.IItemHandlerModifiable;
 import com.cleanroommc.modularui.future.ItemStackHandler;
-import com.cleanroommc.modularui.manager.GuiCreationContext;
+import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.Tooltip;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
@@ -50,7 +50,7 @@ import net.minecraftforge.fluids.FluidTank;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
-public class TestTile extends TileEntity implements IGuiHolder {
+public class TestTile extends TileEntity implements IGuiHolder<PosGuiData> {
 
     private final FluidTank fluidTank = new FluidTank(10000);
     private final FluidTank fluidTankPhantom = new FluidTank(Integer.MAX_VALUE);
@@ -78,7 +78,7 @@ public class TestTile extends TileEntity implements IGuiHolder {
     private int currentDropdownIndex = -1;
 
     @Override
-    public ModularPanel buildUI(GuiCreationContext guiCreationContext, GuiSyncManager guiSyncManager, boolean isClient) {
+    public ModularPanel buildUI(PosGuiData guiData, GuiSyncManager guiSyncManager) {
         guiSyncManager.registerSlotGroup("item_inv", 3);
         guiSyncManager.registerSlotGroup("mixer_items", 2);
 
@@ -87,7 +87,7 @@ public class TestTile extends TileEntity implements IGuiHolder {
         IntSyncValue cycleStateValue = new IntSyncValue(() -> this.cycleState, val -> this.cycleState = val);
         guiSyncManager.syncValue("cycle_state", cycleStateValue);
 
-        Rectangle colorPickerBackground = new Rectangle().setColor(Color.RED.normal);
+        Rectangle colorPickerBackground = new Rectangle().setColor(Color.RED.main);
         ModularPanel panel = new ModularPanel("test_tile");
         PagedWidget.Controller tabController = new PagedWidget.Controller();
         panel.flex()                        // returns object which is responsible for sizing
@@ -137,10 +137,10 @@ public class TestTile extends TileEntity implements IGuiHolder {
                                                             tooltip.showUpTimer(10);
                                                             tooltip.addLine(IKey.str("Test Line g"));
                                                             tooltip.addLine(IKey.str("An image inside of a tooltip:"));
-                                                            tooltip.addLine(GuiTextures.LOGO.asIcon().size(50).alignment(Alignment.TopCenter));
+                                                            tooltip.addLine(GuiTextures.MUI_LOGO.asIcon().size(50).alignment(Alignment.TopCenter));
                                                             tooltip.addLine(IKey.str("And here a circle:"));
                                                             tooltip.addLine(new Circle()
-                                                                            .setColor(Color.RED.dark(2), Color.RED.bright(2))
+                                                                            .setColor(Color.RED.darker(2), Color.RED.brighter(2))
                                                                             .asIcon()
                                                                             .size(20))
                                                                     .addLine(new ItemDrawable(new ItemStack(Items.diamond)).asIcon())
@@ -177,13 +177,13 @@ public class TestTile extends TileEntity implements IGuiHolder {
                                                 .child(new Row().widthRel(1f).height(18)
                                                         .child(new ToggleButton()
                                                                 .value(new BoolValue.Dynamic(() -> cycleStateValue.getIntValue() == 0, val -> cycleStateValue.setIntValue(0)))
-                                                                .overlay(GuiTextures.CYCLE_BUTTON_DEMO.getSubArea(0, 0, 1, 1/3f)))
+                                                                .overlay(GuiTextures.CYCLE_BUTTON_DEMO.getSubArea(0, 0, 1, 1 / 3f)))
                                                         .child(new ToggleButton()
                                                                 .value(new BoolValue.Dynamic(() -> cycleStateValue.getIntValue() == 1, val -> cycleStateValue.setIntValue(1)))
-                                                                .overlay(GuiTextures.CYCLE_BUTTON_DEMO.getSubArea(0, 1/3f, 1, 2/3f)))
+                                                                .overlay(GuiTextures.CYCLE_BUTTON_DEMO.getSubArea(0, 1 / 3f, 1, 2 / 3f)))
                                                         .child(new ToggleButton()
                                                                 .value(new BoolValue.Dynamic(() -> cycleStateValue.getIntValue() == 2, val -> cycleStateValue.setIntValue(2)))
-                                                                .overlay(GuiTextures.CYCLE_BUTTON_DEMO.getSubArea(0, 2/3f, 1, 1))))
+                                                                .overlay(GuiTextures.CYCLE_BUTTON_DEMO.getSubArea(0, 2 / 3f, 1, 1))))
                                                 /*.child(new CycleButtonWidget()
                                                         .length(3)
                                                         .texture(GuiTextures.CYCLE_BUTTON_DEMO)
@@ -247,11 +247,12 @@ public class TestTile extends TileEntity implements IGuiHolder {
                                         .widthRel(1f).height(16)
                                         .top(7)
                                         .stopper(0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100)
-                                        .background(GuiTextures.SLOT_DARK))
+                                        .background(GuiTextures.SLOT_FLUID))
                                 .child(new ButtonWidget<>()
                                         .debugName("color picker button")
                                         .top(25)
                                         .background(colorPickerBackground)
+                                        .disableHoverBackground()
                                         .onMousePressed(mouseButton -> {
                                             panel.getScreen().openPanel(new ColorPickerDialog(colorPickerBackground::setColor, colorPickerBackground.getColor(), true)
                                                     .setDraggable(true)
@@ -341,7 +342,7 @@ public class TestTile extends TileEntity implements IGuiHolder {
                 return true;
             }
         }.flex(flex -> flex.size(100, 100).align(Alignment.Center))
-                .background(GuiTextures.BACKGROUND);
+                .background(GuiTextures.MC_BACKGROUND);
         panel.child(new ButtonWidget<>()
                         .flex(flex -> flex.size(8, 8).top(5).right(5))
                         .overlay(IKey.str("x"))

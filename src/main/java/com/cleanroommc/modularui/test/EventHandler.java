@@ -1,6 +1,6 @@
 package com.cleanroommc.modularui.test;
 
-import com.cleanroommc.modularui.manager.ClientGUI;
+import com.cleanroommc.modularui.factory.ClientGUI;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -17,7 +17,7 @@ public class EventHandler {
                     .inFrontOf(Minecraft.getMinecraft().thePlayer, 5, false)
                     .screenScale(0.5f)
                     .open(new TestGui());*/
-            ClientGUI.open(new ResizerTest());
+            ClientGUI.open(new TestGui());
         }
     }
 }

@@ -75,7 +75,7 @@ public class StringSyncValue extends ValueSyncHandler<String> implements IString
 
     @Override
     public void write(PacketBuffer buffer) {
-        NetworkUtils.writeStringSafe(buffer, getValue());
+        NetworkUtils.writeStringSafe(buffer, getValue(), Short.MAX_VALUE - 74);
     }
 
     @Override

@@ -1,8 +1,10 @@
 package com.cleanroommc.modularui;
 
+import com.cleanroommc.modularui.factory.GuiManager;
+import com.cleanroommc.modularui.factory.ItemGuiFactory;
+import com.cleanroommc.modularui.factory.SidedTileEntityGuiFactory;
+import com.cleanroommc.modularui.factory.TileEntityGuiFactory;
 import com.cleanroommc.modularui.holoui.HoloScreenEntity;
-import com.cleanroommc.modularui.manager.GuiInfos;
-import com.cleanroommc.modularui.manager.GuiManager;
 import com.cleanroommc.modularui.network.NetworkHandler;
 import com.cleanroommc.modularui.screen.ModularContainer;
 import com.cleanroommc.modularui.test.ItemEditorGui;
@@ -14,7 +16,6 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -26,8 +27,9 @@ public class CommonProxy {
 
     void preInit(FMLPreInitializationEvent event) {
         ModularUIConfig.init(event.getSuggestedConfigurationFile());
-        NetworkRegistry.INSTANCE.registerGuiHandler(ModularUI.ID, GuiManager.INSTANCE);
-        GuiInfos.init();
+
+        FMLCommonHandler.instance().bus().register(this);
+        MinecraftForge.EVENT_BUS.register(this);
 
         if (ModularUIConfig.enableTestGuis) {
             MinecraftForge.EVENT_BUS.register(TestBlock.class);
@@ -38,11 +40,13 @@ public class CommonProxy {
 
         NetworkHandler.init();
 
-        FMLCommonHandler.instance().bus().register(this);
-        MinecraftForge.EVENT_BUS.register(this);
+        GuiManager.registerFactory(TileEntityGuiFactory.INSTANCE);
+        GuiManager.registerFactory(SidedTileEntityGuiFactory.INSTANCE);
+        GuiManager.registerFactory(ItemGuiFactory.INSTANCE);
     }
 
-    void postInit(FMLPostInitializationEvent event) {}
+    void postInit(FMLPostInitializationEvent event) {
+    }
 
     void onServerLoad(FMLServerStartingEvent event) {
         event.registerServerCommand(new ItemEditorGui.Command());

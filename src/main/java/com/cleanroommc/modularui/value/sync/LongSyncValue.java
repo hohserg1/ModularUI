@@ -25,7 +25,7 @@ public class LongSyncValue extends ValueSyncHandler<Long> implements ILongSyncVa
 
     @Contract("null, _, null, _ -> fail")
     public LongSyncValue(@Nullable LongSupplier clientGetter, @Nullable LongConsumer clientSetter,
-                           @Nullable LongSupplier serverGetter, @Nullable LongConsumer serverSetter) {
+                         @Nullable LongSupplier serverGetter, @Nullable LongConsumer serverSetter) {
         if (clientGetter == null && serverGetter == null) {
             throw new NullPointerException("Client or server getter must not be null!");
         }

@@ -24,13 +24,13 @@ public class SyncConfig implements IPacket {
 
     @Override
     public void write(PacketBuffer buf) {
-        NetworkUtils.writeStringSafe(buffer, this.name);
-        NetworkUtils.writePacketBuffer(buf, this.buffer);
+        NetworkUtils.writeStringSafe(buf, this.name);
+        NetworkUtils.writeByteBuf(buf, this.buffer);
     }
 
     @Override
     public void read(PacketBuffer buf) {
-        this.name = NetworkUtils.readStringSafe(buffer);
+        this.name = NetworkUtils.readStringSafe(buf);
         this.buffer = NetworkUtils.readPacketBuffer(buf);
     }
 

@@ -1,7 +1,6 @@
 package com.cleanroommc.modularui.screen;
 
 import codechicken.nei.ItemPanels;
-import com.cleanroommc.modularui.ModularUIConfig;
 import com.cleanroommc.modularui.api.ITheme;
 import com.cleanroommc.modularui.api.layout.IViewport;
 import com.cleanroommc.modularui.api.layout.IViewportStack;
@@ -172,7 +171,11 @@ public class ModularPanel extends ParentWidget<ModularPanel> implements IViewpor
         getArea().z(1);
         initialise(this);
         int animationTime = getScreen().getCurrentTheme().getOpenCloseAnimationOverride();
-        if (animationTime <= 0) return;
+        if (animationTime <= 0 || !getScreen().getScreenWrapper().doAnimateTransition()) {
+            this.scale = 1f;
+            this.alpha = 1f;
+            return;
+        }
         this.scale = 0.75f;
         this.alpha = 0f;
         if (this.animator == null) {
@@ -455,6 +458,7 @@ public class ModularPanel extends ParentWidget<ModularPanel> implements IViewpor
         return false;
     }
 
+    @SuppressWarnings("unchecked")
     private <T, W extends IWidget & IFocusedWidget & Interactable> T interactFocused(Function<W, T> function, T defaultValue) {
         LocatedWidget focused = this.getContext().getFocusedWidget();
         T result = defaultValue;

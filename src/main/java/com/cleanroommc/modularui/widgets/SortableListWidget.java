@@ -150,7 +150,7 @@ public class SortableListWidget<T, I extends SortableListWidget.Item<T>> extends
             this.children.add(content);
             this.content.flex().heightRel(1f);
             flex().widthRel(1f).height(18);
-            background(GuiTextures.BUTTON);
+            background(GuiTextures.BUTTON_CLEAN);
         }
 
         @Override

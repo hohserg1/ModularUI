@@ -1,12 +1,11 @@
 package com.cleanroommc.modularui.test;
 
-import com.cleanroommc.modularui.ModularUI;
+import com.cleanroommc.modularui.api.IGuiHolder;
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.factory.GuiData;
+import com.cleanroommc.modularui.factory.SimpleGuiFactory;
 import com.cleanroommc.modularui.future.ItemStackHandler;
-import com.cleanroommc.modularui.manager.GuiCreationContext;
-import com.cleanroommc.modularui.manager.GuiInfo;
 import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
@@ -20,19 +19,15 @@ import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.MinecraftServer;
-import org.jetbrains.annotations.NotNull;
 
-public class ItemEditorGui {
+public class ItemEditorGui implements IGuiHolder<GuiData> {
 
-    private static final GuiInfo GUI_INFO = GuiInfo.builder()
-            .clientGui((creationContext, panel) -> new ModularScreen(ModularUI.ID, panel))
-            .commonGui((creationContext, syncManager) -> new ItemEditorGui().buildUI(creationContext, syncManager))
-            .build();
+    private static final SimpleGuiFactory GUI = new SimpleGuiFactory("mui:item_editor", ItemEditorGui::new);
 
     private final ItemStackHandler stackHandler = new ItemStackHandler(1);
 
@@ -44,7 +39,8 @@ public class ItemEditorGui {
         this.stackHandler.setStackInSlot(0, stack);
     }
 
-    public @NotNull ModularPanel buildUI(GuiCreationContext creationContext, GuiSyncManager syncManager) {
+    @Override
+    public ModularPanel buildUI(GuiData data, GuiSyncManager syncManager) {
         ItemStack itemStack = syncManager.getPlayer().getHeldItem();
         if (itemStack != null) {
             setStack(itemStack.copy());
@@ -110,9 +106,7 @@ public class ItemEditorGui {
                                         }
                                     }
                                 }))
-                                .setValidator(s -> {
-                                    return s;
-                                })));
+                                .setValidator(s -> s)));
     }
 
     public static class Command extends CommandBase {
@@ -129,8 +123,8 @@ public class ItemEditorGui {
 
         @Override
         public void processCommand(ICommandSender sender, String[] args) {
-            if (sender instanceof EntityPlayer && ((EntityPlayer) sender).capabilities.isCreativeMode) {
-                GUI_INFO.open((EntityPlayer) sender);
+            if (sender instanceof EntityPlayerMP && ((EntityPlayer) sender).capabilities.isCreativeMode) {
+                GUI.open((EntityPlayerMP) sender);
             } else {
                 throw new CommandException("Player must be creative mode!");
             }
