@@ -20,6 +20,8 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.PacketBuffer;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -31,7 +33,6 @@ public class GuiManager {
     private static ModularScreen queuedClientScreen;
     private static NEISettingsImpl queuedNEISettings;
     private static GuiScreen queuedGuiScreen;
-    private static boolean closeScreen;
     private static boolean openingQueue = false;
 
     public static void registerFactory(UIFactory<?> factory) {
@@ -96,13 +97,8 @@ public class GuiManager {
             Minecraft.getMinecraft().displayGuiScreen(screenWrapper);
         } else if (queuedGuiScreen != null) {
             Minecraft.getMinecraft().displayGuiScreen(queuedGuiScreen);
-        } else if (closeScreen) {
-            Minecraft.getMinecraft().displayGuiScreen(null);
         }
-        queuedClientScreen = null;
-        queuedNEISettings = null;
-        queuedGuiScreen = null;
-        closeScreen = false;
+        resetState();
         openingQueue = false;
     }
 
@@ -111,7 +107,6 @@ public class GuiManager {
         queuedClientScreen = screen;
         queuedNEISettings = neiSettings;
         queuedGuiScreen = null;
-        closeScreen = false;
     }
 
     @SideOnly(Side.CLIENT)
@@ -119,15 +114,24 @@ public class GuiManager {
         queuedClientScreen = null;
         queuedNEISettings = null;
         queuedGuiScreen = screen;
-        closeScreen = false;
     }
 
     @SideOnly(Side.CLIENT)
     static void closeScreen() {
-        queuedClientScreen = null;
-        queuedNEISettings = null;
-        queuedGuiScreen = null;
-        closeScreen = true;
+        Minecraft.getMinecraft().displayGuiScreen(null);
+        resetState();
+    }
+
+    @ApiStatus.Internal
+    @SideOnly(Side.CLIENT)
+    public static boolean resetState() {
+        if (queuedClientScreen != null || queuedGuiScreen != null) {
+            queuedClientScreen = null;
+            queuedNEISettings = null;
+            queuedGuiScreen = null;
+            return true;
+        }
+        return false;
     }
 
     public static boolean isOpeningQueue() {
