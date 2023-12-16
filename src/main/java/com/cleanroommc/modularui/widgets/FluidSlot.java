@@ -120,8 +120,8 @@ public class FluidSlot extends Widget<FluidSlot> implements Interactable, NEIDra
 
     @Override
     public boolean isValidSyncHandler(SyncHandler syncHandler) {
-        if (syncHandler instanceof FluidSlotSyncHandler) {
-            this.syncHandler = (FluidSlotSyncHandler) syncHandler;
+        if (syncHandler instanceof FluidSlotSyncHandler fluidSlotSyncHandler) {
+            this.syncHandler = fluidSlotSyncHandler;
             return true;
         }
         return false;

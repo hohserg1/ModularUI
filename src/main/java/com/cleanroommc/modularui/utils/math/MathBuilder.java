@@ -148,7 +148,7 @@ public class MathBuilder {
      */
     public String[] breakdown(String expression) throws Exception {
         /* If given string have illegal characters, then it can't be parsed */
-        if (this.strict && !expression.matches("^[\\w\\d\\s_+-/*%^&|<>=!?:.,()\"'@~\\[\\]]+$")) {
+        if (this.strict && !expression.matches("^[\\w\\s_+-/*%^&|<>=!?:.,()\"'@~\\[\\]]+$")) {
             throw new Exception("Given expression '" + expression + "' contains illegal characters!");
         }
 
@@ -267,18 +267,18 @@ public class MathBuilder {
     /**
      * Trims spaces from individual symbols
      */
-    private List<Object> trimSymbols(List<Object> symbols) {
+    private List<Object> trimSymbols(List<?> symbols) {
         List<Object> newSymbols = new ArrayList<>();
 
         for (Object value : symbols) {
-            if (value instanceof String) {
-                String string = ((String) value).trim();
+            if (value instanceof String string) {
+                string = string.trim();
 
                 if (!string.isEmpty()) {
                     newSymbols.add(string);
                 }
             } else {
-                newSymbols.add(this.trimSymbols((List<Object>) value));
+                newSymbols.add(this.trimSymbols((List<?>) value));
             }
         }
 
@@ -296,8 +296,7 @@ public class MathBuilder {
      * However, beside parsing operations, it's also can return one or
      * two item sized symbol lists.
      */
-    @SuppressWarnings("unchecked")
-    public IMathValue parseSymbols(List<Object> symbols) throws Exception {
+    public IMathValue parseSymbols(List<?> symbols) throws Exception {
         IMathValue ternary = this.tryTernary(symbols);
 
         if (ternary != null) {
@@ -316,8 +315,8 @@ public class MathBuilder {
             Object first = symbols.get(0);
             Object second = symbols.get(1);
 
-            if ((this.isVariable(first) || first.equals("-")) && second instanceof List) {
-                return this.createFunction((String) first, (List<Object>) second);
+            if ((this.isVariable(first) || first.equals("-")) && second instanceof List<?> list) {
+                return this.createFunction((String) first, list);
             }
         }
 
@@ -362,14 +361,14 @@ public class MathBuilder {
         return new Operator(operation, this.parseSymbols(symbols.subList(0, lastOp)), this.parseSymbols(symbols.subList(lastOp + 1, size)));
     }
 
-    protected int seekLastOperator(List<Object> symbols) {
+    protected int seekLastOperator(List<?> symbols) {
         return this.seekLastOperator(symbols, symbols.size() - 1);
     }
 
     /**
      * Find the index of the first operator
      */
-    protected int seekLastOperator(List<Object> symbols, int offset) {
+    protected int seekLastOperator(List<?> symbols, int offset) {
         for (int i = offset; i >= 0; i--) {
             Object o = symbols.get(i);
 
@@ -398,7 +397,7 @@ public class MathBuilder {
      * and some elements from beginning till ?, in between ? and :, and also some
      * remaining elements after :.
      */
-    protected IMathValue tryTernary(List<Object> symbols) throws Exception {
+    protected IMathValue tryTernary(List<?> symbols) throws Exception {
         int question = -1;
         int questions = 0;
         int colon = -1;
@@ -447,7 +446,7 @@ public class MathBuilder {
      * mixed with operators, groups, values and commas. And then plug it
      * in to a class constructor with given name.
      */
-    protected IMathValue createFunction(String first, List<Object> args) throws Exception {
+    protected IMathValue createFunction(String first, List<?> args) throws Exception {
         /* Handle special cases with negation */
         if (first.equals("!")) {
             return new Negate(this.parseSymbols(args));
@@ -500,8 +499,7 @@ public class MathBuilder {
      */
     @SuppressWarnings("unchecked")
     public IMathValue valueFromObject(Object object) throws Exception {
-        if (object instanceof String) {
-            String symbol = (String) object;
+        if (object instanceof String symbol) {
 
             /* Variable and constant negation */
             if (symbol.startsWith("!")) {
@@ -532,8 +530,8 @@ public class MathBuilder {
                     }
                 }
             }
-        } else if (object instanceof List) {
-            return new Group(this.parseSymbols((List<Object>) object));
+        } else if (object instanceof List<?> list) {
+            return new Group(this.parseSymbols(list));
         }
 
         throw new Exception("Given object couldn't be converted to value! " + object);
@@ -563,11 +561,11 @@ public class MathBuilder {
      * Whether given object is a variable
      */
     protected boolean isVariable(Object o) {
-        return o instanceof String && !this.isDecimal((String) o) && !this.isOperator((String) o);
+        return o instanceof String string && !this.isDecimal(string) && !this.isOperator(string);
     }
 
     protected boolean isOperator(Object o) {
-        return o instanceof String && this.isOperator((String) o);
+        return o instanceof String string && this.isOperator(string);
     }
 
     /**

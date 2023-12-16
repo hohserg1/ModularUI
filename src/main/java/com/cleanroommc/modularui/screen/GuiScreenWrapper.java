@@ -139,8 +139,8 @@ public class GuiScreenWrapper extends GuiContainer implements INEIGuiHandler {
 
         getAccessor().setHoveredSlot(null);
         IGuiElement hovered = this.screen.getContext().getHovered();
-        if (hovered instanceof IVanillaSlot) {
-            getAccessor().setHoveredSlot(((IVanillaSlot) hovered).getVanillaSlot());
+        if (hovered instanceof IVanillaSlot vanillaSlot) {
+            getAccessor().setHoveredSlot(vanillaSlot.getVanillaSlot());
         }
 
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -283,10 +283,9 @@ public class GuiScreenWrapper extends GuiContainer implements INEIGuiHandler {
                 lineY -= 11;
                 GuiDraw.drawText("Parent: " + parent, 5, lineY, 1, color, false);
             }
-            if (hovered instanceof ItemSlot) {
+            if (hovered instanceof ItemSlot slotWidget) {
                 drawSegmentLine(lineY -= 4, color);
                 lineY -= 10;
-                ItemSlot slotWidget = (ItemSlot) hovered;
                 ModularSlot slot = slotWidget.getSlot();
                 GuiDraw.drawText("Slot Index: " + slot.getSlotIndex(), 5, lineY, 1, color, false);
                 lineY -= 11;

@@ -123,7 +123,7 @@ public class ItemEditorGui implements IGuiHolder<GuiData> {
 
         @Override
         public void processCommand(ICommandSender sender, String[] args) {
-            if (sender instanceof EntityPlayerMP && ((EntityPlayer) sender).capabilities.isCreativeMode) {
+            if (sender instanceof EntityPlayerMP entityPlayerMP && entityPlayerMP.capabilities.isCreativeMode) {
                 GUI.open((EntityPlayerMP) sender);
             } else {
                 throw new CommandException("Player must be creative mode!");

@@ -463,9 +463,9 @@ public class Flex implements IResizeable, IPositioned<Flex> {
         Area parentArea = parent.getParentArea();
         area.rx = area.x - parentArea.x;
         area.ry = area.y - parentArea.y;
-        if (parent instanceof IVanillaSlot) {
+        if (parent instanceof IVanillaSlot vanillaSlot) {
             // special treatment for minecraft slots
-            Slot slot = ((IVanillaSlot) parent).getVanillaSlot();
+            Slot slot = vanillaSlot.getVanillaSlot();
             slot.xDisplayPosition = parent.getArea().x;
             slot.yDisplayPosition = parent.getArea().y;
         }

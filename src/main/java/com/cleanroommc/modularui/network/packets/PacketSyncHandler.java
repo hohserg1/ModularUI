@@ -53,9 +53,9 @@ public class PacketSyncHandler implements IPacket {
     @Override
     public @Nullable IPacket executeServer(NetHandlerPlayServer handler) {
         Container container = handler.playerEntity.openContainer;
-        if (container instanceof ModularContainer) {
+        if (container instanceof ModularContainer modularContainer) {
             try {
-                ((ModularContainer) container).getSyncManager().receiveWidgetUpdate(this.key, this.packet.readVarIntFromBuffer(), this.packet);
+                modularContainer.getSyncManager().receiveWidgetUpdate(this.key, this.packet.readVarIntFromBuffer(), this.packet);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

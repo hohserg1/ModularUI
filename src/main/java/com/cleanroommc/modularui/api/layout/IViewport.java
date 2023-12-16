@@ -64,8 +64,7 @@ public interface IViewport {
             if (!child.isEnabled()) {
                 continue;
             }
-            if (child instanceof IViewport) {
-                IViewport viewport = (IViewport) child;
+            if (child instanceof IViewport viewport) {
                 stack.pushViewport(viewport, parent.getArea());
                 child.transform(stack);
                 viewport.getSelfAt(stack, widgetList, x, y);
@@ -92,8 +91,7 @@ public interface IViewport {
                 continue;
             }
             stack.popMatrix();
-            if (child instanceof IViewport) {
-                IViewport viewport = (IViewport) child;
+            if (child instanceof IViewport viewport) {
                 stack.pushViewport(viewport, parent.getArea());
                 parent.transform(stack);
                 if (!predicate.test(child)) {

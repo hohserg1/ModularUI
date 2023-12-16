@@ -19,6 +19,13 @@ public class ClientEventHandler {
     }
 
     @SubscribeEvent
+    public void onClientTick(TickEvent.ClientTickEvent event) {
+        if (event.phase == TickEvent.Phase.START) {
+            ticks++;
+        }
+    }
+
+    @SubscribeEvent
     public void preDraw(TickEvent.RenderTickEvent event) {
         if (event.phase == TickEvent.Phase.START) {
             GL11.glEnable(GL11.GL_STENCIL_TEST);

@@ -68,7 +68,7 @@ public class ColorShade implements Iterable<Integer> {
         }
 
         public ColorShade build() {
-            return new ColorShade(this.main, this.darker.stream().mapToInt(Integer::intValue).toArray(), this.brighter.stream().mapToInt(Integer::intValue).toArray());
+            return new ColorShade(this.main, this.brighter.stream().mapToInt(Integer::intValue).toArray(), this.darker.stream().mapToInt(Integer::intValue).toArray());
         }
     }
 }
