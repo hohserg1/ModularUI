@@ -3,6 +3,7 @@ package com.cleanroommc.modularui.drawable;
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.screen.GuiScreenWrapper;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
+import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.utils.GameObjectHelper;
 import com.cleanroommc.modularui.utils.JsonHelper;
 import com.google.gson.JsonObject;
@@ -34,21 +35,8 @@ public class ItemDrawable implements IDrawable {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void draw(GuiContext context, int x, int y, int width, int height) {
-        if (this.item == null) return;
-        GL11.glPushMatrix();
-        RenderHelper.enableGUIStandardItemLighting();
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
-        GL11.glScalef(width / 16f, height / 16f, 1);
-        RenderItem renderItem = GuiScreenWrapper.getItemRenderer();
-        renderItem.zLevel = 200;
-        renderItem.renderItemAndEffectIntoGUI(Minecraft.getMinecraft().fontRenderer, Minecraft.getMinecraft().getTextureManager(), this.item, x, y);
-        renderItem.zLevel = 0;
-        GuiDraw.afterRenderItemAndEffectIntoGUI(item);
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
-        RenderHelper.enableStandardItemLighting();
-        GL11.glDisable(GL11.GL_LIGHTING);
-        GL11.glPopMatrix();
+    public void draw(GuiContext context, int x, int y, int width, int height, WidgetTheme widgetTheme) {
+        GuiDraw.drawItem(this.item, x, y, width, height);
     }
 
     @Override

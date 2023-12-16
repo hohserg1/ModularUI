@@ -50,8 +50,7 @@ public interface IGuiElement {
      *
      * @param theme themes to apply
      */
-    default void applyTheme(ITheme theme) {
-    }
+    default void applyTheme(ITheme theme) {}
 
 
     /**

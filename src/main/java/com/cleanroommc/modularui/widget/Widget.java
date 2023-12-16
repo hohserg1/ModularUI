@@ -87,7 +87,6 @@ public class Widget<W extends Widget<W>> implements IWidget, IPositioned<W>, ITo
         if (!getScreen().isClientOnly()) {
             initialiseSyncHandler(getScreen().getSyncManager());
         }
-        applyTheme(this.context.getTheme());
         onInit();
         if (hasChildren()) {
             for (IWidget child : getChildren()) {
@@ -151,10 +150,9 @@ public class Widget<W extends Widget<W>> implements IWidget, IPositioned<W>, ITo
 
     @Override
     public void drawBackground(GuiContext context, WidgetTheme widgetTheme) {
-        IDrawable bg = getCurrentBackground();
+        IDrawable bg = getCurrentBackground(context.getTheme(), widgetTheme);
         if (bg != null) {
-            bg.applyThemeColor(context.getTheme(), widgetTheme);
-            bg.drawAtZero(context, getArea());
+            bg.drawAtZero(context, getArea(), widgetTheme);
         }
     }
 
@@ -164,11 +162,10 @@ public class Widget<W extends Widget<W>> implements IWidget, IPositioned<W>, ITo
 
     @Override
     public void drawOverlay(GuiContext context, WidgetTheme widgetTheme) {
-        IDrawable bg = getCurrentOverlay();
+        IDrawable bg = getCurrentOverlay(context.getTheme(), widgetTheme);
         if (bg != null) {
-            bg.applyThemeColor(context.getTheme(), widgetTheme);
             Box padding = getArea().getPadding();
-            bg.draw(context, padding.left, padding.top, getArea().width - padding.horizontal(), getArea().height - padding.vertical());
+            bg.draw(context, padding.left, padding.top, getArea().width - padding.horizontal(), getArea().height - padding.vertical(), widgetTheme);
         }
     }
 
@@ -177,17 +174,6 @@ public class Widget<W extends Widget<W>> implements IWidget, IPositioned<W>, ITo
         Tooltip tooltip = getTooltip();
         if (tooltip != null && isHoveringFor(tooltip.getShowUpTimer())) {
             tooltip.draw(getContext());
-        }
-    }
-
-    @Override
-    public void applyTheme(ITheme theme) {
-        WidgetTheme widgetTheme = getWidgetTheme(theme);
-        if (this.background == null) {
-            this.background = widgetTheme.getBackground();
-        }
-        if (this.hoverBackground == null) {
-            this.hoverBackground = widgetTheme.getHoverBackground();
         }
     }
 
@@ -207,12 +193,17 @@ public class Widget<W extends Widget<W>> implements IWidget, IPositioned<W>, ITo
         return this.hoverOverlay;
     }
 
-    public IDrawable getCurrentBackground() {
-        IDrawable hoverBackground = getHoverBackground();
-        return hoverBackground != null && hoverBackground != IDrawable.NONE && isHovering() ? hoverBackground : getBackground();
+    public IDrawable getCurrentBackground(ITheme theme, WidgetTheme widgetTheme) {
+        if (isHovering()) {
+            IDrawable hoverBackground = getHoverBackground();
+            if (hoverBackground == null) hoverBackground = widgetTheme.getHoverBackground();
+            if (hoverBackground != null && hoverBackground != IDrawable.NONE) return hoverBackground;
+        }
+        IDrawable background = getBackground();
+        return background == null ? widgetTheme.getBackground() : background;
     }
 
-    public IDrawable getCurrentOverlay() {
+    public IDrawable getCurrentOverlay(ITheme theme, WidgetTheme widgetTheme) {
         IDrawable hoverBackground = getHoverOverlay();
         return hoverBackground != null && hoverBackground != IDrawable.NONE && isHovering() ? hoverBackground : getOverlay();
     }
