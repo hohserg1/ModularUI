@@ -41,12 +41,16 @@ public interface ObjectList<V> extends List<V>, Comparable<List<? extends V>> {
 
     void addLast(V v);
 
+    @NotNull
     V getFirst();
 
+    @NotNull
     V getLast();
 
+    @NotNull
     V removeFirst();
 
+    @NotNull
     V removeLast();
 
     @Nullable
@@ -63,6 +67,7 @@ public interface ObjectList<V> extends List<V>, Comparable<List<? extends V>> {
 
     void trim();
 
+    @NotNull
     V[] elements();
 
     class ObjectArrayList<V> extends ForwardingList<V> implements ObjectList<V> {
@@ -109,22 +114,22 @@ public interface ObjectList<V> extends List<V>, Comparable<List<? extends V>> {
         }
 
         @Override
-        public V getFirst() {
+        public @NotNull V getFirst() {
             return get(0);
         }
 
         @Override
-        public V getLast() {
+        public @NotNull V getLast() {
             return get(size() - 1);
         }
 
         @Override
-        public V removeFirst() {
+        public @NotNull V removeFirst() {
             return remove(0);
         }
 
         @Override
-        public V removeLast() {
+        public @NotNull V removeLast() {
             return remove(size() - 1);
         }
 

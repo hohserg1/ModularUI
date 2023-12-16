@@ -8,11 +8,9 @@ import com.cleanroommc.modularui.api.widget.IGuiElement;
 import com.cleanroommc.modularui.api.widget.IVanillaSlot;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.mixins.early.minecraft.GuiContainerAccessor;
-import com.cleanroommc.modularui.screen.DraggablePanelWrapper;
-import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.screen.ModularScreen;
-import com.cleanroommc.modularui.screen.NEISettingsImpl;
-import com.cleanroommc.modularui.screen.WindowManager;
+
+import com.cleanroommc.modularui.screen.*;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import org.jetbrains.annotations.ApiStatus;
@@ -68,7 +66,7 @@ public class GuiContext extends GuiViewportStack {
 
     public GuiContext(ModularScreen screen) {
         this.screen = screen;
-        this.hoveredWidgets = new HoveredIterable(this.screen.getWindowManager());
+        this.hoveredWidgets = new HoveredIterable(this.screen.getPanelManager());
         this.mc = Minecraft.getMinecraft();
         this.font = this.mc.fontRenderer;
     }
@@ -284,7 +282,8 @@ public class GuiContext extends GuiViewportStack {
         return false;
     }
 
-    private void dropDraggable() {
+    @ApiStatus.Internal
+    public void dropDraggable() {
         this.draggable.applyMatrix(this);
         this.draggable.getElement().onDragEnd(this.draggable.getElement().canDropHere(getAbsMouseX(), getAbsMouseY(), this.hovered));
         this.draggable.getElement().setMoving(false);
@@ -303,7 +302,7 @@ public class GuiContext extends GuiViewportStack {
                 draggable = new LocatedElement<>((IDraggable) widget, hovered.getTransformationMatrix());
             } else if (widget instanceof ModularPanel) {
                 ModularPanel panel = (ModularPanel) widget;
-                if (panel.isDraggable() && !this.screen.getWindowManager().isAboutToClose(panel)) {
+                if (panel.isDraggable()) {
                     if (!panel.flex().hasFixedSize()) {
                         throw new IllegalStateException("Panel must have a fixed size. It can't specify left AND right or top AND bottom!");
                     }
@@ -353,7 +352,7 @@ public class GuiContext extends GuiViewportStack {
     @ApiStatus.Internal
     public void onFrameUpdate() {
         updateEventState();
-        IGuiElement hovered = this.screen.getWindowManager().getTopWidget();
+        IGuiElement hovered = this.screen.getPanelManager().getTopWidget();
         if (hasDraggable() && (this.lastDragX != this.mouseX || this.lastDragY != this.mouseY)) {
             this.lastDragX = this.mouseX;
             this.lastDragY = this.mouseY;
@@ -471,10 +470,10 @@ public class GuiContext extends GuiViewportStack {
 
     private static class HoveredIterable implements Iterable<IGuiElement> {
 
-        private final WindowManager windowManager;
+        private final PanelManager panelManager;
 
-        private HoveredIterable(WindowManager windowManager) {
-            this.windowManager = windowManager;
+        private HoveredIterable(PanelManager panelManager) {
+            this.panelManager = panelManager;
         }
 
         @NotNull
@@ -482,7 +481,7 @@ public class GuiContext extends GuiViewportStack {
         public Iterator<IGuiElement> iterator() {
             return new Iterator<IGuiElement>() {
 
-                private final Iterator<ModularPanel> panelIt = HoveredIterable.this.windowManager.getOpenPanels().iterator();
+                private final Iterator<ModularPanel> panelIt = HoveredIterable.this.panelManager.getOpenPanels().iterator();
                 private Iterator<LocatedWidget> widgetIt;
 
                 @Override

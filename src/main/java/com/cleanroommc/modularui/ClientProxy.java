@@ -2,6 +2,7 @@ package com.cleanroommc.modularui;
 
 import codechicken.nei.guihook.GuiContainerManager;
 import com.cleanroommc.modularui.drawable.DrawableSerialization;
+import com.cleanroommc.modularui.factory.GuiManager;
 import com.cleanroommc.modularui.holoui.HoloScreenEntity;
 import com.cleanroommc.modularui.holoui.ScreenEntityRender;
 import com.cleanroommc.modularui.integration.nei.ModularUIContainerObjectHandler;
@@ -36,7 +37,8 @@ public class ClientProxy extends CommonProxy {
         GuiContainerManager.addInputHandler(new ModularUIInputHandler());
         GuiContainerManager.addObjectHandler(new ModularUIContainerObjectHandler());
 
-        FMLCommonHandler.instance().bus().register(ClientEventHandler.class);
+        FMLCommonHandler.instance().bus().register(new ClientEventHandler());
+        MinecraftForge.EVENT_BUS.register(new GuiManager());
 
         if (ModularUIConfig.enableTestGuis) {
             MinecraftForge.EVENT_BUS.register(new EventHandler());

@@ -41,6 +41,7 @@ import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Column;
 import com.cleanroommc.modularui.widgets.layout.Row;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
+
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -147,7 +148,8 @@ public class TestTile extends TileEntity implements IGuiHolder<PosGuiData> {
                                                                     .pos(Tooltip.Pos.LEFT);
                                                         })
                                                         .onMousePressed(mouseButton -> {
-                                                            panel.getScreen().openDialog("dialog", this::buildDialog, ModularUI.LOGGER::info);
+                                                            panel.getScreen().close(true);
+                                                            //panel.getScreen().openDialog("dialog", this::buildDialog, ModularUI.LOGGER::info);
                                                             //openSecondWindow(context).openIn(panel.getScreen());
                                                             return true;
                                                         })

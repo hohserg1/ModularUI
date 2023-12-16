@@ -4,6 +4,8 @@ import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.screen.NEISettingsImpl;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import org.jetbrains.annotations.NotNull;
 
@@ -43,14 +45,14 @@ public class ClientGUI {
      *
      * @param screen screen to open
      */
-    public static void open(@NotNull GuiScreen screen) {
-        GuiManager.openScreen(screen);
+    public static void open(GuiScreen screen) {
+        Minecraft.getMinecraft().displayGuiScreen(screen);
     }
 
     /**
      * Closes any GUI that is open in this tick.
      */
     public static void close() {
-        GuiManager.closeScreen();
+        Minecraft.getMinecraft().displayGuiScreen(null);
     }
 }

@@ -67,7 +67,7 @@ public class ModularScreen {
 
     private final String owner;
     private final String name;
-    private final WindowManager windowManager = new WindowManager(this);
+    private final PanelManager panelManager;
     private final GuiContext context = new GuiContext(this);
     private final Area screenArea = new Area();
     private final Map<Class<?>, List<IGuiAction>> guiActionListeners = new HashMap<>();
@@ -112,7 +112,7 @@ public class ModularScreen {
         Objects.requireNonNull(mainPanel, "The main panel must not be null!");
         this.name = mainPanel.getName();
         this.currentTheme = IThemeApi.get().getThemeForScreen(this, null);
-        this.windowManager.construct(mainPanel);
+        this.panelManager = new PanelManager(this, mainPanel);
     }
 
     /**
@@ -134,33 +134,29 @@ public class ModularScreen {
         if (this.screenWrapper != null) throw new IllegalStateException("ModularScreen is already constructed!");
         if (wrapper == null) throw new NullPointerException("GuiScreenWrapper must not be null!");
         this.screenWrapper = wrapper;
-        this.screenWrapper.updateArea(this.windowManager.getMainPanel().getArea());
+        this.screenWrapper.updateArea(this.panelManager.getMainPanel().getArea());
     }
 
     public void onResize(int width, int height) {
-
         this.screenArea.set(0, 0, width, height);
         this.screenArea.z(0);
-        this.viewportSet();
 
         this.context.pushViewport(null, this.screenArea);
-        for (ModularPanel panel : this.windowManager.getReverseOpenPanels()) {
+        for (ModularPanel panel : this.panelManager.getReverseOpenPanels()) {
             WidgetTree.resize(panel);
         }
 
-        //this.ROOT.resize();
         this.context.popViewport(null);
-
-        this.screenWrapper.updateArea(this.windowManager.getMainPanel().getArea());
+        this.screenWrapper.updateArea(this.panelManager.getMainPanel().getArea());
     }
 
     public void onOpen() {
-        this.windowManager.init();
+        this.panelManager.init();
     }
 
     @MustBeInvokedByOverriders
     public void onClose() {
-        this.windowManager.closeAll();
+        this.panelManager.closeAll();
     }
 
     public void close() {
@@ -173,37 +169,55 @@ public class ModularScreen {
                 this.context.mc.thePlayer.closeScreen();
                 return;
             }
-            if (!getMainPanel().isOpening() && !getMainPanel().isClosing()) {
-                for (ModularPanel panel : this.windowManager.getOpenPanels()) {
-                    panel.animateClose();
-                }
-            }
+            getMainPanel().closeIfOpen(true);
         }
     }
 
     public void openPanel(ModularPanel panel) {
-        this.windowManager.openPanel(panel);
+        this.panelManager.openPanel(panel);
     }
 
+    /**
+     * Closes the given panel as soon as possible.
+     *
+     * @param panel panel to close
+     * @throws IllegalArgumentException if the panel is not open in this screen
+     */
     public void closePanel(ModularPanel panel) {
-        this.windowManager.closePanel(panel);
+        this.panelManager.closePanel(panel);
     }
 
+    /**
+     * Checks if a panel with a given name is currently open in this screen.
+     *
+     * @param name name of the panel
+     * @return true if a panel with the name is open
+     */
     public boolean isPanelOpen(String name) {
-        return this.windowManager.isPanelOpen(name);
+        return this.panelManager.isPanelOpen(name);
+    }
+
+    /**
+     * Checks if a panel is currently open in this screen.
+     *
+     * @param panel panel to check
+     * @return true if the panel is open
+     */
+    public boolean isPanelOpen(ModularPanel panel) {
+        return this.panelManager.hasOpenPanel(panel);
     }
 
     @MustBeInvokedByOverriders
     public void onUpdate() {
         this.context.tick();
-        for (ModularPanel panel : this.windowManager.getOpenPanels()) {
+        for (ModularPanel panel : this.panelManager.getOpenPanels()) {
             WidgetTree.onUpdate(panel);
         }
     }
 
     @MustBeInvokedByOverriders
     public void onFrameUpdate() {
-        this.windowManager.clearQueue();
+        this.panelManager.checkDirty();
         for (Iterator<Map.Entry<IWidget, Runnable>> iterator = this.frameUpdates.entrySet().iterator(); iterator.hasNext();) {
             Map.Entry<IWidget, Runnable> entry = iterator.next();
             if (!entry.getKey().isValid()) {
@@ -213,9 +227,6 @@ public class ModularScreen {
             entry.getValue().run();
         }
         this.context.onFrameUpdate();
-    }
-
-    protected void viewportSet() {
     }
 
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
@@ -229,7 +240,7 @@ public class ModularScreen {
 
         this.context.reset();
         this.context.pushViewport(null, this.screenArea);
-        for (ModularPanel panel : this.windowManager.getReverseOpenPanels()) {
+        for (ModularPanel panel : this.panelManager.getReverseOpenPanels()) {
             if (panel.disablePanelsBelow()) {
                 GuiDraw.drawRect(0, 0, this.screenArea.w(), this.screenArea.h(), Color.argb(16, 16, 16, (int) (125 * panel.getAlpha())));
             }
@@ -253,7 +264,7 @@ public class ModularScreen {
 
         this.context.reset();
         this.context.pushViewport(null, this.screenArea);
-        for (ModularPanel panel : this.windowManager.getReverseOpenPanels()) {
+        for (ModularPanel panel : this.panelManager.getReverseOpenPanels()) {
             if (panel.isEnabled()) {
                 WidgetTree.drawTreeForeground(panel, this.context);
             }
@@ -275,7 +286,7 @@ public class ModularScreen {
         if (this.context.onMousePressed(mouseButton)) {
             return true;
         }
-        for (ModularPanel panel : this.windowManager.getOpenPanels()) {
+        for (ModularPanel panel : this.panelManager.getOpenPanels()) {
             if (panel.onMousePressed(mouseButton)) {
                 return true;
             }
@@ -294,7 +305,7 @@ public class ModularScreen {
         if (this.context.onMouseReleased(mouseButton)) {
             return true;
         }
-        for (ModularPanel panel : this.windowManager.getOpenPanels()) {
+        for (ModularPanel panel : this.panelManager.getOpenPanels()) {
             if (panel.onMouseRelease(mouseButton)) {
                 return true;
             }
@@ -310,7 +321,7 @@ public class ModularScreen {
         for (IGuiAction.KeyPressed action : getGuiActionListeners(IGuiAction.KeyPressed.class)) {
             action.press(typedChar, keyCode);
         }
-        for (ModularPanel panel : this.windowManager.getOpenPanels()) {
+        for (ModularPanel panel : this.panelManager.getOpenPanels()) {
             if (panel.onKeyPressed(typedChar, keyCode)) {
                 return true;
             }
@@ -326,7 +337,7 @@ public class ModularScreen {
         for (IGuiAction.KeyReleased action : getGuiActionListeners(IGuiAction.KeyReleased.class)) {
             action.release(typedChar, keyCode);
         }
-        for (ModularPanel panel : this.windowManager.getOpenPanels()) {
+        for (ModularPanel panel : this.panelManager.getOpenPanels()) {
             if (panel.onKeyRelease(typedChar, keyCode)) {
                 return true;
             }
@@ -342,7 +353,7 @@ public class ModularScreen {
         for (IGuiAction.MouseScroll action : getGuiActionListeners(IGuiAction.MouseScroll.class)) {
             action.scroll(scrollDirection, amount);
         }
-        for (ModularPanel panel : this.windowManager.getOpenPanels()) {
+        for (ModularPanel panel : this.panelManager.getOpenPanels()) {
             if (panel.onMouseScroll(scrollDirection, amount)) {
                 return true;
             }
@@ -358,7 +369,7 @@ public class ModularScreen {
         for (IGuiAction.MouseDrag action : getGuiActionListeners(IGuiAction.MouseDrag.class)) {
             action.drag(mouseButton, timeSinceClick);
         }
-        for (ModularPanel panel : this.windowManager.getOpenPanels()) {
+        for (ModularPanel panel : this.panelManager.getOpenPanels()) {
             if (panel.onMouseDrag(mouseButton, timeSinceClick)) {
                 return true;
             }
@@ -408,8 +419,14 @@ public class ModularScreen {
         return this.context;
     }
 
-    public WindowManager getWindowManager() {
-        return this.windowManager;
+    @ApiStatus.ScheduledForRemoval
+    @Deprecated
+    public PanelManager getWindowManager() {
+        return this.panelManager;
+    }
+
+    public PanelManager getPanelManager() {
+        return panelManager;
     }
 
     public GuiSyncManager getSyncManager() {
@@ -417,7 +434,7 @@ public class ModularScreen {
     }
 
     public ModularPanel getMainPanel() {
-        return this.windowManager.getMainPanel();
+        return this.panelManager.getMainPanel();
     }
 
     public GuiScreenWrapper getScreenWrapper() {
