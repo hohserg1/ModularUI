@@ -94,6 +94,7 @@ public class Widget<W extends Widget<W>> implements IWidget, IPositioned<W>, ITo
             }
         }
         afterInit();
+        onUpdate();
     }
 
     @ApiStatus.OverrideOnly
