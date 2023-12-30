@@ -20,6 +20,7 @@ public enum Mixins {
     SimpleResourceAccessor("minecraft.SimpleResourceAccessor", Phase.EARLY, Side.CLIENT, VANILLA),
 
     // Vanilla server & client
+    ContainerAccessor("minecraft.ContainerAccessor", Phase.EARLY, Side.BOTH, VANILLA),
     SimpleNetworkWrapperMixin("forge.SimpleNetworkWrapperMixin", Phase.EARLY, Side.BOTH, VANILLA),
 
     // Thaumcraft
