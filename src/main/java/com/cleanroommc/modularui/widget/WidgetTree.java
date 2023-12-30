@@ -1,5 +1,6 @@
 package com.cleanroommc.modularui.widget;
 
+import com.cleanroommc.modularui.ModularUI;
 import com.cleanroommc.modularui.api.layout.ILayoutWidget;
 import com.cleanroommc.modularui.api.layout.IResizeable;
 import com.cleanroommc.modularui.api.layout.IViewport;
@@ -11,6 +12,10 @@ import com.cleanroommc.modularui.screen.viewport.GuiContext;
 import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.utils.ObjectList;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+
+import com.cleanroommc.modularui.widget.sizer.Area;
+
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.ApiStatus;
 import org.lwjgl.opengl.GL11;
 
@@ -328,5 +333,36 @@ public class WidgetTree {
             }
             return true;
         }, true);
+    }
+
+    public static void print(IWidget parent, Predicate<IWidget> test) {
+        StringBuilder builder = new StringBuilder("Widget tree of ")
+                .append(parent)
+                .append('\n');
+        getTree(parent.getArea(), parent, test, builder, 0);
+        ModularUI.LOGGER.info(builder.toString());
+    }
+
+    private static void getTree(Area root, IWidget parent, Predicate<IWidget> test, StringBuilder builder, int indent) {
+        if (indent >= 2) {
+            builder.append(StringUtils.repeat(' ', indent - 2))
+                    .append("- ");
+        }
+        builder.append(parent).append(" {")
+                .append(parent.getArea().x - root.x)
+                .append(", ")
+                .append(parent.getArea().y - root.y)
+                .append(" | ")
+                .append(parent.getArea().width)
+                .append(", ")
+                .append(parent.getArea().height)
+                .append("}\n");
+        if (parent.hasChildren()) {
+            for (IWidget child : parent.getChildren()) {
+                if (test.test(child)) {
+                    getTree(root, child, test, builder, indent + 2);
+                }
+            }
+        }
     }
 }
