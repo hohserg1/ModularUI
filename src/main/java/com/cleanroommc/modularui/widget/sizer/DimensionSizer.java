@@ -18,7 +18,7 @@ public class DimensionSizer {
     private final Unit p1 = new Unit(), p2 = new Unit();
     private Unit start, end, size;
 
-    private boolean coverChildren = false;
+    private boolean coverChildren = false, expanded = false;
     private boolean cancelAutoMovement = false;
     private boolean defaultMode = false;
 
@@ -62,6 +62,10 @@ public class DimensionSizer {
     public void setCoverChildren(boolean coverChildren) {
         getSize();
         this.coverChildren = coverChildren;
+    }
+
+    public void setExpanded(boolean expanded) {
+        this.expanded = expanded;
     }
 
     public void setCancelAutoMovement(boolean cancelAutoMovement) {
@@ -160,7 +164,7 @@ public class DimensionSizer {
                 p = 0;
                 if (this.size == null) {
                     s = defaultSize.getAsInt();
-                    this.sizeCalculated = s > 0;
+                    this.sizeCalculated = s > 0 && !this.expanded;
                 } else {
                     s = calcSize(this.size, parentSize, calcParent);
                 }
@@ -177,7 +181,7 @@ public class DimensionSizer {
                         this.sizeCalculated |= this.posCalculated;
                     } else {
                         s = defaultSize.getAsInt();
-                        this.sizeCalculated = s > 0;
+                        this.sizeCalculated = s > 0 && !this.expanded;
                         if (this.start == null) {
                             p = calcPoint(this.end, s, parentSize, calcParent);
                             p -= s;
