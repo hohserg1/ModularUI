@@ -1,6 +1,5 @@
 package com.cleanroommc.modularui.test;
 
-import com.cleanroommc.modularui.ModularUI;
 import com.cleanroommc.modularui.api.IGuiHolder;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.AnimatedText;
@@ -47,6 +46,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fluids.FluidTank;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
@@ -230,7 +231,7 @@ public class TestTile extends TileEntity implements IGuiHolder<PosGuiData> {
                                                         .size(14, 14)
                                                         .length(3)
                                                         .texture(GuiTextures.CYCLE_BUTTON_DEMO)
-                                                        .value(new IntValue.Dynamic(() -> this.val2, val -> this.val2 = val))
+                                                        .value(new IntSyncValue(() -> this.val2, val -> this.val2 = val))
                                                         .margin(8, 0))
                                                 .child(IKey.str("Hello World").asWidget().height(18)))
                                         .child(new SpecialButton(IKey.str("A very long string that looks cool when animated").withAnimation())
@@ -379,6 +380,10 @@ public class TestTile extends TileEntity implements IGuiHolder<PosGuiData> {
             if (this.time++ % 20 == 0) {
                 this.val++;
             }
+        } else {
+            if (this.time++ % 20 == 0 && ++this.val2 == 3) {
+                this.val2 = 0;
+            }
         }
         if (++this.progress == this.duration) {
             this.progress = 0;
@@ -386,15 +391,17 @@ public class TestTile extends TileEntity implements IGuiHolder<PosGuiData> {
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound nbt) {
-        nbt.setInteger("dropDownIndex", currentDropdownIndex);
-        super.writeToNBT(nbt);
+    public void writeToNBT(@NotNull NBTTagCompound compound) {
+        super.writeToNBT(compound);
+        compound.setTag("item_inv", this.bigInventory.serializeNBT());
+        compound.setInteger("dropDownIndex", this.currentDropdownIndex);
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound nbt) {
-        currentDropdownIndex = nbt.hasKey("dropDownIndex") ? nbt.getInteger("dropDownIndex") : -1;
-        super.readFromNBT(nbt);
+    public void readFromNBT(@NotNull NBTTagCompound compound) {
+        super.readFromNBT(compound);
+        this.bigInventory.deserializeNBT(compound.getCompoundTag("item_inv"));
+        this.currentDropdownIndex = compound.hasKey("dropDownIndex") ? compound.getInteger("dropDownIndex") : -1;
     }
 
     private static class SpecialButton extends ButtonWidget<SpecialButton> {

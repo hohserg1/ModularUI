@@ -7,6 +7,7 @@ import com.cleanroommc.modularui.api.widget.IVanillaSlot;
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.drawable.TextRenderer;
+import com.cleanroommc.modularui.future.IItemHandlerModifiable;
 import com.cleanroommc.modularui.integration.nei.NEIDragAndDropHandler;
 import com.cleanroommc.modularui.integration.nei.NEIIngredientProvider;
 import com.cleanroommc.modularui.mixins.early.minecraft.GuiContainerAccessor;
@@ -176,6 +177,10 @@ public class ItemSlot extends Widget<ItemSlot> implements IVanillaSlot, Interact
         this.syncHandler = new ItemSlotSH(slot);
         setSyncHandler(this.syncHandler);
         return this;
+    }
+
+    public ItemSlot slot(IItemHandlerModifiable itemHandler, int index) {
+        return slot(new ModularSlot(itemHandler, index));
     }
 
     @SideOnly(Side.CLIENT)

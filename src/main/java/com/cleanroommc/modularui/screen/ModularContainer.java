@@ -35,7 +35,7 @@ public class ModularContainer extends Container {
     }
 
     private final GuiSyncManager guiSyncManager;
-    private boolean init = true;
+    private boolean init = true, handshake = false;
     private final List<ModularSlot> slots = new ArrayList<>();
     private final List<ModularSlot> shiftClickSlots = new ArrayList<>();
 
@@ -65,6 +65,7 @@ public class ModularContainer extends Container {
     @Override
     public void onContainerClosed(@NotNull EntityPlayer playerIn) {
         super.onContainerClosed(playerIn);
+        this.handshake = false;
         if (this.guiSyncManager != null) {
             this.guiSyncManager.onClose();
         }
@@ -72,7 +73,9 @@ public class ModularContainer extends Container {
 
     @Override
     public void detectAndSendChanges() {
-        super.detectAndSendChanges();
+        if (this.handshake) {
+            super.detectAndSendChanges();
+        }
         this.guiSyncManager.detectAndSendChanges(this.init);
         this.init = false;
     }
@@ -380,5 +383,9 @@ public class ModularContainer extends Container {
             }
         }
         return false;
+    }
+
+    public void onHandshake() {
+        this.handshake = true;
     }
 }

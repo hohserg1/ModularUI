@@ -13,28 +13,30 @@ import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.widget.WidgetTree;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.PacketBuffer;
 
 import net.minecraftforge.client.event.GuiOpenEvent;
 
+import net.minecraftforge.common.util.FakePlayer;
+
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Objects;
+import java.util.*;
 
 public class GuiManager {
 
     private static final Map<String, UIFactory<?>> FACTORIES = new HashMap<>(16);
 
     private static GuiScreenWrapper lastMui;
+    private static final List<EntityPlayer> openedContainers = new ArrayList<>(4);
 
     public static void registerFactory(UIFactory<?> factory) {
         Objects.requireNonNull(factory);
@@ -55,6 +57,8 @@ public class GuiManager {
     }
 
     public static <T extends GuiData> void open(@NotNull UIFactory<T> factory, @NotNull T guiData, EntityPlayerMP player) {
+        if (player instanceof FakePlayer || openedContainers.contains(player)) return;
+        openedContainers.add(player);
         // create panel, collect sync handlers and create container
         guiData.setNEISettings(NEISettings.DUMMY);
         GuiSyncManager syncManager = new GuiSyncManager(player);
@@ -87,6 +91,7 @@ public class GuiManager {
         GuiScreenWrapper guiScreenWrapper = new GuiScreenWrapper(new ModularContainer(syncManager), screen);
         guiScreenWrapper.inventorySlots.windowId = windowId;
         Minecraft.getMinecraft().displayGuiScreen(guiScreenWrapper);
+        player.openContainer = guiScreenWrapper.inventorySlots;
     }
 
     @SideOnly(Side.CLIENT)
@@ -94,6 +99,13 @@ public class GuiManager {
         screen.getContext().setNEISettings(jeiSettings);
         GuiScreenWrapper screenWrapper = new GuiScreenWrapper(new ModularContainer(), screen);
         Minecraft.getMinecraft().displayGuiScreen(screenWrapper);
+    }
+
+    @SubscribeEvent
+    public void onTick(TickEvent.ServerTickEvent event) {
+        if (event.phase == TickEvent.Phase.END) {
+            openedContainers.clear();
+        }
     }
 
     @SubscribeEvent
