@@ -10,16 +10,15 @@ import net.minecraft.launchwrapper.Launch;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid = ModularUI.ID, name = Tags.MODNAME, version = Tags.VERSION, dependencies = ModularUI.DEPENDENCIES, guiFactory = ModularUI.GUI_FACTORY)
+@Mod(modid = ModularUI.ID, name = "Modular UI", version = Tags.VERSION, dependencies = ModularUI.DEPENDENCIES, guiFactory = "com.cleanroommc.modularui.config.GuiFactory")
 public class ModularUI {
 
     static final String DEPENDENCIES = "required-after:gtnhmixins@[2.0.1,); "
         + "required-after:NotEnoughItems@[2.3.27-GTNH,);"
         + "after:hodgepodge@[2.0.0,);"
         + "before:gregtech";
-    static final String GUI_FACTORY = Tags.GROUPNAME + ".config.GuiFactory";
 
-    public static final String ID = Tags.MODID;
+    public static final String ID = "modularui";
 
     public static final Logger LOGGER = LogManager.getLogger(ID);
 
@@ -30,8 +29,8 @@ public class ModularUI {
 
     @SidedProxy(
         modId = ModularUI.ID,
-        clientSide = Tags.GROUPNAME + ".ClientProxy",
-        serverSide = Tags.GROUPNAME + ".CommonProxy")
+        clientSide = "com.cleanroommc.modularui.ClientProxy",
+        serverSide = "com.cleanroommc.modularui.CommonProxy")
     public static CommonProxy proxy;
 
     @Mod.Instance
