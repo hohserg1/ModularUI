@@ -15,7 +15,7 @@ import org.apache.logging.log4j.Logger;
 public class ModularUI {
 
     static final String DEPENDENCIES = "required-after:gtnhmixins@[2.0.1,); "
-        + "required-after:NotEnoughItems@[2.3.27-GTNH,);"
+        + "after:NotEnoughItems@[2.3.27-GTNH,);"
         + "after:hodgepodge@[2.0.0,);"
         + "before:gregtech";
 
@@ -23,8 +23,10 @@ public class ModularUI {
 
     public static final Logger LOGGER = LogManager.getLogger(ID);
 
+    public static final String MODID_NEI = "NotEnoughItems";
     public static final String MODID_GT5U = "gregtech";
     public static final String MODID_GT6 = "gregapi_post";
+    public static final boolean isNEILoaded = Loader.isModLoaded(MODID_NEI);
     public static final boolean isGT5ULoaded = Loader.isModLoaded(MODID_GT5U) && !Loader.isModLoaded(MODID_GT6);
     public static final boolean isHodgepodgeLoaded = Loader.isModLoaded("hodgepodge");
 

@@ -23,6 +23,8 @@ import com.cleanroommc.modularui.widget.sizer.Area;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import com.cleanroommc.modularui.widgets.slot.SlotGroup;
+
+import cpw.mods.fml.common.Optional;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
@@ -39,6 +41,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.MathHelper;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
@@ -46,6 +49,10 @@ import java.awt.Rectangle;
 import java.util.List;
 import java.util.Set;
 
+import static com.cleanroommc.modularui.ModularUI.MODID_NEI;
+import static com.cleanroommc.modularui.ModularUI.isNEILoaded;
+
+@Optional.Interface(iface = "codechicken.nei.api.INEIGuiHandler", modid = MODID_NEI)
 @SideOnly(Side.CLIENT)
 public class GuiScreenWrapper extends GuiContainer implements INEIGuiHandler {
 
@@ -367,6 +374,15 @@ public class GuiScreenWrapper extends GuiContainer implements INEIGuiHandler {
         super.mouseClickMove(this.screen.getContext().getAbsMouseX(), this.screen.getContext().getAbsMouseY(), this.screen.getContext().getMouseButton(), timeSinceLastClick);
     }
 
+    @Override
+    public void handleMouseInput() {
+        int scrolled = Mouse.getEventDWheel();
+        if (scrolled != 0 && this.screen.onMouseScroll(scrolled > 0 ? ModularScreen.UpOrDown.UP : ModularScreen.UpOrDown.DOWN, Math.abs(scrolled))) {
+            return;
+        }
+        super.handleMouseInput();
+    }
+
     /**
      * This replicates vanilla behavior while also injecting custom behavior for consistency
      */
@@ -376,7 +392,9 @@ public class GuiScreenWrapper extends GuiContainer implements INEIGuiHandler {
         int key = Keyboard.getEventKey();
         boolean state = Keyboard.getEventKeyState();
 
-        if (GuiContainerManager.getManager().firstKeyTyped(c0, key)) return;
+        if (isNEILoaded && GuiContainerManager.getManager().firstKeyTyped(c0, key)) {
+            return;
+        }
 
         if (state) {
             this.lastChar = c0;
@@ -400,7 +418,7 @@ public class GuiScreenWrapper extends GuiContainer implements INEIGuiHandler {
             ModularUIConfig.guiDebugMode = !ModularUIConfig.guiDebugMode;
             return;
         }
-        if (GuiContainerManager.getManager().lastKeyTyped(keyCode, typedChar)) {
+        if (isNEILoaded && GuiContainerManager.getManager().lastKeyTyped(keyCode, typedChar)) {
             return;
         }
         if (keyCode == Keyboard.KEY_ESCAPE || keyCode == this.mc.gameSettings.keyBindInventory.getKeyCode()) {

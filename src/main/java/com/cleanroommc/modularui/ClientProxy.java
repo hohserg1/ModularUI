@@ -6,13 +6,13 @@ import com.cleanroommc.modularui.factory.GuiManager;
 import com.cleanroommc.modularui.holoui.HoloScreenEntity;
 import com.cleanroommc.modularui.holoui.ScreenEntityRender;
 import com.cleanroommc.modularui.integration.nei.ModularUIContainerObjectHandler;
-import com.cleanroommc.modularui.integration.nei.ModularUIInputHandler;
 import com.cleanroommc.modularui.mixins.early.forge.ForgeHooksClientMixin;
 import com.cleanroommc.modularui.test.EventHandler;
 import com.cleanroommc.modularui.theme.ThemeManager;
 import com.cleanroommc.modularui.theme.ThemeReloadCommand;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Optional;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.relauncher.Side;
@@ -24,6 +24,9 @@ import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.MinecraftForge;
 
+import static com.cleanroommc.modularui.ModularUI.MODID_NEI;
+import static com.cleanroommc.modularui.ModularUI.isNEILoaded;
+
 @SideOnly(Side.CLIENT)
 @SuppressWarnings("unused")
 public class ClientProxy extends CommonProxy {
@@ -34,8 +37,9 @@ public class ClientProxy extends CommonProxy {
     void preInit(FMLPreInitializationEvent event) {
         super.preInit(event);
 
-        GuiContainerManager.addInputHandler(new ModularUIInputHandler());
-        GuiContainerManager.addObjectHandler(new ModularUIContainerObjectHandler());
+        if (isNEILoaded) {
+            registerNEIHandler();
+        }
 
         FMLCommonHandler.instance().bus().register(new ClientEventHandler());
         MinecraftForge.EVENT_BUS.register(new GuiManager());
@@ -63,5 +67,10 @@ public class ClientProxy extends CommonProxy {
     @Override
     public Timer getTimer60Fps() {
         return this.timer60Fps;
+    }
+
+    @Optional.Method(modid = MODID_NEI)
+    private void registerNEIHandler() {
+        GuiContainerManager.addObjectHandler(new ModularUIContainerObjectHandler());
     }
 }

@@ -1,6 +1,5 @@
 package com.cleanroommc.modularui.screen;
 
-import codechicken.lib.math.MathHelper;
 import com.cleanroommc.modularui.ModularUIConfig;
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IIcon;
@@ -13,12 +12,16 @@ import com.cleanroommc.modularui.screen.viewport.GuiContext;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.widget.sizer.Area;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.util.MathHelper;
+
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
-import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
@@ -74,8 +77,9 @@ public class Tooltip {
         int mouseX = context.getAbsMouseX(), mouseY = context.getAbsMouseY();
         IconRenderer renderer = IconRenderer.SHARED;
         List<String> textLines = lines.stream().filter(drawable -> drawable instanceof IKey).map(key -> ((IKey) key).get()).collect(Collectors.toList());
-        Dimension displaySize = codechicken.lib.gui.GuiDraw.displaySize();
-        int screenWidth = displaySize.width, screenHeight = displaySize.height;
+        Minecraft mc = Minecraft.getMinecraft();
+        ScaledResolution res = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
+        int screenWidth = res.getScaledWidth(), screenHeight = res.getScaledHeight();
 
         renderer.setShadow(this.textShadow);
         renderer.setColor(this.textColor);
@@ -131,7 +135,7 @@ public class Tooltip {
                     x = PADDING;
                 }
             }
-            y = (int) MathHelper.clip(y, PADDING, screenHeight - PADDING - height);
+            y = MathHelper.clamp_int(y, PADDING, screenHeight - PADDING - height);
             return new Rectangle(x, y, width, height);
         }
 

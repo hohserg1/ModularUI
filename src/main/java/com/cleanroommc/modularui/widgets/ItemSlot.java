@@ -38,6 +38,8 @@ import org.lwjgl.opengl.GL12;
 
 import java.util.List;
 
+import static com.cleanroommc.modularui.ModularUI.isNEILoaded;
+
 public class ItemSlot extends Widget<ItemSlot> implements IVanillaSlot, Interactable, NEIDragAndDropHandler, NEIIngredientProvider {
 
     public static final int SIZE = 18;
@@ -152,6 +154,12 @@ public class ItemSlot extends Widget<ItemSlot> implements IVanillaSlot, Interact
     }
 
     protected List<String> getItemTooltip(ItemStack stack) {
+        if (!isNEILoaded) {
+            return stack.getTooltip(
+                    Minecraft.getMinecraft().thePlayer,
+                    Minecraft.getMinecraft().gameSettings.advancedItemTooltips);
+        }
+
         List<String> tooltips = GuiContainerManager.itemDisplayNameMultiline(stack, getScreen().getScreenWrapper(), true);
 
         GuiContainerManager.applyItemCountDetails(tooltips, stack);

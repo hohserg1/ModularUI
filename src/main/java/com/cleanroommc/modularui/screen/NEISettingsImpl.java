@@ -14,6 +14,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.cleanroommc.modularui.ModularUI.isNEILoaded;
+
 /**
  * Keeps track of everything related to NEI in a Modular GUI.
  * By default, NEI is disabled in client only GUIs.
@@ -58,7 +60,7 @@ public class NEISettingsImpl implements NEISettings {
      */
     @Override
     public boolean isNEIEnabled(ModularScreen screen) {
-        return this.neiState.test(screen);
+        return isNEILoaded && this.neiState.test(screen);
     }
 
     /**
