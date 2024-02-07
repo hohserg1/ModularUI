@@ -11,12 +11,7 @@ import net.minecraft.network.PacketBuffer;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class GuiSyncManager {
@@ -28,7 +23,7 @@ public class GuiSyncManager {
     private final CursorSlotSyncHandler cursorSlotSyncHandler = new CursorSlotSyncHandler();
     private final EntityPlayer player;
     private final PlayerMainInvWrapper playerInventory;
-    private final Map<String, SyncHandler> syncHandlers = new HashMap<>();
+    private final Map<String, SyncHandler> syncHandlers = new LinkedHashMap<>();
     private final Map<String, SlotGroup> slotGroups = new HashMap<>();
     private final Map<SyncHandler, String> reverseSyncHandlers = new HashMap<>();
     private ModularContainer container;
