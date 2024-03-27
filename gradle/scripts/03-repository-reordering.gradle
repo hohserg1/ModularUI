@@ -1,0 +1,24 @@
+/*
+ * This script reorders repositories to the following order:
+ * - maven local
+ * - other local repositories
+ * - maven central
+ * - other online/remote repositories
+ * 
+ * This makes downloading dependencies a bit faster in some cases.
+ */
+
+def allRepos = repositories as List<ArtifactRepository>
+def localRepos = List.copyOf(allRepos.findAll { it['url']?.getScheme() == "file" })
+def remoteRepos = List.copyOf(allRepos.findAll { it['url']?.getScheme() != "file" })
+
+repositories {
+    allRepos.clear()
+
+    mavenLocal()
+    addAll(localRepos)
+
+    mavenCentral()
+
+    addAll(remoteRepos)
+}

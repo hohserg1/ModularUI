@@ -1,0 +1,6 @@
+repositories {
+    maven {
+        name = 'Parchment Maven'
+        url "https://maven.parchmentmc.org/"
+    }
+}

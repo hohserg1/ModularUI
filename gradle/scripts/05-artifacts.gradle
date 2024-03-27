@@ -1,0 +1,31 @@
+processResources {
+    inputs.property "version", project.version
+    inputs.property "forge_version", project.forge_version
+    inputs.property "minecraft_version", project.minecraft_version
+
+    filesMatching("META-INF/mods.toml") {
+        expand(
+                "version": project.version,
+                "forge_version": project.forge_version,
+                "minecraft_version": project.minecraft_version
+        )
+    }
+}
+
+java {
+    withSourcesJar()
+}
+
+jar {
+    manifest {
+        attributes([
+                "Specification-Title"     : project.mod_id,
+                "Specification-Vendor"    : project.mod_author,
+                "Specification-Version"   : "1",
+                "Implementation-Title"    : project.name,
+                "Implementation-Vendor"   : project.mod_author,
+                "Implementation-Version"  : version,
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
+}

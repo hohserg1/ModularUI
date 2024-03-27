@@ -1,0 +1,36 @@
+loom {
+    silentMojangMappingsLicense()
+
+    forge {
+        mixinConfigs = [
+                "${project.mod_id}.mixins.json"
+        ]
+    }
+}
+
+dependencies {
+    // Upgrade TerminalConsoleAppender to get rid of an error in JLine on windows:
+    forgeRuntimeLibrary("net.minecrell:terminalconsoleappender:1.3.0")
+}
+
+
+/*************************************************
+ *                    DATAGEN                    *
+ *************************************************/
+File generatedResourcesDir = file("src/generated")
+File resourcesDir = file("src/main/resources")
+
+sourceSets {
+    main.resources.srcDir(generatedResourcesDir)
+}
+
+loom {
+    runs {
+        data {
+            data()
+            programArgs("--all", "--mod", "$mod_id")
+            programArgs("--output", generatedResourcesDir.absolutePath)
+            programArgs("--existing", resourcesDir.absolutePath)
+        }
+    }
+}

@@ -1,0 +1,32 @@
+modLoader = "javafml"
+loaderVersion = "[47,)"
+license = "LGPL-3.0"
+
+[[mods]]
+modId = "modularui"
+version = "${version}"
+displayName = "ModularUI"
+description = '''
+A GUI library to ease the process of creating vanilla style GUIs. Heavily inspired by GTCE's ModularUI
+'''
+authors = [
+    "brachy84",
+    "Rongmario",
+    "CleanroomMC"
+]
+credits = "GTCE Author for the idea and concept, Kila Bash for improvements in GTCEu"
+logoFile = "assets/modularui/textures/modular_ui_logo.png"
+
+[[dependencies.modularui]]
+modId = "forge"
+mandatory = true
+versionRange = "[${forge_version},)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.modularui]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[${minecraft_version},)"
+ordering = "NONE"
+side = "BOTH"
